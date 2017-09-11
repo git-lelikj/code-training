@@ -1486,7 +1486,7 @@ public:
     }
 };
 #endif
-
+#if 0
 // -------------------------------------------------------------------------------------------------------
 // log(n) solution
 // -------------------------------------------------------------------------------------------------------
@@ -1550,6 +1550,34 @@ int main(int argc, char** argv)
     vector<int> input = {3, 2, 1, 2, 1, 2, 1, 1, 3, 2, 1, 4, 2, 1, 5};
 
     cout << "Resulting LIS: " << s.lengthOfLIS(input) << endl;
+
+    return 0;
+}
+#endif
+
+// -------------------------------------------------------------------------------------------------------
+// 72. Edit Distance
+
+//    Given two words word1 and word2, find the minimum number of steps required to convert word1 to word2. (each operation is counted as 1 step.)
+//    You have the following 3 operations permitted on a word:
+//    a) Insert a character
+//    b) Delete a character
+//    c) Replace a character
+
+// -------------------------------------------------------------------------------------------------------
+
+class Solution {
+public:
+    int minDistance(string word1, string word2) {
+
+    }
+};
+
+int main(int argc, char** argv)
+{
+    int in = (argc > 1 ? atoi(argv[1]) : 0);
+
+    Solution s;
 
     return 0;
 }
