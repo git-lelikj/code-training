@@ -1,1135 +1,434 @@
-// --------------------------------------------------------------------------------------------
-// Chapter 13.1.1
-// --------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------------
+//  http://www.interqiew.com/tests?type=cpp: #1:4
+//      Program output:   11010
+//
+//  disassembly command: g++ -std=c++11 -Wa,-adhln -g main.cpp > main.s
+//
+//  disassembly explained:
+//
 #if 0
+1093:main.cpp      ****
+1094:main.cpp      **** #include <iostream>
+1095:main.cpp      ****
+1096:main.cpp      **** using namespace std;
+1097:main.cpp      ****
+1098:main.cpp      **** class A
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// default constructor ?:
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  18              		.loc 1 1098 0
+  19              		.cfi_startproc
+  20 0000 55       		pushq	%rbp
+  21              		.cfi_def_cfa_offset 16
+  22              		.cfi_offset 6, -16
+  23 0001 4889E5   		movq	%rsp, %rbp
+  24              		.cfi_def_cfa_register 6
+  25 0004 48897DF8 		movq	%rdi, -8(%rbp)
+  26              		.loc 1 1098 0
+  27 0008 5D       		popq	%rbp
+  28              		.cfi_def_cfa 7, 8
+  29 0009 C3       		ret
+  30              		.cfi_endproc
+  31              	.LFE1197:
+  33              		.weak	_ZN1AC1Ev
+  34              		.set	_ZN1AC1Ev,_ZN1AC2Ev
+  35              		.section	.text._ZN1BC2Ev,"axG",@progbits,_ZN1BC5Ev,comdat
+  36              		.align 2
+  37              		.weak	_ZN1BC2Ev
+  39              	_ZN1BC2Ev:
+  40              	.LFB1200:
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+1099:main.cpp      **** {
+1100:main.cpp      **** //public:
+1101:main.cpp      **** //    A() {}
+1102:main.cpp      **** public:
+1103:main.cpp      ****     int i_;
+1104:main.cpp      **** };
+1105:main.cpp      ****
+1106:main.cpp      **** class B
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// default constructor ?:
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  41              		.loc 1 1106 0
+  42              		.cfi_startproc
+  43 0000 55       		pushq	%rbp
+  44              		.cfi_def_cfa_offset 16
+  45              		.cfi_offset 6, -16
+  46 0001 4889E5   		movq	%rsp, %rbp
+  47              		.cfi_def_cfa_register 6
+  48 0004 48897DF8 		movq	%rdi, -8(%rbp)
+  49              		.loc 1 1106 0
+  50 0008 5D       		popq	%rbp
+  51              		.cfi_def_cfa 7, 8
+  52 0009 C3       		ret
+  53              		.cfi_endproc
+  54              	.LFE1200:
+  56              		.weak	_ZN1BC1Ev
+  57              		.set	_ZN1BC1Ev,_ZN1BC2Ev
+  58              		.section	.text._ZN1CC2Ev,"axG",@progbits,_ZN1CC5Ev,comdat
+  59              		.align 2
+  60              		.weak	_ZN1CC2Ev
+  62              	_ZN1CC2Ev:
+  63              	.LFB1202:
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+1107:main.cpp      **** {
+1108:main.cpp      **** //public:
+1109:main.cpp      **** //    B() {}
+1110:main.cpp      **** public:
+1111:main.cpp      ****     int ii_;
+1112:main.cpp      **** };
+1113:main.cpp      ****
+1114:main.cpp      **** class C: public A,
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// default constructor ?:
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  64              		.loc 1 1114 0
+  65              		.cfi_startproc
+  66 0000 55       		pushq	%rbp
+  67              		.cfi_def_cfa_offset 16
+  68              		.cfi_offset 6, -16
+  69 0001 4889E5   		movq	%rsp, %rbp
+  70              		.cfi_def_cfa_register 6
+  71 0004 4883EC10 		subq	$16, %rsp
+  72 0008 48897DF8 		movq	%rdi, -8(%rbp)
+  73              	.LBB2:
+  74              		.loc 1 1114 0
+  75 000c 488B45F8 		movq	-8(%rbp), %rax
+  76 0010 4889C7   		movq	%rax, %rdi
+  77 0013 E8000000 		call	_ZN1AC2Ev
+  77      00
+  78 0018 488B45F8 		movq	-8(%rbp), %rax
+  79 001c 4883C004 		addq	$4, %rax
+  80 0020 4889C7   		movq	%rax, %rdi
+  81 0023 E8000000 		call	_ZN1BC2Ev
+  81      00
+  82 0028 488B45F8 		movq	-8(%rbp), %rax
+  83 002c C6400861 		movb	$97, 8(%rax)
+  84              	.LBE2:
+  85 0030 C9       		leave
+  86              		.cfi_def_cfa 7, 8
+  87 0031 C3       		ret
+  88              		.cfi_endproc
+  89              	.LFE1202:
+  91              		.weak	_ZN1CC1Ev
+  92              		.set	_ZN1CC1Ev,_ZN1CC2Ev
+  93              		.text
+  94              		.globl	main
+  96              	main:
+  97              	.LFB1194:
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+1115:main.cpp      ****          public B
+1116:main.cpp      **** {
+1117:main.cpp      **** //public:
+1118:main.cpp      **** //    C() {}
+1119:main.cpp      **** public:
+1120:main.cpp      ****     char c_ = 'a';
+1121:main.cpp      **** };
+1122:main.cpp      ****
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//	stack layout of pointers pc, pa and pb:
+//
+//	i_			-> -64(%rbp): 		address of c object	-> stored at -8(%rbp): pc		-> stored at -16(%rbp): pa
+//	ii_			-> -64(%rbp) + 4:	stored at -24(%rbp): pb
+//	c_
+//
+//	important:
+//		when comparing pointers to classes, pointer to base and derived (pa and pc, pb and pc) are the same due to adjustments,
+//		when comparing raw pointers, pa and pc are the same, pa and pb (pb and pc) are different (offset of 4 bytes)
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+1123:main.cpp      **** int main()
+1124:main.cpp      **** {
+  98              		.loc 1 1124 0
+  99              		.cfi_startproc
+ 100              		.cfi_personality 0x3,__gxx_personality_v0
+ 101              		.cfi_lsda 0x3,.LLSDA1194
+ 102 0000 55       		pushq	%rbp
+ 103              		.cfi_def_cfa_offset 16
+ 104              		.cfi_offset 6, -16
+ 105 0001 4889E5   		movq	%rsp, %rbp
+ 106              		.cfi_def_cfa_register 6
+ 107 0004 4883EC40 		subq	$64, %rsp
+ 108              	.LBB3:
+1125:main.cpp      ****     C c;
+ 109              		.loc 1 1125 0
+ 110 0008 488D45C0 		leaq	-64(%rbp), %rax								// load address of c var to %rax: -64(%rbp) - address of c
+ 111 000c 4889C7   		movq	%rax, %rdi
+ 112 000f E8000000 		call	_ZN1CC1Ev
+ 112      00
+1126:main.cpp      ****     C* pc = &c;
+ 113              		.loc 1 1126 0
+ 114 0014 488D45C0 		leaq	-64(%rbp), %rax								// load address of c var to %rax
+ 115 0018 488945F8 		movq	%rax, -8(%rbp)								// store address of c to -8(%rbp): pc var is offset -8 from (%rbp)
+1127:main.cpp      ****     A* pa = &c;
+ 116              		.loc 1 1127 0
+ 117 001c 488D45C0 		leaq	-64(%rbp), %rax								// load address of c var to %rax
+ 118 0020 488945F0 		movq	%rax, -16(%rbp)								// store address of c + 0 to -16(%rbp): pa var is offset -16 from (%rbp) -> pa == pc
+1128:main.cpp      ****     B* pb = &c;
+ 119              		.loc 1 1128 0
+ 120 0024 488D45C0 		leaq	-64(%rbp), %rax								// load address of c var to %rax
+ 121 0028 4883C004 		addq	$4, %rax
+ 122 002c 488945E8 		movq	%rax, -24(%rbp)								// store address of c + 4 to -24(%rbp): pb var is offset -24 from (%rbp) -> pb = pc + 4
+1129:main.cpp      ****
+1130:main.cpp      ****     pc->i_ = 5;
+ 123              		.loc 1 1130 0
+ 124 0030 488B45F8 		movq	-8(%rbp), %rax								// store pc to %rax (offset -8 from (%rbp))
+ 125 0034 C7000500 		movl	$5, (%rax)									// set value 5 to i_ at offset 0
+ 125      0000
+1131:main.cpp      ****     pc->ii_ = 10;
+ 126              		.loc 1 1131 0
+ 127 003a 488B45F8 		movq	-8(%rbp), %rax								// store pc to %rax (offset -8 from (%rbp))
+ 128 003e C740040A 		movl	$10, 4(%rax)								// set value 10 to ii_ at offset 4
+ 128      000000
+1132:main.cpp      ****     pc->c_ = 'b';
+ 129              		.loc 1 1132 0
+ 130 0045 488B45F8 		movq	-8(%rbp), %rax								// store pc to %rax (offset -8 from (%rbp))
+ 131 0049 C6400862 		movb	$98, 8(%rax)								// set value 98 to c_ at offset 8
+1133:main.cpp      ****
+1134:main.cpp      ****     pa->i_ = 25;
+ 132              		.loc 1 1134 0
+ 133 004d 488B45F0 		movq	-16(%rbp), %rax								// store pa to %rax (offset -16 from (%rbp)); note: points to same as pc
+ 134 0051 C7001900 		movl	$25, (%rax)									// set value 25 to i_ at offset 0; note: changes same as pc->i_
+ 134      0000
+1135:main.cpp      ****
+1136:main.cpp      ****     pb->ii_ = 20;
+ 135              		.loc 1 1136 0
+ 136 0057 488B45E8 		movq	-24(%rbp), %rax								// store pb to %rax (offset -24 from (%rbp))
+ 137 005b C7001400 		movl	$20, (%rax)									// set value 20 to ii_ at offset 0; note: changes same as pc->ii_
+ 137      0000
+1137:main.cpp      ****
+1138:main.cpp      ****     const int x = (pa == &c) ? 1 : 0;
+ 138              		.loc 1 1138 0
+ 139 0061 488D45C0 		leaq	-64(%rbp), %rax								// load address of c var to %rax: -64(%rbp) - address of c
+ 140 0065 483945F0 		cmpq	%rax, -16(%rbp)								// compares addres of c (==pc) with pa (-16(%rbp): pa var is offset -16 from (%rbp)) -> pa == &c
+ 141 0069 7507     		jne	.L5
+ 142              		.loc 1 1138 0 is_stmt 0 discriminator 1
+ 143 006b B8010000 		movl	$1, %eax
+ 143      00
+ 144 0070 EB05     		jmp	.L6
+ 145              	.L5:
+ 146              		.loc 1 1138 0 discriminator 2
+ 147 0072 B8000000 		movl	$0, %eax
+ 147      00
+ 148              	.L6:
+ 149              		.loc 1 1138 0 discriminator 3
+ 150 0077 8945E4   		movl	%eax, -28(%rbp)
+1139:main.cpp      ****     const int y = (pb == &c) ? 1 : 0;
+ 151              		.loc 1 1139 0 is_stmt 1 discriminator 3
+ 152 007a 488D45C0 		leaq	-64(%rbp), %rax								// load address of c var to %rax: -64(%rbp) - address of c
+ 153 007e 4883C004 		addq	$4, %rax									// adjust offset of pb: add 4 to address of c
+ 154 0082 483945E8 		cmpq	%rax, -24(%rbp)								// compares addres of c (==pc) with pb (-24(%rbp): pb var is offset -24 from (%rbp)) -> pb == &c !!! after above adjustment
+ 155 0086 7507     		jne	.L7
+ 156              		.loc 1 1139 0 is_stmt 0 discriminator 1
+ 157 0088 B8010000 		movl	$1, %eax
+ 157      00
+ 158 008d EB05     		jmp	.L8
+ 159              	.L7:
+ 160              		.loc 1 1139 0 discriminator 2
+ 161 008f B8000000 		movl	$0, %eax
+ 161      00
+ 162              	.L8:
+ 163              		.loc 1 1139 0 discriminator 3
+ 164 0094 8945E0   		movl	%eax, -32(%rbp)
+1140:main.cpp      ****     const int z = (reinterpret_cast<char*>(pa) == reinterpret_cast<char*>(pb)) ? 1 : 0;
+ 165              		.loc 1 1140 0 is_stmt 1 discriminator 3
+ 166 0097 488B45F0 		movq	-16(%rbp), %rax								// load address of pa var to %rax: -16(%rbp) - pa
+ 167 009b 483B45E8 		cmpq	-24(%rbp), %rax								// compare pa with address of pb: -24(%rbp): since no adjustment, raw pointers differ by 4
+ 168 009f 7507     		jne	.L9
+ 169              		.loc 1 1140 0 is_stmt 0 discriminator 1
+ 170 00a1 B8010000 		movl	$1, %eax
+ 170      00
+ 171 00a6 EB05     		jmp	.L10
+ 172              	.L9:
+ 173              		.loc 1 1140 0 discriminator 2
+ 174 00a8 B8000000 		movl	$0, %eax
+ 174      00
+ 175              	.L10:
+ 176              		.loc 1 1140 0 discriminator 3
+ 177 00ad 8945DC   		movl	%eax, -36(%rbp)
+1141:main.cpp      ****     const int zz = (reinterpret_cast<char*>(pa) == reinterpret_cast<char*>(pc)) ? 1 : 0;
+ 178              		.loc 1 1141 0 is_stmt 1 discriminator 3
+ 179 00b0 488B45F0 		movq	-16(%rbp), %rax								// load address of pa var to %rax: -16(%rbp) - pa
+ 180 00b4 483B45F8 		cmpq	-8(%rbp), %rax								// compare pa with pc: -8(%rbp): raw pointers are the same
+ 181 00b8 7507     		jne	.L11
+ 182              		.loc 1 1141 0 is_stmt 0 discriminator 1
+ 183 00ba B8010000 		movl	$1, %eax
+ 183      00
+ 184 00bf EB05     		jmp	.L12
+ 185              	.L11:
+ 186              		.loc 1 1141 0 discriminator 2
+ 187 00c1 B8000000 		movl	$0, %eax
+ 187      00
+ 188              	.L12:
+ 189              		.loc 1 1141 0 discriminator 3
+ 190 00c6 8945D8   		movl	%eax, -40(%rbp)
+1142:main.cpp      ****     const int zzz = (reinterpret_cast<char*>(pb) == reinterpret_cast<char*>(pc)) ? 1 : 0;
+ 191              		.loc 1 1142 0 is_stmt 1 discriminator 3
+ 192 00c9 488B45E8 		movq	-24(%rbp), %rax								// load address of pb var to %rax: -24(%rbp) - pb
+ 193 00cd 483B45F8 		cmpq	-8(%rbp), %rax								// compare pb with pc: -8(%rbp): raw pointers differ by 4, since no adjustment done
+ 194 00d1 7507     		jne	.L13
+ 195              		.loc 1 1142 0 is_stmt 0 discriminator 1
+ 196 00d3 B8010000 		movl	$1, %eax
+ 196      00
+ 197 00d8 EB05     		jmp	.L14
+ 198              	.L13:
+ 199              		.loc 1 1142 0 discriminator 2
+ 200 00da B8000000 		movl	$0, %eax
+ 200      00
+ 201              	.L14:
+ 202              		.loc 1 1142 0 discriminator 3
+ 203 00df 8945D4   		movl	%eax, -44(%rbp)
+1143:main.cpp      ****
+1144:main.cpp      ****     cout << x << y << z << zz << zzz << endl;
+ 204              		.loc 1 1144 0 is_stmt 1 discriminator 3
+ 205 00e2 8B45E4   		movl	-28(%rbp), %eax
+ 206 00e5 89C6     		movl	%eax, %esi
+ 207 00e7 BF000000 		movl	$_ZSt4cout, %edi
+ 207      00
+ 208              	.LEHB0:
+ 209 00ec E8000000 		call	_ZNSolsEi
+ 209      00
+ 210 00f1 8B55E0   		movl	-32(%rbp), %edx
+ 211 00f4 89D6     		movl	%edx, %esi
+ 212 00f6 4889C7   		movq	%rax, %rdi
+ 213 00f9 E8000000 		call	_ZNSolsEi
+ 213      00
+ 214              		.loc 1 1144 0 is_stmt 0 discriminator 1
+ 215 00fe 8B55DC   		movl	-36(%rbp), %edx
+ 216 0101 89D6     		movl	%edx, %esi
+ 217 0103 4889C7   		movq	%rax, %rdi
+ 218 0106 E8000000 		call	_ZNSolsEi
+ 218      00
+ 219 010b 8B55D8   		movl	-40(%rbp), %edx
+ 220 010e 89D6     		movl	%edx, %esi
+ 221 0110 4889C7   		movq	%rax, %rdi
+ 222 0113 E8000000 		call	_ZNSolsEi
+ 222      00
+ 223 0118 8B55D4   		movl	-44(%rbp), %edx
+ 224 011b 89D6     		movl	%edx, %esi
+ 225 011d 4889C7   		movq	%rax, %rdi
+ 226 0120 E8000000 		call	_ZNSolsEi
+ 226      00
+ 227 0125 BE000000 		movl	$_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_, %esi
+ 227      00
+ 228 012a 4889C7   		movq	%rax, %rdi
+ 229 012d E8000000 		call	_ZNSolsEPFRSoS_E
+ 229      00
+ 230              	.LEHE0:
+1145:main.cpp      **** //    cout << "C: " << std::hex << &c << "\nA: " << a << "\nB: " << b << endl;
+1146:main.cpp      **** //    printf("C: %x\nA: %x\nB: %x\n", &c, a, b);
+1147:main.cpp      **** //    const int x = (a == &c) ? 1 : 2;
+1148:main.cpp      **** //    const int y = (b == &c) ? 3 : 4;
+1149:main.cpp      **** //    const int z = (reinterpret_cast<char*>(a) == reinterpret_cast<char*>(b)) ? 5 : 6;
+1150:main.cpp      ****
+1151:main.cpp      **** //    std::cout << x << y << z << std::endl;
+1152:main.cpp      ****
+1153:main.cpp      ****     return 0;
+ 231              		.loc 1 1153 0 is_stmt 1
+ 232 0132 B8000000 		movl	$0, %eax
+ 232      00
+ 233 0137 EB08     		jmp	.L18
+ 234              	.L17:
+ 235 0139 4889C7   		movq	%rax, %rdi
+ 236              	.LEHB1:
+ 237 013c E8000000 		call	_Unwind_Resume
+ 237      00
+ 238              	.LEHE1:
+ 239              	.L18:
+ 240              	.LBE3:
+1154:main.cpp      **** }
+ 241              		.loc 1 1154 0
+ 242 0141 C9       		leave
+ 243              		.cfi_def_cfa 7, 8
+ 244 0142 C3       		ret
+ 245              		.cfi_endproc
+ 246              	.LFE1194:
+ 247              		.globl	__gxx_personality_v0
+ 248              		.section	.gcc_except_table,"a",@progbits
+ 249              	.LLSDA1194:
+ 250 0000 FF       		.byte	0xff
+ 251 0001 FF       		.byte	0xff
+ 252 0002 01       		.byte	0x1
+ 253 0003 0B       		.uleb128 .LLSDACSE1194-.LLSDACSB1194
+ 254              	.LLSDACSB1194:
+ 255 0004 EC01     		.uleb128 .LEHB0-.LFB1194
+ 256 0006 46       		.uleb128 .LEHE0-.LEHB0
+ 257 0007 B902     		.uleb128 .L17-.LFB1194
+ 258 0009 00       		.uleb128 0
+ 259 000a BC02     		.uleb128 .LEHB1-.LFB1194
+ 260 000c 05       		.uleb128 .LEHE1-.LEHB1
+ 261 000d 00       		.uleb128 0
+ 262 000e 00       		.uleb128 0
+ 263              	.LLSDACSE1194:
+ 264              		.text
+ 267              	_Z41__static_initialization_and_destruction_0ii:
+ 268              	.LFB1355:
+ 269              		.loc 1 1154 0
+ 270              		.cfi_startproc
+ 271 0143 55       		pushq	%rbp
+ 272              		.cfi_def_cfa_offset 16
+ 273              		.cfi_offset 6, -16
+ 274 0144 4889E5   		movq	%rsp, %rbp
+ 275              		.cfi_def_cfa_register 6
+ 276 0147 4883EC10 		subq	$16, %rsp
+ 277 014b 897DFC   		movl	%edi, -4(%rbp)
+ 278 014e 8975F8   		movl	%esi, -8(%rbp)
+ 279              		.loc 1 1154 0
+ 280 0151 837DFC01 		cmpl	$1, -4(%rbp)
+ 281 0155 7527     		jne	.L19
+ 282              		.loc 1 1154 0 is_stmt 0 discriminator 1
+ 283 0157 817DF8FF 		cmpl	$65535, -8(%rbp)
+ 283      FF0000
+ 284 015e 751E     		jne	.L19
+#endif
+//
+// -----------------------------------------------------------------------------------------------------------
+
 #include <iostream>
-#include <string>
-#include <vector>
 using namespace std;
 
-class HasPtr {
+class A
+{
 public:
-    HasPtr(const std::string &s = std::string()):
-        ps_(new std::string(s)),
-        i_(0)
-    { cout << "HasPtr::HasPtr()\n"; }
-
-    HasPtr(const HasPtr& rhs):
-        ps_ {new std::string(*rhs.ps_)},
-        i_ {rhs.i_}
-    { cout << "HasPtr::HasPtr(const& HasPtr)\n"; }
-
-    HasPtr& operator=(const HasPtr& rhs)
-    {
-        { cout << "HasPtr::operator=(const& HasPtr)\n"; }
-        if (this != &rhs) {
-            if (ps_)
-                delete ps_;
-            ps_ = new std::string(*rhs.ps_);
-            i_ = rhs.i_;
-        }
-        return *this;
-    }
-
-    ~HasPtr()
-    {
-        { cout << "HasPtr::~HasPtr()\n"; }
-        if (ps_)
-            delete ps_;
-    }
-
-    int i() const
-    {
-        return i_;
-    }
-
-private:
-    std::string *ps_;
     int i_;
 };
 
-void foo(HasPtr h)
-{
-    { cout << "HasPtr::foo(): i: " << h.i() << endl; }
-}
-
-void goo(const HasPtr& h)
-{
-    { cout << "HasPtr::goo(): i: " << h.i() << endl; }
-}
-
-int main(int argc, char *argv[])
-{
-#if 0
-    HasPtr h1;      // direct initialization
-
-    HasPtr h2 = h1; // copy initialization
-
-    h1 = h2;        // copy assignment
-#endif
-
-    HasPtr h1;
-
-//    foo(h1);
-//    goo(h1);
-
-    using HpVec = vector<HasPtr>;
-
-    HpVec hv;
-
-    hv.push_back(h1);
-
-    return 0;
-}
-#endif
-
-// --------------------------------------------------------------------------------------------
-// lvalue/rvalue, references
-// --------------------------------------------------------------------------------------------
-#if 0
-#include <vector>
-#include <string>
-#include <iostream>
-
-template<typename T>
-class Type_display;
-
-int global_i = 456;
-
-int f_ret_rval()
-{
-    return 123;
-}
-
-int f1(int i_param)
-{
-#if 0
-    Type_display<decltype(i_param)> type_f_param;                             // lvalue
-#endif
-
-    int &i_l_param = i_param;
-
-    return 0;
-}
-
-int& f_ret_lval()
-{
-    return global_i;
-}
-
-int main(int argc, char *argv[])
-{
-    int i = 24;
-    const int ci = 42;
-    int &r = i;
-
-    int *pi = &i;
-
-    auto x = ci;
-    auto y = &ci;
-    const auto &z = r;
-
-    std::vector<int> v;
-    std::string s;
-    auto v_it = v.begin();
-    auto s_it = s.begin();
-#if 0
-    Type_display<decltype(i)> type_var;                             // lvalue
-    Type_display<decltype(i+0)> type_arithm_plus;                   // rvalue
-    Type_display<decltype(i=33)> type_assignment;                   // lvalue
-    Type_display<decltype(*pi)> type_dereference;                   // lvalue
-    Type_display<decltype(&i)> type_address_of;                     // rvalue
-    Type_display<decltype(v[0])> type_vector_subscript;             // lvalue
-    Type_display<decltype(s[0])> type_string_subscript;             // lvalue
-    Type_display<decltype(++v_it)> type_vector_prefix;              // lvalue
-    Type_display<decltype(++s_it)> type_string_prefix;              // lvalue
-    Type_display<decltype(v_it++)> type_vector_postfix;             // rvalue
-    Type_display<decltype(s_it++)> type_string_postfix;             // rvalue
-    Type_display<decltype(f_ret_rval())> type_f_ret_rval;           // rvalue
-    Type_display<decltype(f_ret_lval())> type_f_ret_lval;           // lvalue
-
-    Type_display<decltype(x)> type_x;
-    Type_display<decltype(y)> type_y;
-    Type_display<decltype(z)> type_z;
-#endif
-
-    int &l_assignment = (i = 55);
-    std::cout << "i: " << i << ", l_assignment: " << l_assignment << endl;
-
-    int &&r_plus = i + 1;
-    std::cout << "r_plus: " << r_plus << endl;
-
-    int &l_deref = *pi;
-    std::cout << "l_deref: " << l_deref << endl;
-
-    int &&l_f_ret_rval = f_ret_rval();
-    std::cout << "l_f_ret_rval: " << l_f_ret_rval << endl;
-
-    f_ret_lval() = 789;
-    int &l_f_ret_lval = f_ret_lval();
-    std::cout << "l_f_ret_lval: " << l_f_ret_lval << endl;
-
-    int &&r_address_of = reinterpret_cast<long>(&i);
-
-    return 0;
-}
-#endif
-
-// --------------------------------------------------------------------------------------------
-// template type deduction
-// --------------------------------------------------------------------------------------------
-#if 0
-#include <iostream>
-#include <utility>
-
-template<typename T>
-void f(T param);
-
-template<typename T>
-void f_ref(T &param);
-
-template<typename T>
-void f_constref(const T &param);
-
-template<typename T>
-void f_ptr(T *param);
-
-template<typename T>
-void f_rref(T &&param);
-
-int main(int argc, char *argv[])
-{
-    int i;
-    const int ci = 123;
-    int &l_i = i;
-    const int &l_ci = 456;
-    int *p_i = &i;
-    const int *const cp_ci = &i;
-    int a[10];
-    const int *p_ci = &i;
-
-    f(i);                   // int,     int
-    f(ci);                  // int,     int
-    f(l_i);                 // int,     int
-    f(l_ci);                // int,     int
-    f(p_i);                 // int*,    int*
-    f(cp_ci);               // const int*, const int*
-    f(*p_i);                // int,     int
-    f(a);                   // int*,    int*
-
-    f_ref(i);               // int,         int&
-    f_ref(ci);              // const int,   const int&
-    f_ref(l_i);             // int,         int&
-    f_ref(l_ci);            // const int,   const int&
-    f_ref(p_i);             // int*,        int*&
-    f_ref(*p_i);            // int,         int&
-    f_ref(a);               // int [10],    int (&) [10]    -> ???
-
-    f_constref(i);          // int,         const int&
-    f_constref(ci);         // int,         const int&
-    f_constref(l_i);        // int,         const int&
-    f_constref(l_ci);       // int,         const int&
-    f_constref(p_i);        // int*,        int* const&
-    f_constref(*p_i);       // int,         const int&
-    f_constref(a);          // int [10],    int const (&) [10]
-    f_constref(123);        // int,         const int&
-
-    f_ptr(p_i);              // int,         int*
-    f_ptr(p_ci);             // const int,   const int*
-
-    f_rref(i);               // int&,        int&
-    f_rref(ci);              // const int&,  const int&
-    f_rref(l_i);             // int&,        int&
-    f_rref(l_ci);            // const int&,  const int&
-    f_rref(p_i);             // int*&,       int*&
-    f_rref(*p_i);            // int&,        int&
-    f_rref(123);             // int,         int&&
-    f_rref(std::move(i));    // int,         int&&
-
-    return 0;
-}
-#endif
-
-// --------------------------------------------------------------------------------------------
-// auto/decltype
-// --------------------------------------------------------------------------------------------
-#if 0
-#include <iostream>
-#include <utility>
-
-template<typename T>
-class Type_display;
-
-int main(int argc, char *argv[])
-{
-    int i;
-    const int ci = 123;
-    int &l_i = i;
-    const int &l_ci = 456;
-    int *p_i = &i;
-    const int *const cp_ci = &i;
-    int a[10];
-    const int *p_ci = &i;
-
-    auto a_i = i;
-    auto a_ci = ci;
-    auto a_li = l_i;
-    auto a_l_ci = l_ci;
-    auto a_pi = p_i;
-    auto a_arr = a;
-
-    auto &a_lr_i = i;
-    auto &a_lr_arr = a;
-
-    auto a_parentheses = (i);
-
-    auto a_literal = 123;
-    auto a_str_literal = "ladenzon";
-    auto &&a_rr_literal = 123;
-    auto &a_lr_str_literal = "ladenzon";
-
-    Type_display<decltype(a_i)> type_a_i;
-    Type_display<decltype(a_ci)> type_a_ci;
-    Type_display<decltype(a_li)> type_a_li;
-    Type_display<decltype(a_l_ci)> type_a_l_ci;
-    Type_display<decltype(a_pi)> type_a_pi;
-    Type_display<decltype(a_arr)> type_a_arr;
-
-    Type_display<decltype(a_lr_i)> type_a_lr_i;
-    Type_display<decltype(a_lr_arr)> type_a_lr_arr;
-
-    Type_display<decltype(a_parentheses)> type_a_parenth;
-    Type_display<decltype((i))> type_d_parenth;
-
-    Type_display<decltype(a_literal)> type_a_literal;
-    Type_display<decltype(a_str_literal)> type_a_str_literal;
-    Type_display<decltype(a_rr_literal)> type_a_rr_literal;
-    Type_display<decltype(a_lr_str_literal)> type_a_lr_str_literal;
-    Type_display<decltype(123)> type_d_literal;
-    Type_display<decltype("ladenzon")> type_d_str_literal;
-
-    return 0;
-}
-#endif
-
-// --------------------------------------------------------------------------------------------
-// 10 proven interview questions: #1
-// --------------------------------------------------------------------------------------------
-#if 0
-#include <iostream>
-#include <memory>
-
-std::unique_ptr<int> f(std::unique_ptr<int> u_i_arg)
-{
-    *u_i_arg = 456;
-    return u_i_arg;
-}
-
-int main(int argc, char *argv[])
-{
-    std::unique_ptr<int> u_i = std::unique_ptr<int>(new int(123));
-
-    f(std::move(u_i));
-
-    return 0;
-}
-#endif
-#if 0
-// --------------------------------------------------------------------------------------------
-// 10 proven interview questions: #2
-// --------------------------------------------------------------------------------------------
-#include <iostream>
-#include <vector>
-#include <string>
-
-class SearchQuery
+class B
 {
 public:
-    SearchQuery()
-    {}
-
-    SearchQuery(const SearchQuery& sq)
-    {}
+    int ii_;
 };
 
-class DirectorySearchResult {
+class C: public A,
+         public B
+{
 public:
-  DirectorySearchResult(
-    std::vector<std::string> const& files,
-    size_t attributes,
-    SearchQuery const* query)
-    : files_(files),
-      attributes_(attributes),
-      query_(new SearchQuery(*query))
-  {}
-
-  ~DirectorySearchResult() { delete query_; }
-
-  DirectorySearchResult(const DirectorySearchResult& rhs)
-    : files_(rhs.files_),
-      attributes_(rhs.attributes_),
-      query_(new SearchQuery(*rhs.query_))
-  {}
-
-  DirectorySearchResult(DirectorySearchResult&& rhs)
-      : files_(std::move(rhs.files_)),
-        attributes_(rhs.attributes_),
-        query_(rhs.query_)
-  {
-      rhs.query_ = nullptr;
-  }
-
-  DirectorySearchResult& operator=(const DirectorySearchResult& rhs)
-  {
-      if (&rhs != this) {
-          this->files_ = rhs.files_;
-          this->attributes_ = rhs.attributes_;
-          *this->query_ = *rhs.query_;
-      }
-      return *this;
-  }
-
-  DirectorySearchResult& operator=(DirectorySearchResult&& rhs)
-  {
-      if (&rhs != this) {
-          this->files_ = std::move(rhs.files_);
-          this->attributes_ = rhs.attributes_;
-          this->query_ = rhs.query_;
-          rhs.query_ = nullptr;
-      }
-      return *this;
-  }
-
-private:
-  std::vector<std::string> files_;
-  size_t attributes_;
-  SearchQuery* query_;
+    char c_ = 'a';
 };
 
-int main(int argc, char *argv[])
+int main()
 {
-    std::vector<std::string> vs;
-    DirectorySearchResult sr(vs, 0, 0);
+    C c;
+    C* pc = &c;
+    A* pa = &c;
+    B* pb = &c;
 
-    return 0;
-}
-#endif
-#if 0
-// --------------------------------------------------------------------------------------------
-// special member functions generation
-// --------------------------------------------------------------------------------------------
-#include <iostream>
-#include <vector>
-#include <string>
-#include <utility>
-using namespace std;
+    pc->i_ = 5;
+    pc->ii_ = 10;
+    pc->c_ = 'b';
 
-struct A
-{
-    int i_ = 1;
-    string s_ = "amsterdam";
+    pa->i_ = 25;
 
-    A() { cout << "A::A()\n"; }
-    ~A() { cout << "A::~A()\n"; }
-};
+    pb->ii_ = 20;
 
-struct B
-{
-    int i_ = 2;
-    string s_ = "boston";
+    const int x = (pa == &c) ? 1 : 0;
+    const int y = (pb == &c) ? 1 : 0;
+    const int z = (reinterpret_cast<char*>(pa) == reinterpret_cast<char*>(pb)) ? 1 : 0;
+    const int zz = (reinterpret_cast<char*>(pa) == reinterpret_cast<char*>(pc)) ? 1 : 0;
+    const int zzz = (reinterpret_cast<char*>(pb) == reinterpret_cast<char*>(pc)) ? 1 : 0;
 
-    B() { cout << "B::B()\n"; }
-    B(const B &b)
-        : i_(b.i_), s_(b.s_)
-    { cout << "B::B(const B&)\n"; }
-    B& operator=(const B &b)
-    {
-        cout << "B::operator=(const B&)\n";
-        i_ = b.i_;
-        s_ = b.s_;
-        return *this;
-    }
-    B(B &&b) = default;
-    B& operator=(B &&b) = default;
-    ~B() { cout << "B::~B()\n"; }             //  -> suppress default move constructor generation
-//    ~B() { cout << "B::~B()\n"; }             //  -> generate default move constructor
-};
-
-int main(int argc, char *argv[])
-{
-
-    {
-        cout << "Default copy constructor...\n";
-        A a1;
-        A a2(a1);
-        A a3 = a1;
-        cout << "a1.s_: " << a1.s_ << ", a2.s_: " << a2.s_ << ", a3.s_: " << a3.s_ << endl;
-    }
-    cout << endl;
-
-    {
-        cout << "Default copy assignment...\n";
-        A a1;
-        A a2;
-        a2 = a1;
-        cout << "a1.s_: " << a1.s_ << ", a2.s_: " << a2.s_ << endl;
-    }
-    cout << endl;
-
-    {
-        cout << "Default move constructor...\n";
-        B b1;
-        B b2(std::move(b1));
-        cout << "b1.i_:b1.s_: " << b1.i_ << ":" << b1.s_ << ", b2.i_:b2.s_: " << b2.i_ << ":" << b2.s_ << endl;
-    }
-    cout << endl;
-
-    {
-        cout << "Default move assignment...\n";
-        B b1;
-        B b2;
-        b2 = std::move(b1);
-        cout << "b1.i_:b1.s_: " << b1.i_ << ":" << b1.s_ << ", b2.i_:b2.s_: " << b2.i_ << ":" << b2.s_ << endl;
-    }
-    cout << endl;
-
-    return 0;
-}
-#endif
-
-// --------------------------------------------------------------------------------------------
-// copy/assign/move/swap
-// --------------------------------------------------------------------------------------------
-
-#if 0
-#include <iostream>
-#include <vector>
-#include <string>
-#include <utility>
-#include <memory>
-#include <algorithm>
-using namespace std;
-
-struct A
-{
-    int i_ = 1;
-    string s_ = "usa";
-    vector<string> vs_ = {"boston", "chicago", "new_york"};
-
-    A()
-    {
-        cout << "A::A()\n";
-    }
-    ~A() { cout << "A::~A()\n"; }
-    A(const A& a) = default;
-    A& operator=(const A &a) = default;
-    A(A &&a) = default;
-    A& operator=(A &&a) = default;
-
-    void foo()
-    {
-        cout << "A::foo()\n";
-    }
-};
-
-ostream& operator<<(ostream &os, const A &a)
-{
-    os  << "i_: " << a.i_ << ", "
-        << "s_: " << a.s_ << ", "
-//        << "vs_: " << a.vs_
-           ;
-    os << "vs_: ";
-    for (const auto &elem: a.vs_) {
-        os << elem << ";";
-    }
-
-    return os;
-}
-
-void f_val(A a)
-{
-    cout << "f_val()...\n";
-//    cout << a << endl;
-}
-
-void f_constref(const A &a)
-{
-    cout << "f_constref()...\n";
-//    cout << a << endl;
-}
-
-struct B
-{
-    unique_ptr<int> up_i_;
-
-    B(int i = 0)
-        : up_i_ {unique_ptr<int>(new int {i})}
-    {
-        cout << "B::B()\n";
-    }
-    ~B() { cout << "B::~B()\n"; }
-
-    B(const B &b)
-        : up_i_ {unique_ptr<int>(new int {*b.up_i_})}
-    {
-        cout << "B::B(const B &b)\n";
-    }
-
-    B& operator=(const B &b)
-    {
-        cout << "B::operator=(const B &b)\n";
-//        up_i_.reset(new int {*b.up_i_});  // same as *up_i_ = *b.up_i_
-        *up_i_ = *b.up_i_;
-        return *this;
-    }
-
-    B(B &&b)
-        : up_i_ {std::move(b.up_i_)}
-    {
-        cout << "B::B(B &&b)\n";
-    }
-
-    B& operator=(B &&b)
-    {
-        up_i_ = std::move(b.up_i_);
-        return *this;
-    }
-};
-
-ostream& operator<<(ostream &os, const B &b)
-{
-    os  << "up_i_: " << (b.up_i_ != nullptr ? *b.up_i_ : 0)
-           ;
-    return os;
-}
-
-void f_val(B b)
-{
-    cout << "f_val()...\n";
-    cout << b << endl;
-}
-
-struct C
-{
-    std::size_t size_;
-    unique_ptr<int[]> array_;
-
-    C(std::size_t size = 0, int default_val = 0)
-        : size_{size}, array_{unique_ptr<int[]>(new int[size])}
-    {
-        cout << "C::C()\n";
-        std::fill(&array_[0], &array_[0] + size, default_val);
-    }
-
-    C(const C &c)
-        : size_{c.size_}, array_{unique_ptr<int[]>(new int[size_])}
-    {
-        cout << "C::C(const C&)\n";
-        if ((c.array_ != nullptr) && (size_))
-            std::copy(&c.array_[0], &c.array_[0]+size_, &array_[0]);
-    }
-
-    C& operator=(const C& c)
-    {
-        cout << "C::operator=(const C&)\n";
-        size_ = c.size_;
-        if (c.array_ != nullptr) {
-            array_.reset(new int[size_]);
-            if (size_) {
-                std::copy(&c.array_[0], &c.array_[0] + size_, &array_[0]);
-            }
-        }
-        else
-            array_.reset(nullptr);
-        return *this;
-    }
-
-    C(C &&c)
-        : size_(c.size_), array_(std::move(c.array_))
-    {
-        cout << "C::C(C&&)\n";
-    }
-
-    C& operator=(C &&c)
-    {
-        size_ = c.size_;
-        array_ = std::move(c.array_);
-        return *this;
-    }
-};
-
-ostream& operator<<(ostream& os, const C &c)
-{
-    cout << "size: " << c.size_ << ", array: ";
-    if (c.array_ != nullptr) {
-        for (std::size_t i = 0; i < c.size_; ++i) {
-            cout << c.array_[i] << " ";
-        }
-    }
-    else
-        cout << "null";
-    return os;
-}
-
-struct D
-{
-    int i_ = 0;
-    D(int i)
-        : i_{i}
-    { cout << "D::D(): " << i_ << endl; }
-    ~D() { cout << "D::~D(): " << i_ << endl; }
-    D(const D &d)
-        : i_(d.i_)
-    { cout << "D::D(const D&)" << endl; }
-    D& operator=(const D &d)
-    {
-        cout << "D::operator=(const D&)" << endl; return *this;
-        i_ = d.i_;
-    }
-    D(D &&d)
-    {
-        cout << "D::D(D&&)" << endl;
-        i_ = d.i_;
-        d.i_ = 0;
-    }
-    D& operator=(D&&) { cout << "D::D(D&&)" << endl; return *this; }
-
-    void foo() { cout << "D::foo(): " << i_ << endl; }
-};
-
-struct E
-{
-    unique_ptr<D> up_d_;
-
-    E(int i = 0)
-        : up_d_{unique_ptr<D>(new D{i})}
-    {
-        cout << "E::E()" << endl;
-    }
-
-    ~E() { cout << "E::~E()" << endl; }
-
-    E(const E& e)
-    {
-        cout << "E::E(const E&)" << endl;
-        if (e.up_d_ != nullptr)
-            up_d_ = unique_ptr<D>(new D(*e.up_d_));
-        else
-            up_d_ = nullptr;
-    }
-
-    E& operator=(const E &e)
-    {
-        cout << "E::operator=(const E&)" << endl;
-        if (e.up_d_ != nullptr)
-            up_d_.reset(new D{*e.up_d_});
-        else
-            up_d_.reset(nullptr);
-        return *this;
-    }
-
-    E(E &&e)
-        : up_d_(std::move(e.up_d_))
-    {
-        cout << "E::E(E&&)" << endl;
-    }
-
-    E& operator=(E &&e)
-    {
-        cout << "E::operator=(E&&)\n";
-        up_d_ = std::move(e.up_d_);
-        return *this;
-    }
-};
-
-ostream& operator<<(ostream& os, const D &d)
-{
-    cout << d.i_;
-    return os;
-}
-
-ostream& operator<<(ostream& os, const E &e)
-{
-    if (e.up_d_ != nullptr)
-        cout << *e.up_d_;
-    else
-        cout << "null";
-    return os;
-}
-
-struct F
-{
-    vector<unique_ptr<D>> v_upd_;
-
-    F(std::size_t n_elements = 0, int default_val = 0)
-        : v_upd_()//, std::move(unique_ptr<D>(new D(default_val))))
-    {
-        cout << "F::F()" << endl;
-        for (std::size_t i=0; i < n_elements; ++i) {
-//            v_upd_.push_back(unique_ptr<D>(new D(default_val)));
-            v_upd_.emplace_back(new D(default_val));
-        }
-    }
-
-    ~F() { cout << "F::~F()" << endl; }
-
-    F(const F &f)
-        : v_upd_()
-    {
-        cout << "F::F(const F&)\n";
-        for (const auto &f_elem: f.v_upd_)
-            v_upd_.emplace_back(new D(*f_elem));
-    }
-
-    F& operator=(const F &f)
-    {
-        cout << "F::operator=(const F&)\n";
-        if (this != &f) {
-            v_upd_.clear();
-            for (const auto &f_elem: f.v_upd_)
-                v_upd_.emplace_back(new D(*f_elem));
-        }
-        return *this;
-    }
-
-    F(F &&f)
-        : v_upd_(std::move(f.v_upd_))
-    {
-        cout << "F::F(F&&)\n";
-    }
-
-    F& operator=(F &&f)
-    {
-        cout << "F& operator=(F&&)\n";
-        v_upd_ = std::move(f.v_upd_);
-        return *this;
-    }
-};
-
-ostream& operator<<(ostream& os, const F &f)
-{
-    os << "size: " << f.v_upd_.size();
-    if (f.v_upd_.size()) {
-        os << ", elements: ";
-        for (const auto &element: f.v_upd_)
-            os << *element << " ";
-    }
-    return os;
-}
-
-int main(int argc, char *argv[])
-{
-
-    {
-        cout << "Value semantics...\n";
-        A a;
-        cout << a << endl;
-        cout << "Copy construct...\n";
-        f_val(a);
-        cout << "source: " << a << endl;
-        cout << "Move construct...\n";
-        f_val(std::move(a));
-        cout << "source: " << a << endl;
-        A b, c;
-        cout << "Move assign...\n";
-        b = std::move(c);
-        cout << "dest: " << b << endl;
-        cout << "source: " << c << endl;
-    }
-    cout << endl;
-
-    {
-        cout << "Value semantics with unique_ptr...\n";
-        B b;
-        cout << b << endl;
-        cout << "Copy construct...\n";
-        f_val(b);
-        cout << "source: " << b << endl;
-        cout << "Copy assign...\n";
-        B b1 {5}, b2;
-        b2 = b1;
-        cout << "source: " << b1 << endl;
-        cout << "dest: " << b2 << endl;
-        cout << "Move construct...\n";
-        B b3 {123}, b4(std::move(b3));
-        cout << "dest: " << b4 << endl;
-        cout << "source: " << b3 << endl;
-        cout << "Move assign...\n";
-        B b5 {456}, b6;
-        b6  = std::move(b5);
-        cout << "dest: " << b6 << endl;
-        cout << "source: " << b5 << endl;
-    }
-    cout << endl;
-
-    {
-        cout << "Value semantics with unique_ptr[]...\n";
-        C c{10, 5};
-        cout << c << endl;
-        cout << "Copy construct...\n";
-        C c2{c};
-        cout << "dest:   " << c2 << endl;
-        cout << "source: " << c << endl;
-        cout << "Copy assign...\n";
-        C c3;
-        c3 = c;
-        cout << "dest:   " << c3 << endl;
-        cout << "source: " << c << endl;
-        cout << "Move construct...\n";
-        C c4(std::move(c));
-        cout << "dest:   " << c4 << endl;
-        cout << "source: " << c << endl;
-        cout << "Move assign...\n";
-        C c5{5, 123};
-        C c6;
-        c6 = std::move(c5);
-        cout << "dest:   " << c6 << endl;
-        cout << "source: " << c5 << endl;
-    }
-    cout << endl;
-
-    {
-        cout << "Value semantics with unique_ptr to class...\n";
-        E e{5};
-        cout << e << endl;
-        cout << "Copy construct...\n";
-        E e1{e};
-        cout << "dest:   " << e1 << endl;
-        cout << "source: " << e << endl;
-        cout << "Copy assign...\n";
-        E e2;
-        e2 = e;
-        cout << "dest:   " << e2 << endl;
-        cout << "source: " << e << endl;
-        cout << "Move construct...\n";
-        E e3(std::move(e));
-        cout << "dest:   " << e3 << endl;
-        cout << "source: " << e << endl;
-        cout << "Move assign...\n";
-        E e4{123};
-        E e5{456};
-        e5 = std::move(e4);
-        cout << "dest:   " << e5 << endl;
-        cout << "source: " << e4 << endl;
-
-    }
-    cout << endl;
-
-    {
-        cout << "Value semantics with vector of unique_ptr to class...\n";
-        F f{5, 5};
-        cout << f << endl;
-        cout << "Copy construct...\n";
-        F f1(f);
-        cout << "dest:   " << f1 << endl;
-        cout << "source: " << f << endl;
-        cout << "Copy assign...\n";
-        F f2{10, 10};
-        f2 = f;
-        cout << "dest:   " << f2 << endl;
-        cout << "source: " << f << endl;
-        cout << "Move construct...\n";
-        F f3{3, 3};
-        F f4(std::move(f3));
-        cout << "dest:   " << f4 << endl;
-        cout << "source: " << f3 << endl;
-        cout << "Move assign...\n";
-        F f5{4, 4};
-        F f6;
-        f6 = std::move(f5);
-        cout << "dest:   " << f6 << endl;
-        cout << "source: " << f5 << endl;
-    }
-    cout << endl;
-
-    return 0;
-}
-#endif
-
-// --------------------------------------------------------------------------------------------
-// 10 proven interview questions: #8
-//    Write a templated struct that determines, at compile time, whether its template argument
-//    T is a pointer
-// --------------------------------------------------------------------------------------------
-#if 0
-
-#include <iostream>
-using namespace std;
-
-template<typename T>
-struct Is_pointer
-{
-    static constexpr bool result_ = false;
-};
-
-template<typename T>
-struct Is_pointer<T*>
-{
-    static constexpr bool result_ = true;
-};
-
-class A {};
-
-int main(int argc, char *argv[])
-{
-    cout << "int:        " << (Is_pointer<int>::result_==true ? "pointer" : "not a pointer") << endl;
-    cout << "int*:       " << (Is_pointer<int*>::result_==true ? "pointer" : "not a pointer") << endl;
-    cout << "A:          " << (Is_pointer<A>::result_==true ? "pointer" : "not a pointer") << endl;
-    cout << "A*:         " << (Is_pointer<A*>::result_==true ? "pointer" : "not a pointer") << endl;
-    cout << "A&:         " << (Is_pointer<A&>::result_==true ? "pointer" : "not a pointer") << endl;
-    cout << "const A*:   " << (Is_pointer<const A*>::result_==true ? "pointer" : "not a pointer") << endl;
-    return 0;
-}
-#endif
-// --------------------------------------------------------------------------------------------
-// std::enable_if
-// --------------------------------------------------------------------------------------------
-#if 0
-#include <iostream>
-#include <array>
-#include <type_traits>
-using namespace std;
-
-struct A
-{
-    int i_ = 0;
-    A(int i = 0)
-        : i_{i}
-    {}
-};
-
-ostream& operator<<(ostream& os, const A &a)
-{
-    os << "A::i_: " <<  a.i_;
-    return os;
-}
-
-template <typename T,
-          typename enable_if<is_integral<T>::value, T>::type* = nullptr>
-void display(const T &t)
-{
-    cout << "integral: " << t << endl;
-}
-
-template <typename T,
-          typename enable_if<is_floating_point<T>::value, T>::type* = nullptr>
-void display(const T &t)
-{
-    cout << "floating point: " << t << endl;
-}
-
-template <typename T,
-          typename enable_if<is_class<T>::value, T>::type* = nullptr>
-void display(const T &t)
-{
-    cout << "struct or class: " << t << endl;
-}
-
-int main(int argc, char *argv[])
-{
-//    array<int, 10> arr_int_10;
-
-//    insertion_sort<int, 10>(arr_int_10);
-
-    A a(123);
-    display(5);
-    display(5.5);
-    display(a);
-
-    return 0;
-}
-#endif
-
-// --------------------------------------------------------------------------------------------
-// 10 proven interview questions: #9
-//    Define a function insertion_sort which accepts as first and only argument a reference to an
-//    std::array only if the element types are integral (the trait std::is_integral might be of help)
-//    and the size of the array is less than 128 elements, and sorts it using insertion sort
-// --------------------------------------------------------------------------------------------
-#if 0
-#include <iostream>
-#include <array>
-#include <type_traits>
-using namespace std;
-
-template<typename T, size_t size,
-         typename enable_if< is_integral<T>::value &&
-                             (size < 128),
-                             T >::type* = nullptr>
-void insertion_sort(array<T, size> &arr)
-{
-    cout << "insertion_sort: integral, array size: " << arr.size() << endl;
-
-    for (size_t i = 1; i < arr.size(); ++i) {
-        for (size_t j = (i); (j > 0) && (arr[j] < arr[j-1]); --j) {
-            swap(arr[j], arr[j-1]);
-        }
-    }
-}
-
-template<typename Array>
-void display_array(const Array &a)
-{
-  for (size_t i = 0; i < a.size(); ++i) {
-    cout << a[i] << " ";
-  }
-}
-
-int main(int argc, char *argv[])
-{
-    array<int, 10> arr_int_10 = {{10, 2, 5, 6, 8 ,9, 1, 3, 4, 7}};
-//    array<double, 10> arr_double_10;
-
-    display_array(arr_int_10); cout << endl;
-
-    insertion_sort(arr_int_10);
-
-    display_array(arr_int_10); cout << endl;
-//    insertion_sort(arr_double_10);
-
-    return 0;
-}
-#endif
-
-#include <iostream>
-#include <array>
-#include <type_traits>
-using namespace std;
-
-template<typename T, size_t size,
-      typename enable_if< is_integral<T>::value &&
-                          (size < 128),
-                          T >::type* = nullptr>
-void insertion_sort(array<T, size> &arr)
-{
-    cout << "insertion_sort: integral, array size: " << arr.size() << endl;
-
-    for (size_t i = 1; i < arr.size(); ++i) {
-     for (size_t j = (i); (j > 0) && (arr[j] < arr[j-1]); --j) {
-         swap(arr[j], arr[j-1]);
-     }
-    }
-}
-
-template<typename Array>
-void display_array(const Array &a)
-{
-    for (size_t i = 0; i < a.size(); ++i) {
-     cout << a[i] << " ";
-    }
-}
-
-int main(int argc, char *argv[])
-{
-    array<int, 10> arr_int_10 = {{10, 2, 5, 6, 8 ,9, 1, 3, 4, 7}};
-    //    array<double, 10> arr_double_10;
-
-    display_array(arr_int_10); cout << endl;
-
-    insertion_sort(arr_int_10);
-
-    display_array(arr_int_10); cout << endl;
-    //    insertion_sort(arr_double_10);
+    cout << x << y << z << zz << zzz << endl;
 
     return 0;
 }
