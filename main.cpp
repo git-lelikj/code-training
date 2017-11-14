@@ -414,6 +414,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 #endif
+
 #if 0
 // --------------------------------------------------------------------------------------------
 // special member functions generation
@@ -981,6 +982,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 #endif
+
 // --------------------------------------------------------------------------------------------
 // std::enable_if
 // --------------------------------------------------------------------------------------------
@@ -1046,90 +1048,95 @@ int main(int argc, char *argv[])
 //    std::array only if the element types are integral (the trait std::is_integral might be of help)
 //    and the size of the array is less than 128 elements, and sorts it using insertion sort
 // --------------------------------------------------------------------------------------------
+
 #if 0
 #include <iostream>
 #include <array>
 #include <type_traits>
 using namespace std;
 
-template<typename T, size_t size,
-         typename enable_if< is_integral<T>::value &&
-                             (size < 128),
-                             T >::type* = nullptr>
-void insertion_sort(array<T, size> &arr)
-{
-    cout << "insertion_sort: integral, array size: " << arr.size() << endl;
+//template<typename T, size_t size,
+//         typename enable_if< is_integral<T>::value &&
+//                             (size < 128),
+//                             T >::type* = nullptr>
+//void insertion_sort(array<T, size> &arr)
+//{
+//    cout << "insertion_sort: integral, array size: " << arr.size() << endl;
 
-    for (size_t i = 1; i < arr.size(); ++i) {
-        for (size_t j = (i); (j > 0) && (arr[j] < arr[j-1]); --j) {
-            swap(arr[j], arr[j-1]);
-        }
-    }
-}
+//    for (size_t i = 1; i < arr.size(); ++i) {
+//        for (size_t j = (i); (j > 0) && (arr[j] < arr[j-1]); --j) {
+//            swap(arr[j], arr[j-1]);
+//        }
+//    }
+//}
 
-template<typename Array>
-void display_array(const Array &a)
-{
-  for (size_t i = 0; i < a.size(); ++i) {
-    cout << a[i] << " ";
-  }
-}
+//template<typename Array>
+//void display_array(const Array &a)
+//{
+//  for (size_t i = 0; i < a.size(); ++i) {
+//    cout << a[i] << " ";
+//  }
+//}
 
-int main(int argc, char *argv[])
-{
-    array<int, 10> arr_int_10 = {{10, 2, 5, 6, 8 ,9, 1, 3, 4, 7}};
-//    array<double, 10> arr_double_10;
+//int main(int argc, char *argv[])
+//{
+//    array<int, 10> arr_int_10 = {{10, 2, 5, 6, 8 ,9, 1, 3, 4, 7}};
+////    array<double, 10> arr_double_10;
 
-    display_array(arr_int_10); cout << endl;
+//    display_array(arr_int_10); cout << endl;
 
-    insertion_sort(arr_int_10);
+//    insertion_sort(arr_int_10);
 
-    display_array(arr_int_10); cout << endl;
-//    insertion_sort(arr_double_10);
+//    display_array(arr_int_10); cout << endl;
+////    insertion_sort(arr_double_10);
 
-    return 0;
-}
+//    return 0;
+//}
 #endif
 
+// --------------------------------------------------------------------------------------------
+// std:: generate, transform and copy
+// --------------------------------------------------------------------------------------------
+
 #include <iostream>
-#include <array>
-#include <type_traits>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <iterator>
 using namespace std;
-
-template<typename T, size_t size,
-      typename enable_if< is_integral<T>::value &&
-                          (size < 128),
-                          T >::type* = nullptr>
-void insertion_sort(array<T, size> &arr)
-{
-    cout << "insertion_sort: integral, array size: " << arr.size() << endl;
-
-    for (size_t i = 1; i < arr.size(); ++i) {
-     for (size_t j = (i); (j > 0) && (arr[j] < arr[j-1]); --j) {
-         swap(arr[j], arr[j-1]);
-     }
-    }
-}
-
-template<typename Array>
-void display_array(const Array &a)
-{
-    for (size_t i = 0; i < a.size(); ++i) {
-     cout << a[i] << " ";
-    }
-}
 
 int main(int argc, char *argv[])
 {
-    array<int, 10> arr_int_10 = {{10, 2, 5, 6, 8 ,9, 1, 3, 4, 7}};
-    //    array<double, 10> arr_double_10;
+    vector<int> vi(10, 0);
+    srand(0);
+    generate(vi.begin(), vi.end(), [](){ return rand() % 20; } );
 
-    display_array(arr_int_10); cout << endl;
+    cout << "input:  ";
+    for (auto e: vi) {
+        cout << e << " ";
+    }
+    cout << endl;
 
-    insertion_sort(arr_int_10);
+    transform(vi.cbegin(), vi.cend(), vi.begin(),
+              [](vector<int>::value_type v) { return v*v; }
+    );
 
-    display_array(arr_int_10); cout << endl;
-    //    insertion_sort(arr_double_10);
+    cout << "output: ";
+//    for (auto e: vi) {
+//        cout << e << " ";
+//    }
+//    cout << endl;
+    copy(vi.begin(), vi.end(), ostream_iterator<int>(cout, " "));
+
+    string s = "we can be heroes just for one day";
+
+    cout << "\n\ninput:  " << s << endl;
+
+    transform(s.begin(), s.end(), s.begin(),
+              [](string::value_type c) { return toupper(c); }
+              );
+
+    cout << "output: " << s << endl << endl;
 
     return 0;
 }
