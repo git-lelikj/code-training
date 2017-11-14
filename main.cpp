@@ -384,7 +384,7 @@
 #endif
 //
 // -----------------------------------------------------------------------------------------------------------
-
+#if 0
 #include <iostream>
 using namespace std;
 
@@ -429,6 +429,426 @@ int main()
     const int zzz = (reinterpret_cast<char*>(pb) == reinterpret_cast<char*>(pc)) ? 1 : 0;
 
     cout << x << y << z << zz << zzz << endl;
+
+    return 0;
+}
+#endif
+
+// -----------------------------------------------------------------------------------------------------------
+//  virtual function table, empty class
+//
+//  disassembly command: g++ -std=c++11 -Wa,-adhln -g main.cpp > main.s
+//
+//  disassembly explained:
+//
+#if 0
+437:main.cpp      **** #include <iostream>
+438:main.cpp      **** using namespace std;
+439:main.cpp      ****
+440:main.cpp      **** class A
+441:main.cpp      **** {
+442:main.cpp      **** };
+443:main.cpp      ****
+444:main.cpp      **** class B
+445:main.cpp      **** {
+446:main.cpp      **** public:
+447:main.cpp      ****     int i_;
+448:main.cpp      ****     int ii_;
+449:main.cpp      ****     virtual void f() {}
+ 18              		.loc 1 449 0
+ 19              		.cfi_startproc
+ 20 0000 55       		pushq	%rbp
+ 21              		.cfi_def_cfa_offset 16
+ 22              		.cfi_offset 6, -16
+ 23 0001 4889E5   		movq	%rsp, %rbp
+ 24              		.cfi_def_cfa_register 6
+ 25 0004 48897DF8 		movq	%rdi, -8(%rbp)
+ 26              		.loc 1 449 0
+ 27 0008 5D       		popq	%rbp
+ 28              		.cfi_def_cfa 7, 8
+ 29 0009 C3       		ret
+ 30              		.cfi_endproc
+ 31              	.LFE1194:
+ 33              		.section	.text._ZN1B1gEv,"axG",@progbits,_ZN1B1gEv,comdat
+ 34              		.align 2
+ 35              		.weak	_ZN1B1gEv
+ 37              	_ZN1B1gEv:
+ 38              	.LFB1195:
+450:main.cpp      ****     virtual void g() {}
+ 39              		.loc 1 450 0
+ 40              		.cfi_startproc
+ 41 0000 55       		pushq	%rbp
+ 42              		.cfi_def_cfa_offset 16
+ 43              		.cfi_offset 6, -16
+ 44 0001 4889E5   		movq	%rsp, %rbp
+ 45              		.cfi_def_cfa_register 6
+ 46 0004 48897DF8 		movq	%rdi, -8(%rbp)
+ 47              		.loc 1 450 0
+ 48 0008 5D       		popq	%rbp
+ 49              		.cfi_def_cfa 7, 8
+ 50 0009 C3       		ret
+ 51              		.cfi_endproc
+ 52              	.LFE1195:
+ 54              		.section	.text._ZN1BD2Ev,"axG",@progbits,_ZN1BD5Ev,comdat
+ 55              		.align 2
+ 56              		.weak	_ZN1BD2Ev
+ 58              	_ZN1BD2Ev:
+ 59              	.LFB1197:
+451:main.cpp      ****     virtual ~B() {}
+ 60              		.loc 1 451 0
+ 61              		.cfi_startproc
+ 62 0000 55       		pushq	%rbp
+ 63              		.cfi_def_cfa_offset 16
+ 64              		.cfi_offset 6, -16
+ 65 0001 4889E5   		movq	%rsp, %rbp
+ 66              		.cfi_def_cfa_register 6
+ 67 0004 4883EC10 		subq	$16, %rsp
+ 68 0008 48897DF8 		movq	%rdi, -8(%rbp)
+ 69              	.LBB2:
+ 70              		.loc 1 451 0
+ 71 000c 488B45F8 		movq	-8(%rbp), %rax
+ 72 0010 48C70000 		movq	$_ZTV1B+16, (%rax)
+ 72      000000
+ 73              	.LBE2:
+ 74 0017 B8000000 		movl	$0, %eax
+ 74      00
+ 75 001c 85C0     		testl	%eax, %eax
+ 76 001e 740C     		je	.L3
+ 77              		.loc 1 451 0 is_stmt 0 discriminator 1
+ 78 0020 488B45F8 		movq	-8(%rbp), %rax
+ 79 0024 4889C7   		movq	%rax, %rdi
+ 80 0027 E8000000 		call	_ZdlPv
+ 80      00
+ 81              	.L3:
+ 82              		.loc 1 451 0
+ 83 002c C9       		leave
+ 84              		.cfi_def_cfa 7, 8
+ 85 002d C3       		ret
+ 86              		.cfi_endproc
+ 87              	.LFE1197:
+ 89              		.weak	_ZN1BD1Ev
+ 90              		.set	_ZN1BD1Ev,_ZN1BD2Ev
+ 91              		.section	.text._ZN1BD0Ev,"axG",@progbits,_ZN1BD0Ev,comdat
+ 92              		.align 2
+ 93              		.weak	_ZN1BD0Ev
+ 95              	_ZN1BD0Ev:
+ 96              	.LFB1199:
+ 97              		.loc 1 451 0 is_stmt 1
+ 98              		.cfi_startproc
+ 99 0000 55       		pushq	%rbp
+100              		.cfi_def_cfa_offset 16
+101              		.cfi_offset 6, -16
+102 0001 4889E5   		movq	%rsp, %rbp
+103              		.cfi_def_cfa_register 6
+104 0004 4883EC10 		subq	$16, %rsp
+105 0008 48897DF8 		movq	%rdi, -8(%rbp)
+106              		.loc 1 451 0
+107 000c 488B45F8 		movq	-8(%rbp), %rax
+108 0010 4889C7   		movq	%rax, %rdi
+109 0013 E8000000 		call	_ZN1BD1Ev
+109      00
+110 0018 488B45F8 		movq	-8(%rbp), %rax
+111 001c 4889C7   		movq	%rax, %rdi
+112 001f E8000000 		call	_ZdlPv
+112      00
+113 0024 C9       		leave
+114              		.cfi_def_cfa 7, 8
+115 0025 C3       		ret
+116              		.cfi_endproc
+117              	.LFE1199:
+119              		.section	.text._ZN1BC2Ev,"axG",@progbits,_ZN1BC5Ev,comdat
+120              		.align 2
+121              		.weak	_ZN1BC2Ev
+123              	_ZN1BC2Ev:
+124              	.LFB1202:
+444:main.cpp      **** class B
+125              		.loc 1 444 0
+126              		.cfi_startproc
+127 0000 55       		pushq	%rbp
+128              		.cfi_def_cfa_offset 16
+129              		.cfi_offset 6, -16
+130 0001 4889E5   		movq	%rsp, %rbp
+131              		.cfi_def_cfa_register 6
+132 0004 48897DF8 		movq	%rdi, -8(%rbp)
+133              	.LBB3:
+444:main.cpp      **** class B
+134              		.loc 1 444 0
+135 0008 488B45F8 		movq	-8(%rbp), %rax
+136 000c 48C70000 		movq	$_ZTV1B+16, (%rax)
+136      000000
+137              	.LBE3:
+138 0013 5D       		popq	%rbp
+139              		.cfi_def_cfa 7, 8
+140 0014 C3       		ret
+141              		.cfi_endproc
+142              	.LFE1202:
+144              		.weak	_ZN1BC1Ev
+145              		.set	_ZN1BC1Ev,_ZN1BC2Ev
+146              		.section	.rodata
+147              	.LC0:
+148 0001 73697A65 		.string	"sizeof A: "
+148      6F662041
+148      3A2000
+149              	.LC1:
+150 000c 2C207369 		.string	", sizeof B: "
+150      7A656F66
+150      20423A20
+150      00
+151              		.text
+152              		.globl	main
+154              	main:
+155              	.LFB1200:
+452:main.cpp      **** };
+453:main.cpp      ****
+454:main.cpp      **** int main()
+455:main.cpp      **** {
+156              		.loc 1 455 0
+157              		.cfi_startproc
+158              		.cfi_personality 0x3,__gxx_personality_v0
+159              		.cfi_lsda 0x3,.LLSDA1200
+160 0000 55       		pushq	%rbp
+161              		.cfi_def_cfa_offset 16
+162              		.cfi_offset 6, -16
+163 0001 4889E5   		movq	%rsp, %rbp
+164              		.cfi_def_cfa_register 6
+165 0004 53       		pushq	%rbx
+166 0005 4883EC38 		subq	$56, %rsp
+167              		.cfi_offset 3, -24
+168              	.LBB4:
+456:main.cpp      ****     A a;
+457:main.cpp      ****     size_t a_size = sizeof(a);
+169              		.loc 1 457 0
+170 0009 48C745E8 		movq	$1, -24(%rbp)                           // size of empty class set to 1
+170      01000000
+458:main.cpp      ****     B b;
+171              		.loc 1 458 0
+172 0011 488D45C0 		leaq	-64(%rbp), %rax
+173 0015 4889C7   		movq	%rax, %rdi
+174 0018 E8000000 		call	_ZN1BC1Ev
+174      00
+459:main.cpp      ****     size_t b_size = sizeof(b);
+175              		.loc 1 459 0
+176 001d 48C745E0 		movq	$16, -32(%rbp)                          // size of class B set to 16: 2*4 + 8 (vptr)
+176      10000000
+460:main.cpp      ****
+461:main.cpp      ****     cout << "sizeof A: " << a_size << ", sizeof B: " << b_size << endl;
+177              		.loc 1 461 0
+178 0025 BE000000 		movl	$.LC0, %esi
+178      00
+179 002a BF000000 		movl	$_ZSt4cout, %edi
+179      00
+180              	.LEHB0:
+181 002f E8000000 		call	_ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc
+181      00
+182 0034 488B55E8 		movq	-24(%rbp), %rdx
+183 0038 4889D6   		movq	%rdx, %rsi
+184 003b 4889C7   		movq	%rax, %rdi
+185 003e E8000000 		call	_ZNSolsEm
+185      00
+186              		.loc 1 461 0 is_stmt 0 discriminator 1
+187 0043 BE000000 		movl	$.LC1, %esi
+187      00
+188 0048 4889C7   		movq	%rax, %rdi
+189 004b E8000000 		call	_ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc
+189      00
+190 0050 488B55E0 		movq	-32(%rbp), %rdx
+191 0054 4889D6   		movq	%rdx, %rsi
+192 0057 4889C7   		movq	%rax, %rdi
+193 005a E8000000 		call	_ZNSolsEm
+193      00
+194 005f BE000000 		movl	$_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_, %esi
+194      00
+195 0064 4889C7   		movq	%rax, %rdi
+196 0067 E8000000 		call	_ZNSolsEPFRSoS_E
+196      00
+462:main.cpp      ****
+463:main.cpp      ****     B* pb = new B;
+197              		.loc 1 463 0 is_stmt 1
+198 006c BF100000 		movl	$16, %edi
+198      00
+199 0071 E8000000 		call	_Znwm
+199      00
+200 0076 4889C3   		movq	%rax, %rbx
+201 0079 4889DF   		movq	%rbx, %rdi
+202 007c E8000000 		call	_ZN1BC1Ev
+202      00
+203 0081 48895DD8 		movq	%rbx, -40(%rbp)                         // pointer pb stored in -40(%rbp) stack offset
+464:main.cpp      ****     pb->i_ = 5;
+204              		.loc 1 464 0
+205 0085 488B45D8 		movq	-40(%rbp), %rax                         // load pb pointer to %rax
+206 0089 C7400805 		movl	$5, 8(%rax)                             // set pb->i_ to 5 at offset 8
+206      000000
+465:main.cpp      ****     pb->ii_ = 55;
+207              		.loc 1 465 0
+208 0090 488B45D8 		movq	-40(%rbp), %rax                         // load pb pointer to %rax
+209 0094 C7400C37 		movl	$55, 12(%rax)                           // set pb->ii_ to 55 at offset 12
+209      000000
+466:main.cpp      ****     pb->f();
+210              		.loc 1 466 0
+211 009b 488B45D8 		movq	-40(%rbp), %rax                         // load pb pointer to %rax
+212 009f 488B00   		movq	(%rax), %rax
+213 00a2 488B00   		movq	(%rax), %rax                            // load to %rax pointer to function vtbl[0]: f()
+214 00a5 488B55D8 		movq	-40(%rbp), %rdx
+215 00a9 4889D7   		movq	%rdx, %rdi                              // store "this" pointer to %rdi (argument 1)
+216 00ac FFD0     		call	*%rax                                   // call function f() through the pointer at %rax
+467:main.cpp      ****     pb->g();
+217              		.loc 1 467 0
+218 00ae 488B45D8 		movq	-40(%rbp), %rax                         // load pb pointer to %rax
+219 00b2 488B00   		movq	(%rax), %rax
+220 00b5 4883C008 		addq	$8, %rax
+221 00b9 488B00   		movq	(%rax), %rax                            // load to %rax pointer to function vtbl[1]: vtbl + 8: g()
+222 00bc 488B55D8 		movq	-40(%rbp), %rdx
+223 00c0 4889D7   		movq	%rdx, %rdi                              // store "this" pointer to %rdi (argument 1)
+224 00c3 FFD0     		call	*%rax                                   // call function g() through the pointer at %rax
+225              	.LEHE0:
+468:main.cpp      ****     delete pb;
+226              		.loc 1 468 0
+227 00c5 48837DD8 		cmpq	$0, -40(%rbp)
+227      00
+228 00ca 7417     		je	.L10
+229              		.loc 1 468 0 is_stmt 0 discriminator 1
+230 00cc 488B45D8 		movq	-40(%rbp), %rax                         // load pb pointer to %rax
+231 00d0 488B00   		movq	(%rax), %rax
+232 00d3 4883C018 		addq	$24, %rax
+233 00d7 488B00   		movq	(%rax), %rax                            // load to %rax pointer to function vtbl[2]: vtbl + 24: B::~B()
+234 00da 488B55D8 		movq	-40(%rbp), %rdx
+235 00de 4889D7   		movq	%rdx, %rdi                              // store "this" pointer to %rdi (argument 1)
+236 00e1 FFD0     		call	*%rax                                   // call function B::~B() through the pointer at %rax
+237              	.L10:
+469:main.cpp      ****
+470:main.cpp      ****     return 0;
+238              		.loc 1 470 0 is_stmt 1
+239 00e3 BB000000 		movl	$0, %ebx
+239      00
+240 00e8 488D45C0 		leaq	-64(%rbp), %rax
+241 00ec 4889C7   		movq	%rax, %rdi
+242 00ef E8000000 		call	_ZN1BD1Ev
+242      00
+243 00f4 89D8     		movl	%ebx, %eax
+244 00f6 EB1A     		jmp	.L14
+245              	.L13:
+246 00f8 4889C3   		movq	%rax, %rbx
+247 00fb 488D45C0 		leaq	-64(%rbp), %rax
+248 00ff 4889C7   		movq	%rax, %rdi
+249 0102 E8000000 		call	_ZN1BD1Ev
+249      00
+250 0107 4889D8   		movq	%rbx, %rax
+251 010a 4889C7   		movq	%rax, %rdi
+252              	.LEHB1:
+253 010d E8000000 		call	_Unwind_Resume
+253      00
+254              	.LEHE1:
+255              	.L14:
+256              	.LBE4:
+471:main.cpp      **** }
+257              		.loc 1 471 0
+258 0112 4883C438 		addq	$56, %rsp
+259 0116 5B       		popq	%rbx
+260 0117 5D       		popq	%rbp
+261              		.cfi_def_cfa 7, 8
+262 0118 C3       		ret
+263              		.cfi_endproc
+264              	.LFE1200:
+265              		.globl	__gxx_personality_v0
+266              		.section	.gcc_except_table,"a",@progbits
+267              	.LLSDA1200:
+268 0000 FF       		.byte	0xff
+269 0001 FF       		.byte	0xff
+270 0002 01       		.byte	0x1
+271 0003 0B       		.uleb128 .LLSDACSE1200-.LLSDACSB1200
+272              	.LLSDACSB1200:
+273 0004 2F       		.uleb128 .LEHB0-.LFB1200
+274 0005 9601     		.uleb128 .LEHE0-.LEHB0
+275 0007 F801     		.uleb128 .L13-.LFB1200
+276 0009 00       		.uleb128 0
+277 000a 8D02     		.uleb128 .LEHB1-.LFB1200
+278 000c 05       		.uleb128 .LEHE1-.LEHB1
+279 000d 00       		.uleb128 0
+280 000e 00       		.uleb128 0
+281              	.LLSDACSE1200:
+282              		.text
+284              		.weak	_ZTV1B
+285              		.section	.rodata._ZTV1B,"aG",@progbits,_ZTV1B,comdat
+286              		.align 32
+289              	_ZTV1B:
+290 0000 00000000 		.quad	0
+290      00000000
+291 0008 00000000 		.quad	_ZTI1B
+291      00000000
+292 0010 00000000 		.quad	_ZN1B1fEv
+292      00000000
+293 0018 00000000 		.quad	_ZN1B1gEv
+293      00000000
+294 0020 00000000 		.quad	_ZN1BD1Ev
+294      00000000
+295 0028 00000000 		.quad	_ZN1BD0Ev
+295      00000000
+296              		.weak	_ZTS1B
+297              		.section	.rodata._ZTS1B,"aG",@progbits,_ZTS1B,comdat
+300              	_ZTS1B:
+301 0000 314200   		.string	"1B"
+302              		.weak	_ZTI1B
+303              		.section	.rodata._ZTI1B,"aG",@progbits,_ZTI1B,comdat
+304              		.align 16
+307              	_ZTI1B:
+308 0000 00000000 		.quad	_ZTVN10__cxxabiv117__class_type_infoE+16
+308      00000000
+309 0008 00000000 		.quad	_ZTS1B
+309      00000000
+310              		.text
+312              	_Z41__static_initialization_and_destruction_0ii:
+313              	.LFB1359:
+314              		.loc 1 471 0
+315              		.cfi_startproc
+316 0119 55       		pushq	%rbp
+317              		.cfi_def_cfa_offset 16
+318              		.cfi_offset 6, -16
+319 011a 4889E5   		movq	%rsp, %rbp
+320              		.cfi_def_cfa_register 6
+321 011d 4883EC10 		subq	$16, %rsp
+322 0121 897DFC   		movl	%edi, -4(%rbp)
+323 0124 8975F8   		movl	%esi, -8(%rbp)
+324              		.loc 1 471 0
+325 0127 837DFC01 		cmpl	$1, -4(%rbp)
+326 012b 7527     		jne	.L15
+327              		.loc 1 471 0 is_stmt 0 discriminator 1
+328 012d 817DF8FF 		cmpl	$65535, -8(%rbp)
+328      FF0000
+329 0134 751E     		jne	.L15
+#endif
+
+#include <iostream>
+using namespace std;
+
+class A
+{
+};
+
+class B
+{
+public:
+    int i_;
+    int ii_;
+    virtual void f() {}
+    virtual void g() {}
+    virtual ~B() {}
+};
+
+int main()
+{
+    A a;
+    size_t a_size = sizeof(a);
+    B b;
+    size_t b_size = sizeof(b);
+
+    cout << "sizeof A: " << a_size << ", sizeof B: " << b_size << endl;
+
+    B* pb = new B;
+    pb->i_ = 5;
+    pb->ii_ = 55;
+    pb->f();
+    pb->g();
+    delete pb;
 
     return 0;
 }
