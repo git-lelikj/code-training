@@ -1097,7 +1097,7 @@ using namespace std;
 // --------------------------------------------------------------------------------------------
 // std:: generate, transform and copy
 // --------------------------------------------------------------------------------------------
-
+#if 0
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -1140,3 +1140,82 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+#endif
+
+#if 0
+// --------------------------------------------------------------------------------------------
+// http://www.interqiew.com: #3.1
+//  From cppreference:
+
+//  Removing is done by shifting (by means of move assignment) the elements in the range in such a way that the elements that are not to be removed appear
+//  in the beginning of the range.
+//  !!!	Relative order of the elements that remain is preserved and the physical size of the container is unchanged.
+//  Iterators pointing to an element between the new logical end and the physical end of the range are still dereferenceable, but the elements themselves
+//  have unspecified values
+//  (as per MoveAssignable post-condition).
+//  !!!	A call to remove is typically followed by a call to a container's erase method, which erases the unspecified values and reduces the physical
+//  size of the container to match its new logical size.
+// --------------------------------------------------------------------------------------------
+
+#include <algorithm>
+#include <iostream>
+#include <list>
+
+struct P
+{
+    bool operator()(const int &n) const
+    {
+        return n % 3 == 0;
+    }
+};
+
+int main()
+{
+    std::list<int> l({ 5, 2, 6, 1, 13, 9, 19 });
+    std::cout << l.size();
+    std::remove_if(l.begin(), l.end(), P());        // remove/remove_if will not change size of container!!!
+    std::cout << l.size() << std::endl;             // output: 77
+
+    return 0;
+}
+#endif
+#if 0
+#include <iostream>
+using namespace std;
+
+class A
+{
+public:
+    A()
+    { cout << "A::A()\n"; }
+
+    A(int i):
+        i_(i)
+    { cout << "A::A(int)\n"; }
+
+    A(const A& a):
+        i_(a.i_)
+    { cout << "A::A(const& A)\n"; }
+
+    A& operator=(const A& a)
+    { this->i_ = a.i_; cout << "A::operator=(const& A)\n"; }
+
+    ~A()
+    { cout << "A::~A()\n"; }
+
+public:
+    int i_ = 0;
+};
+
+int main()
+{
+    A a(5);
+    A b = a;
+    b = a;
+    A x = 5;
+    A y;
+    y = 5;
+
+    return 0;
+}
+#endif
