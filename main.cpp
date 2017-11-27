@@ -1566,18 +1566,145 @@ int main(int argc, char** argv)
 
 // -------------------------------------------------------------------------------------------------------
 
-class Solution {
-public:
-    int minDistance(string word1, string word2) {
+// -------------------------------------------------------------------------------------------------------
+//  Brute force solution: start from beginning of the string
+// -------------------------------------------------------------------------------------------------------
 
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class Solution_brute_beginning {
+public:
+    static size_t n_calls;
+    int minDistance(string word1, string word2) {
+        ++n_calls;
+        size_t s1 = word1.size(), s2 = word2.size();
+//        cout << "w1: " << word1 << ", w2: " << word2 << ", s1: " << s1 << ", s2: " << s2 << endl;
+        if (!s1 && !s2)
+            return 0;
+        if (!s1)
+            return s2;
+        if (!s2)
+            return s1;
+        int n_replace   = minDistance(word1.substr(1), word2.substr(1)) + (word1[0] == word2[0] ? 0 : 1);
+//        cout << "rep: " << n_replace << ", w1: " << word1 << ", w2: " << word2 << endl;
+        int n_del       = minDistance(word1.substr(1), word2) + 1;
+//        cout << "del: " << n_del << ", w1: " << word1 << ", w2: " << word2 << endl;
+        int n_ins       = minDistance(word1, word2.substr(1)) + 1;
+//        cout << "ins: " << n_ins << ", w1: " << word1 << ", w2: " << word2 << endl;
+        return (min(min(n_replace, n_ins), n_del));
     }
 };
 
+size_t Solution_brute_beginning::n_calls = 0;
+
+// -------------------------------------------------------------------------------------------------------
+//  Brute force solution: start from end of the string
+// -------------------------------------------------------------------------------------------------------
+class Solution_brute_end {
+public:
+    static size_t n_calls;
+    int minDistance(string word1, string word2) {
+        ++n_calls;
+        size_t s1 = word1.size(), s2 = word2.size();
+//        cout << "w1: " << word1 << ", w2: " << word2 << ", s1: " << s1 << ", s2: " << s2 << endl;
+        if (!s1 && !s2)
+            return 0;
+        if (!s1)
+            return s2;
+        if (!s2)
+            return s1;
+        int n_replace   = minDistance(word1.substr(0, s1-1), word2.substr(0, s2-1)) + (word1[s1-1] == word2[s2-1] ? 0 : 1);
+//        cout << "rep: " << n_replace << ", w1: " << word1 << ", w2: " << word2 << endl;
+        int n_del       = minDistance(word1.substr(0, s1-1), word2) + 1;
+//        cout << "del: " << n_del << ", w1: " << word1 << ", w2: " << word2 << endl;
+        int n_ins       = minDistance(word1, word2.substr(0, s2-1)) + 1;
+//        cout << "ins: " << n_ins << ", w1: " << word1 << ", w2: " << word2 << endl;
+        return (min(min(n_replace, n_ins), n_del));
+    }
+};
+
+size_t Solution_brute_end::n_calls = 0;
+
+// -------------------------------------------------------------------------------------------------------
+//  Dynamic programming solution
+// -------------------------------------------------------------------------------------------------------
+class Solution_dynamic_programming {
+public:
+    static size_t n_calls;
+    int minDistance(string word1, string word2) {
+        size_t s1 = word1.size(), s2 = word2.size();
+        if (!s1 && !s2)
+            return 0;
+        if (!s1)
+            return s2;
+        if (!s2)
+            return s1;
+        // preallocate matrix of min distance solutions
+        vector<vector<int>> min_dist;
+        min_dist.resize(s1 + 1);
+        // initialize min distance solutions
+        for (int i = 0; i <= s1; ++i) {
+            min_dist[i].resize(s2 + 1);
+            min_dist[i][0] = i;
+        }
+        for (int j = 0; j <= s2; ++j) {
+            min_dist[0][j] = j;
+        }
+        // main loop: dynamic programming
+        int n_replace = 0, n_ins = 0, n_del = 0;
+        for (int i = 1; i <= s1; ++i) {
+            for (int j = 1; j <= s2; ++j) {
+                ++n_calls;
+                n_replace   = min_dist[i-1][j-1] + (word1[i-1] == word2[j-1] ? 0 : 1);
+                n_del       = min_dist[i-1][j] + 1;
+                n_ins       = min_dist[i][j-1] + 1;
+                min_dist[i][j] = min(n_replace, min(n_del, n_ins));
+            }
+        }
+        return min_dist[s1][s2];
+    }
+};
+
+size_t Solution_dynamic_programming::n_calls = 0;
+
 int main(int argc, char** argv)
 {
-    int in = (argc > 1 ? atoi(argv[1]) : 0);
+    string input1 = (argc > 1 ? string(argv[1]) : "");
+    string input2 = (argc > 2 ? string(argv[2]) : "");
 
-    Solution s;
+    {
+        Solution_brute_beginning s;
+        auto f = mem_fn(&Solution_brute_beginning::minDistance);
+        auto res = benchmark<int>(f, 1, s, input1, input2);
+        cout << "[brute begin] min distance of " << input1 << " and " << input2 << " is: " << res.first << endl;
+        cout << "complexity: " << Solution_brute_beginning::n_calls << ", avg duration: " << res.second << " ns" << endl;
+    }
+
+    cout << endl;
+
+    {
+        Solution_brute_end s;
+        auto f = mem_fn(&Solution_brute_end::minDistance);
+        auto res = benchmark<int>(f, 1, s, input1, input2);
+        cout << "[brute end] min distance of " << input1 << " and " << input2 << " is: " << res.first << endl;
+        cout << "complexity: " << Solution_brute_end::n_calls << ", avg duration: " << res.second << " ns" << endl;
+    }
+
+    cout << endl;
+
+    {
+        Solution_dynamic_programming s;
+        auto f = mem_fn(&Solution_dynamic_programming::minDistance);
+        auto res = benchmark<int>(f, 1, s, input1, input2);
+        cout << "[dynamic] min distance of " << input1 << " and " << input2 << " is: " << res.first << endl;
+        cout << "number of recursions: " << Solution_dynamic_programming::n_calls << ", avg duration: " << res.second << " ns" << endl;
+    }
+
+    cout << endl;
 
     return 0;
 }
