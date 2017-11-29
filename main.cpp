@@ -1219,3 +1219,89 @@ int main()
     return 0;
 }
 #endif
+// --------------------------------------------------------------------------------------------
+//  From cppreference: storage and linkage
+// --------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+using namespace std;
+
+void aux_foo();
+
+int global_extern_static;
+static int global_internal_static;
+enum global_extern_enum
+{
+    EXTERN_ENUM_CASE1 = 99
+};
+
+namespace
+{
+    int unnamed_namespace_internal;
+}
+
+namespace lelik
+{
+    int namespace_internal;
+}
+
+void foo()
+{
+    int local_auto;
+    static int local_static;
+    extern const int global_extern_const;
+
+    cout << "[foo]: local auto: " << local_auto << ", local static: " << local_static << endl;
+}
+
+const int global_internal_const = 55;
+extern const int global_extern_const = 66;
+
+extern int aux_global_static;
+
+int main()
+{
+
+    cout << "[main]: global extern static: " << global_extern_static << endl;
+    cout << "[main]: global internal static: " << global_internal_static << endl;
+    cout << "[main]: global internal const: " << global_internal_const << endl;
+    cout << "[main]: aux global extern static: " << aux_global_static << endl;
+    cout << "[main]: unnamed namespace internal: " << unnamed_namespace_internal << endl;
+    cout << "[main]: lelik namespace external: " << lelik::namespace_internal << endl;
+
+    foo();
+
+    aux_foo();
+
+    return 0;
+}
+#endif
+
+// --------------------------------------------------------------------------------------------
+//  Template compile-time factorial
+// --------------------------------------------------------------------------------------------
+
+#include <iostream>
+using namespace std;
+
+template<typename T>
+class Type_display;
+
+template <int N>
+struct Factorial
+{
+    static const int result = N * Factorial<N-1>::result;
+};
+
+template <>
+struct Factorial<0>
+{
+    static const int result = 1;
+};
+
+int main()
+{
+    cout << Factorial<5>::result << endl;
+
+    return 0;
+}
