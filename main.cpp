@@ -30,7 +30,7 @@
 //    6
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------
-
+#if 0
 #include <iostream>
 #include <vector>
 using namespace std;
@@ -87,3 +87,98 @@ int main() {
 
     return 0;
 }
+#endif
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+// Binomial Coefficient
+
+//    Find nCr for given n and r.
+//    Input:
+//    First line contains no of test cases T, for every test case 2 integers as inputs (n,r).
+//    Output:
+//    Compute and print the value in seperate line. Modulus your output to 10^9+7. If n
+//    Constraints:
+//    1<=T<=50
+//    1<=n<=1000
+//    1<=r<=800
+//    Example:
+//    Input:
+//    1
+//    3 2
+//    Output:
+//    3
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+// Brute force solution
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+using namespace std;
+
+int bin_coeff(int n, int r)
+{
+    if (r > n) return 0;
+    if ((r == 0) || (n == r)) return 1;
+    return bin_coeff(n - 1, r - 1) + bin_coeff(n - 1, r);
+}
+
+int main() {
+    int num_tests = 0;
+    cin >> num_tests;
+    for (int test = 0; test < num_tests; ++test) {
+        int n = 0, r = 0;
+        cin >> n >> r;
+//        cout << "test " << test << ": n: " << n << ", r: " << r << endl;
+//        cout << "binomial coeff: " << bin_coeff(n, r) << endl;
+        cout << bin_coeff(n, r) << endl;
+    }
+    return 0;
+}
+#endif
+#if 0
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+// Dynamic programming solution
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+#include <iostream>
+#include <vector>
+using namespace std;
+
+namespace
+{
+    constexpr uint64_t Modulo = 1000000007;
+}
+
+uint64_t bin_coeff(int n, int r)
+{
+    if (r > n) return 0;
+    if ((r == 0) || (n == r)) return 1;
+    // create matrix of solutions
+    vector<vector<uint64_t>> solutions(n + 1, vector<uint64_t>(n + 1, 0));
+    // initialize matrix of solutions
+    for (size_t i = 1; i <= n; ++i) {
+        solutions[i][0] = 1;
+        solutions[i][i] = 1;
+    }
+    // main loop
+    for (size_t i = 2; i <= n; ++i) {
+        for (size_t j = 1; j <= (min((size_t)r, i-1)); ++j) {
+            solutions[i][j] = (solutions[i-1][j-1] + solutions[i-1][j]) % Modulo;
+        }
+    }
+    return solutions[n][r];
+}
+
+int main() {
+    int num_tests = 0;
+    cin >> num_tests;
+    for (int test = 0; test < num_tests; ++test) {
+        int n = 0, r = 0;
+        cin >> n >> r;
+//        cout << "test " << test << ": n: " << n << ", r: " << r << endl;
+//        cout << "binomial coeff: " << bin_coeff(n, r) << endl;
+        cout << bin_coeff(n, r) << endl;
+    }
+    return 0;
+}
+#endif
