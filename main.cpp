@@ -182,3 +182,237 @@ int main() {
     return 0;
 }
 #endif
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+// Longest Common Subsequence
+//    Given two sequences, find the length of longest subsequence present in both of them. Both the strings are of uppercase.
+//    Input:
+//    First line of the input contains no of test cases  T,the T test cases follow.
+//    Each test case consist of 2 space separated integers A and B denoting the size of string str1 and str2 respectively
+//    The next two lines contains the 2 string str1 and str2 .
+//    Output:
+//    For each test case print the length of longest  common subsequence of the two strings .
+//    Constraints:
+//    1<=T<=200
+//    1<=size(str1),size(str2)<=100
+//    Example:
+//    Input:
+//    2
+//    6 6
+//    ABCDGH
+//    AEDFHR
+//    3 2
+//    ABC
+//    AC
+//    Output:
+//    3
+//    2
+//    Explanation
+//    LCS for input Sequences “ABCDGH” and “AEDFHR” is “ADH” of length 3.
+//    LCS of "ABC" and "AC" is "AC" of length 2
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+// Dynamic programming solution: GeeksforGeeks submission
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+size_t LCS(const string& x, const string& y)
+{
+    size_t size_x = x.size(), size_y = y.size();
+    if (!size_x || !size_y)
+        return 0;
+    vector<vector<size_t>> dp_solutions(size_x+1, vector<size_t>(size_y+1, 0));
+    for (size_t i=1; i <= size_x; ++i) {
+        for (size_t j=1; j <= size_y; ++j) {
+            if (x[i-1] == y[j-1])
+                dp_solutions[i][j] = dp_solutions[i-1][j-1] + 1;
+            else
+                dp_solutions[i][j] = max(dp_solutions[i][j-1],dp_solutions[i-1][j]);
+        }
+    }
+    return dp_solutions[size_x][size_y];
+}
+
+int main() {
+    int num_tests = 0;
+    cin >> num_tests;
+    for (int test = 0; test < num_tests; ++test) {
+        int size1 = 0, size2 = 0;
+        string s1, s2;
+        cin >> size1 >> size2;
+        if (size1)
+            cin >> s1;
+        if (size2)
+            cin >> s2;
+        cout << LCS(s1, s2) << endl;
+    }
+    return 0;
+}
+#endif
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+// Dynamic programming solution: + result reconstruction
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+using Lcs_return_type = pair<size_t, string>;
+using Lcs_cell_type = pair<size_t, size_t>;
+
+struct Lcs_solution_rec
+{
+    size_t length_ = 0;
+    Lcs_cell_type route_;
+};
+
+Lcs_return_type LCS(const string& x, const string& y)
+{
+    size_t size_x = x.size(), size_y = y.size();
+    if (!size_x || !size_y)
+        return {0, ""};
+    vector<vector<Lcs_solution_rec>> dp_solutions(size_x+1, vector<Lcs_solution_rec>(size_y+1, Lcs_solution_rec()));
+    for (size_t i = 1; i <= size_x; ++i) {
+        for (size_t j = 1; j <= size_y; ++j) {
+            if (x[i-1] == y[j-1]) {
+                dp_solutions[i][j].length_ = dp_solutions[i-1][j-1].length_ + 1;
+                dp_solutions[i][j].route_ = {i-1, j-1};
+            }
+            else {
+                if (dp_solutions[i][j-1].length_ > dp_solutions[i-1][j].length_) {
+                    dp_solutions[i][j].length_ = dp_solutions[i][j-1].length_;
+                    dp_solutions[i][j].route_ = {i, j-1};
+                }
+                else {
+                    dp_solutions[i][j].length_ = dp_solutions[i-1][j].length_;
+                    dp_solutions[i][j].route_ = {i-1, j};
+                }
+            }
+
+        }
+    }
+    string lcs_result;
+    for (size_t i = size_x, j = size_y; i > 0 && j > 0; ) {
+        if (x[i-1] == y[j-1])
+            lcs_result.insert(0, 1, x[i-1]);
+        Lcs_solution_rec solution = dp_solutions[i][j];
+        i = solution.route_.first;
+        j = solution.route_.second;
+    }
+    return {dp_solutions[size_x][size_y].length_, lcs_result};
+}
+
+int main() {
+    int num_tests = 0;
+    cin >> num_tests;
+    for (int test = 0; test < num_tests; ++test) {
+        int size1 = 0, size2 = 0;
+        string s1, s2;
+        cin >> size1 >> size2;
+        if (size1)
+            cin >> s1;
+        if (size2)
+            cin >> s2;
+        cout << "test " << test << ": s1: " << s1 << ", s2: " << s2 << endl;
+        Lcs_return_type result = LCS(s1, s2);
+        cout << "LCS length: " << result.first << ", result: " << result.second << endl;
+    }
+    return 0;
+}
+#endif
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+// Longest Repeating Subsequence
+//    Given a string str, find length of the longest repeating subseequence such that the two subsequence don’t have same string character at same position, i.e., any i’th character in the two subsequences shouldn’t have the same index in the original string.
+//    Input:
+//    The first line of input contains an integer T denoting the number of test cases. Then T test cases follow. The first line of each test case contains an integer N denoting the length of string str.
+//    The second line of each test case contains the string str consisting only of lower case english alphabets.
+//    Output:
+//    Print the length of the longest repeating subsequence for each test case in a new line.
+//    Constraints:
+//    1<= T <=100
+//    1<= N <=1000
+//    Example:
+//    Input:
+//    2
+//    3
+//    abc
+//    5
+//    axxxy
+//    Output:
+//    0
+//    2
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+size_t LRS(const string& x)
+{
+    size_t size_x = x.size();
+    if (!size_x)
+        return 0;
+    vector<vector<size_t>> dp_solutions(size_x+1, vector<size_t>(size_x+1, 0));
+    for (size_t i=1; i <= size_x; ++i) {
+        for (size_t j=1; j <= size_x; ++j) {
+            if ((x[i-1] == x[j-1]) && (i != j))
+                dp_solutions[i][j] = dp_solutions[i-1][j-1] + 1;
+            else
+                dp_solutions[i][j] = max(dp_solutions[i][j-1],dp_solutions[i-1][j]);
+        }
+    }
+    return dp_solutions[size_x][size_x];
+}
+
+int main() {
+    int num_tests = 0;
+    cin >> num_tests;
+    for (int test = 0; test < num_tests; ++test) {
+        int size1 = 0;
+        string s1;
+        cin >> size1;
+        if (size1)
+            cin >> s1;
+        cout << LRS(s1) << endl;
+    }
+    return 0;
+}
+#endif
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+// Largest Sum Contiguous Subarray
+//    Given an array containing both negative and positive integers. Find the contiguous sub-array with maximum sum.
+//    Input:
+//    The first line of input contains an integer T denoting the number of test cases. The description of T test cases follows. The first line of each test case contains a single integer N denoting the size of array. The second line contains N space-separated integers A1, A2, ..., AN denoting the elements of the array.
+//    Output:
+//    Print the maximum sum of the contiguous sub-array in a separate line for each test case.
+//    Constraints:
+//    1 ≤ T ≤ 200
+//    1 ≤ N ≤ 1000
+//    -100 ≤ A[i] <= 100
+//    Example:
+//    Input
+//    2
+//    3
+//    1 2 3
+//    4
+//    -1 -2 -3 -4
+//    Output
+//    6
+//    -1
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+#include <iostream>
+using namespace std;
+
+int main() {
+    //code
+    return 0;
+}
