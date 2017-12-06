@@ -1280,7 +1280,7 @@ int main()
 // --------------------------------------------------------------------------------------------
 //  Template compile-time factorial
 // --------------------------------------------------------------------------------------------
-
+#if 0
 #include <iostream>
 using namespace std;
 
@@ -1304,4 +1304,22 @@ int main()
     cout << Factorial<5>::result << endl;
 
     return 0;
+}
+#endif
+
+#include <iostream>
+using namespace std;
+
+int main(int argc, char** argv)
+{
+  // assume result printed is 4
+  std::cout << sizeof(int) << std::endl;
+
+  int x = 0x1000;
+
+  x = x << 32;
+
+  std::cout << std::hex << x << std::endl;
+
+  return 0;
 }
