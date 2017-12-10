@@ -1284,9 +1284,6 @@ int main()
 #include <iostream>
 using namespace std;
 
-template<typename T>
-class Type_display;
-
 template <int N>
 struct Factorial
 {
