@@ -71,16 +71,22 @@ int main()
 
 // ---------------------------------------------------------------------------------------------------------------------------------------
 //    Competitions::Code.cpp 4::C++ Variadics
-//    A template parameter pack is a template parameter that accepts zero or more template arguments (non-types, types, or templates). To read more about parameter pack, click here.
-//    Create a template function named reversed_binary_value. It must take an arbitrary number of bool values as template parameters. These booleans represent binary digits in reverse order. Your function must return an integer corresponding to the binary value of the digits represented by the booleans. For example: reversed_binary_value<0,0,1>() should return .
+//    A template parameter pack is a template parameter that accepts zero or more template arguments (non-types, types, or templates).
+//    To read more about parameter pack, click here.
+//    Create a template function named reversed_binary_value. It must take an arbitrary number of bool values as template parameters.
+//    These booleans represent binary digits in reverse order. Your function must return an integer corresponding to the binary value of the digits
+//    represented by the booleans. For example: reversed_binary_value<0,0,1>() should return 4.
 //    Input Format
-//    The first line contains an integer, , the number of test cases. Each of the  subsequent lines contains a test case. A test case is described as  space-separated integers,  and , respectively.
-//     is the value to compare against.
-//     represents the range to compare:  to .
+//    The first line contains an integer t, , the number of test cases. Each of the  subsequent t lines contains a test case. A test case is described as
+//    2 space-separated integers, x and y, respectively.
+//    x is the value to compare against.
+//    y represents the range to compare: 64 x y  to 64 x y + 63.
 //    Constraints
 //    The number of template parameters passed to reversed_binary_value will be .
 //    Output Format
-//    Each line of output contains  binary characters (i.e., 's and 's). Each character represents one value in the range. The first character corresponds to the first value in the range. The last character corresponds to the last value in the range. The character is  if the value in the range matches ; otherwise, the character is .
+//    Each line of output contains  binary characters (i.e., 's and 's). Each character represents one value in the range. The first character corresponds
+//    to the first value in the range. The last character corresponds to the last value in the range. The character is  if the value in the range matches ;
+//    otherwise, the character is .
 //    Sample Input
 //    2
 //    65 1
@@ -93,10 +99,165 @@ int main()
 //    The eleventh character on the second line is a , because the eleventh value in the range  is  and  is .
 //    All other characters are zero, because the corresponding values in the range do not match .
 // ---------------------------------------------------------------------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+// Debug common solution
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+using namespace std;
+
+template<int N, bool... digits>
+struct Dbg
+{
+    static void test(int x, int y)
+    {
+//        cout << "[" << __PRETTY_FUNCTION__ << "]: sizeof digits: " << sizeof...(digits) << endl;
+        Dbg<N-1, 0, digits...>::test(x, y);
+        Dbg<N-1, 1, digits...>::test(x, y);
+    }
+};
+
+template<bool... digits>
+struct Dbg<0, digits...>
+{
+    static void test(int x, int y)
+    {
+        //TBD
+        cout << "[" << __PRETTY_FUNCTION__ << "]: sizeof digits: " << sizeof...(digits) << endl;
+    }
+};
+
+int main()
+{
+    Dbg<6>::test(0,0);
+
+    return 0;
+}
+#endif
+
 #include <iostream>
 using namespace std;
 
 // Enter your code for reversed_binary_value<bool...>()
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+// Misc Tries
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
+//template<bool digit>
+//struct Impl
+//{
+//    static int reverse_binary_value_impl(size_t total_digits)
+//    {
+//        return (digit==true ? 1 << (total_digits - 1) : 0 );
+//    }
+//};
+//template<bool digit, bool... digits>
+//struct Impl
+//{
+//    static int reverse_binary_value_impl(size_t total_digits)
+//    {
+//        return Impl<digits...>::reverse_binary_value_impl(total_digits) | (digit==true ? 1 << (total_digits - (sizeof...(digits)+1)) : 0 );
+//        return 0;
+//    }
+//};
+//template<bool... digits>
+//int reverse_binary_value()
+//{
+//    return reverse_binary_value_impl<digits...>(sizeof...(digits));
+//}
+
+//template<bool digit, bool... digits>
+//struct Impl
+//{
+//    static int reverse_binary_value(size_t total_digits)
+//    {
+//        if (sizeof...(digits))
+//            return Impl<digits...>::reverse_binary_value(total_digits) | (digit==true ? 1 << (total_digits - (sizeof...(digits)+1)) : 0 );
+//        else
+//            return (digit==true ? 1 << (total_digits - 1) : 0 );
+//    }
+//};
+//template<bool... digits>
+//int reverse_binary_value()
+//{
+//    return Impl<digits...>::reverse_binary_value(sizeof...(digits));
+//}
+
+//template<bool... digits>
+//struct Impl<0, digits...>
+//{
+//    static int reverse_binary_value(size_t total_digits)
+//    {
+//        return (digit==true ? 1 << (total_digits - 1) : 0 );
+//    }
+//};
+//template<int N, bool digit, bool... digits>
+//struct Impl
+//{
+//    static int reverse_binary_value(size_t total_digits)
+//    {
+//        return Impl<N-1, digits...>::reverse_binary_value(total_digits) | (digit==true ? 1 << (total_digits - (sizeof...(digits)+1)) : 0 );
+//    }
+//};
+//template<bool... digits>
+//int reverse_binary_value()
+//{
+//    return Impl<sizeof...(digits), digits...>::reverse_binary_value(sizeof...(digits));
+//}
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+// Hackerrank submission
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
+//template<typename T>
+//int reversed_binary_value_impl(size_t total_digits, const T& head)
+//{
+//    return (head==true ? 1 << (total_digits - 1) : 0 );
+//}
+
+//template<typename T, typename... Args>
+//int reversed_binary_value_impl(size_t total_digits, const T& head, const Args&... tail)
+//{
+//    return reversed_binary_value_impl(total_digits, tail...) | (head==true ? 1 << (total_digits - (sizeof...(tail)+1)) : 0 );
+//}
+
+//template<bool... digits>
+//int reversed_binary_value()
+//{
+//    return reversed_binary_value_impl(sizeof...(digits), digits...);
+//}
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+// Niciest solution
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
+template<bool last>
+int reversed_binary_value_impl(size_t total_digits)
+{
+    return (last==true ? 1 << (total_digits - 1) : 0 );
+}
+
+template<bool first, bool second, bool... rest>
+int reversed_binary_value_impl(size_t total_digits)
+{
+    return reversed_binary_value_impl<second, rest...>(total_digits) | (first==true ? 1 << (total_digits - (sizeof...(rest)+2)) : 0 );
+}
+
+template<bool... digits>
+int reversed_binary_value()
+{
+    return reversed_binary_value_impl<digits...>(sizeof...(digits));
+}
+
+#if 0
+int main()
+{
+    cout << "[reverse_binary_value]: result: " << reversed_binary_value<false, true, false, true, false, false>() << endl;
+    return 0;
+}
+#endif
 
 template <int n, bool...digits>
 struct CheckValues {
