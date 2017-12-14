@@ -135,7 +135,7 @@ int main()
     return 0;
 }
 #endif
-
+#if 0
 #include <iostream>
 using namespace std;
 
@@ -288,3 +288,155 @@ int main()
         cout << "\n";
     }
 }
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Competitions::Code.cpp 4::Print Pretty
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <iomanip>
+#include <cmath>
+using namespace std;
+
+int main() {
+    int T; cin >> T;
+    cout << setiosflags(ios::uppercase);
+    cout << setw(0xf) << internal;
+    while(T--) {
+        double A; cin >> A;
+        double B; cin >> B;
+        double C; cin >> C;
+        /* Enter your code here */
+        cout << left << hex << showbase << nouppercase << static_cast<int64_t>(A) << endl;
+        cout << setw(15) << right << dec << setfill('_') << setprecision(2) << fixed << showpos << B << endl;
+        cout << setw(0) << left << setprecision(9) << scientific << uppercase << noshowpos << C << endl;
+    }
+    return 0;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Competitions::Code.cpp 4::Preprocessor Solution
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <vector>
+using namespace std;
+
+#define toStr(arg) #arg
+#define io(container) cin >> v
+#define FUNCTION(name, compare_op) void name(int& res, int arg) { res = ( res compare_op arg ? res : arg ); }
+#define INF (0x7fffffff)
+#define foreach(container, index) for(size_t i=0; i<container.size(); ++i)
+
+#if !defined toStr || !defined io || !defined FUNCTION || !defined INF
+#error Missing preprocessor definitions
+#endif
+
+FUNCTION(minimum, <)
+/*
+void minimum(int& res, int arg) { res = (res < arg ? res : arg); }
+ */
+FUNCTION(maximum, >)
+
+int main(){
+    int n; cin >> n;
+    vector<int> v(n);
+    foreach(v, i) {
+        io(v)[i];
+    }
+    int mn = INF;
+    int mx = -INF;
+//    cout << "mn: " << mn << " mx: " << mx << endl;
+    foreach(v, i) {
+        minimum(mn, v[i]);
+        maximum(mx, v[i]);
+    }
+    int ans = mx - mn;
+    cout << toStr(Result =) <<' '<< ans;
+    return 0;
+
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Competitions::Code.cpp 4::Inherited Code
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <exception>
+using namespace std;
+
+#if 0
+class BadLengthException: public exception
+{
+public:
+    const static size_t MAX_LEN = 255;
+
+    BadLengthException(int bad_length)
+    {
+        snprintf(what_, MAX_LEN, "%d", bad_length);
+    }
+
+    const char* what() const noexcept
+    {
+        return what_;
+    }
+
+private:
+    char what_[MAX_LEN];
+};
+#endif
+
+class BadLengthException
+{
+public:
+    BadLengthException(int bad_length):
+        bad_length_(bad_length)
+    {}
+
+    int what() const noexcept
+    {
+        return bad_length_;
+    }
+
+private:
+    int bad_length_ = 0;
+};
+
+bool checkUsername(string username) {
+    bool isValid = true;
+    int n = username.length();
+    if(n < 5) {
+        throw BadLengthException(n);
+    }
+    for(int i = 0; i < n-1; i++) {
+        if(username[i] == 'w' && username[i+1] == 'w') {
+            isValid = false;
+        }
+    }
+    return isValid;
+}
+
+int main() {
+    int T; cin >> T;
+    while(T--) {
+        string username;
+        cin >> username;
+        try {
+            bool isValid = checkUsername(username);
+            if(isValid) {
+                cout << "Valid" << '\n';
+            } else {
+                cout << "Invalid" << '\n';
+            }
+        } catch (BadLengthException e) {
+            cout << "Too short: " << e.what() << '\n';
+        }
+    }
+    return 0;
+}
+#endif
