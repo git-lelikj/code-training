@@ -440,3 +440,211 @@ int main() {
     return 0;
 }
 #endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Competitions::Code.cpp 4::Exceptional Server
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <exception>
+#include <string>
+#include <stdexcept>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+class Server {
+private:
+    static int load;
+public:
+    static int compute(long long A, long long B) {
+        load += 1;
+        if(A < 0) {
+            throw std::invalid_argument("A is negative");
+        }
+        vector<int> v(A, 0);
+        int real = -1, cmplx = sqrt(-1);
+        if(B == 0) throw 0;
+        real = (A/B)*real;
+        int ans = v.at(B);
+        return real + A - B*ans;
+    }
+    static int getLoad() {
+        return load;
+    }
+};
+int Server::load = 0;
+
+int main() {
+    int T; cin >> T;
+    while(T--) {
+        long long A, B;
+        cin >> A >> B;
+
+        /* Enter your code here. */
+
+        try {
+            int res = Server::compute(A, B);
+            cout << res << endl;
+        }
+        catch (std::bad_alloc& e) {
+            cout << "Not enough memory\n";
+        }
+        catch (std::exception& e) {
+            cout << "Exception: " << e.what() << endl;
+        }
+        catch (...) {
+            cout << "Other Exception\n";
+        }
+    }
+    cout << Server::getLoad() << endl;
+    return 0;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Competitions::Code.cpp 4::Magic Spells
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+class Spell {
+    private:
+        string scrollName;
+    public:
+        Spell(): scrollName("") { }
+        Spell(string name): scrollName(name) { }
+        virtual ~Spell() { }
+        string revealScrollName() {
+            return scrollName;
+        }
+};
+
+class Fireball : public Spell {
+    private: int power;
+    public:
+        Fireball(int power): power(power) { }
+        void revealFirepower(){
+            cout << "Fireball: " << power << endl;
+        }
+};
+
+class Frostbite : public Spell {
+    private: int power;
+    public:
+        Frostbite(int power): power(power) { }
+        void revealFrostpower(){
+            cout << "Frostbite: " << power << endl;
+        }
+};
+
+class Thunderstorm : public Spell {
+    private: int power;
+    public:
+        Thunderstorm(int power): power(power) { }
+        void revealThunderpower(){
+            cout << "Thunderstorm: " << power << endl;
+        }
+};
+
+class Waterbolt : public Spell {
+    private: int power;
+    public:
+        Waterbolt(int power): power(power) { }
+        void revealWaterpower(){
+            cout << "Waterbolt: " << power << endl;
+        }
+};
+
+class SpellJournal {
+    public:
+        static string journal;
+        static string read() {
+            return journal;
+        }
+};
+string SpellJournal::journal = "";
+
+void counterspell(Spell *spell) {
+    Fireball* fireball = dynamic_cast<Fireball*>(spell);
+    if (fireball!=nullptr) {
+        fireball->revealFirepower();
+        return;
+    }
+    Frostbite* frostbite = dynamic_cast<Frostbite*>(spell);
+    if (frostbite!=nullptr) {
+        frostbite->revealFrostpower();
+        return;
+    }
+    Waterbolt* waterbolt = dynamic_cast<Waterbolt*>(spell);
+    if (waterbolt!=nullptr) {
+        waterbolt->revealWaterpower();
+        return;
+    }
+    Thunderstorm* thuderstorm = dynamic_cast<Thunderstorm*>(spell);
+    if (thuderstorm!=nullptr) {
+        thuderstorm->revealThunderpower();
+        return;
+    }
+    // generic spell, do LCS(spell->revealScrollName, SpellJournal::journal)
+    string x = spell->revealScrollName(), y = SpellJournal::read();
+    size_t n = x.size(), m = y.size();
+    if (n==0 || m==0) {
+        cout << 0 << endl;
+        return;
+    }
+    vector<vector<size_t>> dp(m+1, vector<size_t>(n+1, 0));
+    for (size_t i = 1; i <= m; ++i) {
+        for (size_t j = 1; j <= n; ++j) {
+            if (x[j-1] == y[i-1]) {
+                dp[i][j] = dp[i-1][j-1] + 1;
+            }
+            else {
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+            }
+        }
+    }
+    cout << dp[m][n] << endl;
+    return;
+}
+
+class Wizard {
+    public:
+        Spell *cast() {
+            Spell *spell;
+            string s; cin >> s;
+            int power; cin >> power;
+            if(s == "fire") {
+                spell = new Fireball(power);
+            }
+            else if(s == "frost") {
+                spell = new Frostbite(power);
+            }
+            else if(s == "water") {
+                spell = new Waterbolt(power);
+            }
+            else if(s == "thunder") {
+                spell = new Thunderstorm(power);
+            }
+            else {
+                spell = new Spell(s);
+                cin >> SpellJournal::journal;
+            }
+            return spell;
+        }
+};
+
+int main() {
+    int T;
+    cin >> T;
+    Wizard Arawn;
+    while(T--) {
+        Spell *spell = Arawn.cast();
+        counterspell(spell);
+    }
+    return 0;
+}
+#endif
