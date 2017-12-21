@@ -648,3 +648,523 @@ int main() {
     return 0;
 }
 #endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Competitions::Code.cpp 3::Variable Sized Arrays
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+
+int main() {
+    size_t n = 0, q = 0;
+    cin >> n >> q;
+    vector<vector<uint>> a(n);
+    for (size_t i = 0; i < n; ++i) {
+        size_t m = 0;
+        cin >> m;
+        a[i].resize(m);
+        for (size_t j = 0; j < m; ++j)
+            cin >> a[i][j];
+    }
+    for (size_t query = 0; query < q; ++query) {
+        size_t i = 0, j = 0;
+        cin >> i >> j;
+        cout << a[i][j] << endl;
+    }
+    return 0;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Competitions::Code.cpp 3::Overload Operators
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//Operator Overloading
+#if 0
+#include<iostream>
+
+using namespace std;
+
+class Complex
+{
+public:
+    int a,b;
+    void input(string s)
+    {
+        int v1=0;
+        int i=0;
+        while(s[i]!='+')
+        {
+            v1=v1*10+s[i]-'0';
+            i++;
+        }
+        while(s[i]==' ' || s[i]=='+'||s[i]=='i')
+        {
+            i++;
+        }
+        int v2=0;
+        while(i<s.length())
+        {
+            v2=v2*10+s[i]-'0';
+            i++;
+        }
+        a=v1;
+        b=v2;
+    }
+};
+//Overload operators + and << for the class complex
+//+ should add two complex numbers as (a+ib) + (c+id) = (a+c) + i(b+d)
+//<< should print a complex number in the format "a+ib"
+
+Complex operator+(const Complex& x, const Complex& y)
+{
+    Complex z;
+    z.a = x.a + y.a;
+    z.b = x.b + y.b;
+    return z;
+}
+
+ostream& operator<<(ostream& os, const Complex& z)
+{
+    os << z.a << "+i" << z.b;
+    return os;
+}
+
+int main()
+{
+    Complex x,y;
+    string s1,s2;
+    cin>>s1;
+    cin>>s2;
+    x.input(s1);
+    y.input(s2);
+    Complex z=x+y;
+    cout<<z<<endl;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Competitions::Code.cpp 3::Box It!
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include<bits/stdc++.h>
+
+using namespace std;
+
+
+//Implement the class Box
+//l,b,h are integers representing the dimensions of the box
+
+// The class should have the following functions :
+
+// Constructors:
+// Box();
+// Box(int,int,int);
+// Box(Box);
+
+
+// int getLength(); // Return box's length
+// int getBreadth (); // Return box's breadth
+// int getHeight ();  //Return box's height
+// long long CalculateVolume(); // Return the volume of the box
+
+//Overload operator < as specified
+//bool operator<(Box& b)
+
+//Overload operator << as specified
+//ostream& operator<<(ostream& out, Box& B)
+
+class Box
+{
+public:
+    Box()
+    {}
+
+    Box(int length, int breadth, int height):
+        l(length), b(breadth), h(height)
+    {}
+
+    Box(const Box& b):
+        l(b.l), b(b.b), h(b.h)
+    {}
+
+    int getLength() const
+    {
+        return l;
+    }
+
+    int getBreadth() const
+    {
+        return b;
+    }
+
+    int getHeight() const
+    {
+        return h;
+    }
+
+    long long CalculateVolume()
+    {
+        return static_cast<long long>(l) * static_cast<long long>(b) * static_cast<long long>(h);
+    }
+
+    friend bool operator<(const Box& l, const Box& r)
+    {
+        if (l.l < r.l)              return true;
+        else if (l.l > r.l)         return false;
+        else {
+            if (l.b < r.b)          return true;
+            else if (l.b > r.b)     return false;
+            else {
+                if (l.h < r.h)      return true;
+                else                return false;
+            }
+        }
+    }
+
+private:
+    int l = 0;
+    int b = 0;
+    int h = 0;
+};
+
+ostream& operator<<(ostream& os, const Box& b)
+{
+    os << b.getLength() << " " << b.getBreadth() << " " << b.getHeight();
+    return os;
+}
+
+void check2()
+{
+    int n;
+    cin>>n;
+    Box temp;
+    for(int i=0;i<n;i++)
+    {
+        int type;
+        cin>>type;
+        if(type ==1)
+        {
+            cout<<temp<<endl;
+        }
+        if(type == 2)
+        {
+            int l,b,h;
+            cin>>l>>b>>h;
+            Box NewBox(l,b,h);
+            temp=NewBox;
+            cout<<temp<<endl;
+        }
+        if(type==3)
+        {
+            int l,b,h;
+            cin>>l>>b>>h;
+            Box NewBox(l,b,h);
+            if(NewBox<temp)
+            {
+                cout<<"Lesser\n";
+            }
+            else
+            {
+                cout<<"Greater\n";
+            }
+        }
+        if(type==4)
+        {
+            cout<<temp.CalculateVolume()<<endl;
+        }
+        if(type==5)
+        {
+            Box NewBox(temp);
+            cout<<NewBox<<endl;
+        }
+
+    }
+}
+
+int main()
+{
+    check2();
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Competitions::Code.cpp 3::Accessing Inherited Functions
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include<iostream>
+
+using namespace std;
+
+class A
+{
+    public:
+        A(){
+            callA = 0;
+        }
+    private:
+        int callA;
+        void inc(){
+            callA++;
+        }
+
+    protected:
+        void func(int & a)
+        {
+            a = a * 2;
+            inc();
+        }
+    public:
+        int getA(){
+            return callA;
+        }
+};
+
+class B
+{
+    public:
+        B(){
+            callB = 0;
+        }
+    private:
+        int callB;
+        void inc(){
+            callB++;
+        }
+    protected:
+        void func(int & a)
+        {
+            a = a * 3;
+            inc();
+        }
+    public:
+        int getB(){
+            return callB;
+        }
+};
+
+class C
+{
+    public:
+        C(){
+            callC = 0;
+        }
+    private:
+        int callC;
+        void inc(){
+            callC++;
+        }
+    protected:
+        void func(int & a)
+        {
+            a = a * 5;
+            inc();
+        }
+    public:
+        int getC(){
+            return callC;
+        }
+};
+
+class D: public A, public B, public C
+{
+
+    int val;
+    public:
+    //Initially val is 1
+     D()
+     {
+        val = 1;
+     }
+
+
+     //Implement this function
+     void update_val(int new_val)
+     {
+         size_t n_2 = 0;
+         for (int test_val = new_val; (test_val >= 2) && (test_val % 2 == 0); test_val /= 2, ++n_2);
+         size_t n_3 = 0;
+         for (int test_val = new_val; (test_val >= 3) && (test_val % 3 == 0); test_val /= 3, ++n_3);
+         size_t n_5 = 0;
+         for (int test_val = new_val; (test_val >= 5) && (test_val % 5 == 0); test_val /= 5, ++n_5);
+         for (int i=0; i < n_2; ++i)    A::func(val);
+         for (int i=0; i < n_3; ++i)    B::func(val);
+         for (int i=0; i < n_5; ++i)    C::func(val);
+     }
+
+     //For Checking Purpose
+     void check(int); //Do not delete this line.
+};
+
+void D::check(int new_val)
+{
+    update_val(new_val);
+    cout << "Value = " << val << endl << "A's func called " << getA() << " times " << endl << "B's func called " << getB() << " times" << endl << "C's func called " << getC() << " times" << endl;
+}
+
+
+int main()
+{
+    D d;
+    int new_val;
+    cin >> new_val;
+    d.check(new_val);
+
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Competitions::Code.cpp 3::Virtual Functions
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+#include <string>
+
+class Person
+{
+public:
+    virtual void getdata()
+    {
+        cin >> name_ >> age_;
+    }
+
+    virtual void putdata()
+    {
+        cout << name_ << " " << age_ << " ";
+    }
+
+private:
+    string name_;
+    int age_ = 0;
+};
+
+class Professor: public Person
+{
+public:
+    Professor():
+        cur_id_(++running_id_)
+    {}
+
+    virtual void getdata()
+    {
+        Person::getdata();
+        cin >> publications_;
+    }
+
+    virtual void putdata()
+    {
+        Person::putdata();
+        cout << publications_ << " " << cur_id_ << endl;
+    }
+
+private:
+    int publications_ = 0;
+    int cur_id_ = 0;
+    static int running_id_;
+};
+
+int Professor::running_id_ = 0;
+
+class Student: public Person
+{
+public:
+    Student():
+        cur_id_(++running_id_)
+    {}
+
+    virtual void getdata()
+    {
+        Person::getdata();
+        for (int i=0; i < 6; ++i)
+            cin >> marks_[i];
+    }
+
+    virtual void putdata()
+    {
+        Person::putdata();
+        cout << accumulate(begin(marks_), end(marks_), 0) << " " << cur_id_ << endl;
+    }
+
+private:
+    int marks_[6] = {0,0,0,0,0,0};
+    int cur_id_ = 0;
+    static int running_id_;
+};
+
+int Student::running_id_ = 0;
+
+int main(){
+
+    int n, val;
+    cin>>n; //The number of objects that is going to be created.
+    Person *per[n];
+
+    for(int i = 0;i < n;i++){
+
+        cin>>val;
+        if(val == 1){
+            // If val is 1 current object is of type Professor
+            per[i] = new Professor;
+
+        }
+        else per[i] = new Student; // Else the current object is of type Student
+
+        per[i]->getdata(); // Get the data from the user.
+
+    }
+
+    for(int i=0;i<n;i++)
+        per[i]->putdata(); // Print the required output for each object.
+
+    return 0;
+
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Competitions::Code.cpp 3::Attending Workshops
+//    Output to stdout is handled for you.
+
+//    Your initialize function must return a pointer to an Available_Workshops object.
+//    Your CalculateMaxWorkshops function must return maximum number of non-overlapping workshops the student can attend.
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include<bits/stdc++.h>
+
+using namespace std;
+
+//Define the structs Workshops and Available_Workshops.
+//Implement the functions initialize and CalculateMaxWorkshops
+
+int main(int argc, char *argv[]) {
+    int n; // number of workshops
+    cin >> n;
+    // create arrays of unknown size n
+    int* start_time = new int[n];
+    int* duration = new int[n];
+
+    for(int i=0; i < n; i++){
+        cin >> start_time[i];
+    }
+    for(int i = 0; i < n; i++){
+        cin >> duration[i];
+    }
+
+    Available_Workshops * ptr;
+    ptr = initialize(start_time,duration, n);
+    cout << CalculateMaxWorkshops(ptr) << endl;
+    return 0;
+}
+#endif
