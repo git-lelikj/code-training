@@ -409,6 +409,7 @@ int main() {
 //    6
 //    -1
 // -------------------------------------------------------------------------------------------------------------------------------------------------------
+#if 0
 #include <iostream>
 using namespace std;
 
@@ -416,3 +417,121 @@ int main() {
     //code
     return 0;
 }
+#endif
+
+
+// -------------------------------------------------------------------------------------------------------
+// Greedy
+// -------------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+// N meetings in one room (Activity Selection problem)
+//    There is one meeting room in Flipkart. There are n meetings in the form of (S [ i ], F [ i ]) where S [ i ] is start time of meeting i and F [ i ] is finish time of meeting i
+//    What is the maximum number of meetings that can be accommodated in the meeting room ?
+//    Input:
+//    The first line of input consists number of the test cases. The description of T test cases is as follows:
+//    The first line consists of the size of the array, second line has the array containing the starting time of all the meetings each separated by a space, i.e., S [ i ]. And the third line has the array containing the finishing time of all the meetings each separated by a space, i.e., F [ i ].
+//    Output:
+//    In each separate line print the order in which the meetings take place separated by a space.
+//    Constraints:
+//    1 ≤ T ≤ 70
+//    1 ≤ N ≤ 100
+//    1 ≤ S[ i ], F[ i ] ≤ 100000
+//    Example:
+//    Input:
+//    2
+//    6
+//    1 3 0 5 8 5
+//    2 4 6 7 9 9
+//    8
+//    75250 50074 43659 8931 11273 27545 50879 77924
+//    112960 114515 81825 93424 54316 35533 73383 160252
+//    Output:
+//    1 2 4 5
+//    6 7 1
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct Meeting
+{
+    int start_ = 0;
+    int finish_ = 0;
+    size_t index_ = 0;
+};
+
+using Meetings = vector<Meeting>;
+using Result = vector<size_t>;
+
+ostream& operator<<(ostream& os, const Meeting& m)
+{
+    os << "[" << m.start_ << "," << m.finish_ << "," << m.index_ << "]";
+    return os;
+}
+
+ostream& operator<<(ostream& os, const Meetings& meetings)
+{
+    for (auto m: meetings) {
+        os << m << " ";
+    }
+    return os;
+}
+
+ostream& operator<<(ostream& os, const Result& results)
+{
+    for (int i=0; i < results.size(); ++i) {
+        os << results[i];
+        if (i != results.size()-1)
+            os << " ";
+    }
+    return os;
+}
+
+// algorithm for activity selection: based on Greedy algorithm:
+// sort meetings by finish date acsending, each loop select first
+// one to finish meeting, starting after current one finishes
+int activity_selection_algo(Meetings meetings, Result& result)
+{
+    // sort by meeting finish ascending
+    sort(meetings.begin(), meetings.end(), [](const Meeting& m1, const Meeting& m2){ return m1.finish_ < m2.finish_; });
+//    cout << "sorted: " << meetings << endl;
+    int max_meetings = 0;
+    for (auto i = meetings.begin(); i != meetings.end(); ) {
+        // add current meeting to results
+        result.push_back(i->index_);
+        ++max_meetings;
+        // find first meeting starting later than current finishes
+        auto j = i + 1;
+        for (; (j != meetings.end()) && (j->start_ < i->finish_); ++j);
+        i = j;
+    }
+//    cout << "max: " << max_meetings << endl;
+//    cout << "results: " << result << endl;
+
+    return 0;
+}
+
+int main() {
+    size_t n_tests = 0;
+    cin >> n_tests;
+    for (size_t t = 0; t < n_tests; ++t) {
+        size_t n_meetings = 0;
+        cin >> n_meetings;
+        Meetings meetings(n_meetings);
+        for (size_t i = 0; i < n_meetings; ++i) {
+            cin >> meetings[i].start_;
+            meetings[i].index_ = i + 1;
+        }
+        for (size_t i = 0; i < n_meetings; ++i) {
+            cin >> meetings[i].finish_;
+        }
+        Result result;
+        int max_meetings = activity_selection_algo(meetings, result);
+        cout << result << endl;
+    }
+    return 0;
+}
+#endif
