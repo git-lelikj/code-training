@@ -1145,8 +1145,68 @@ int main(){
 
 using namespace std;
 
+#include <algorithm>
+
 //Define the structs Workshops and Available_Workshops.
 //Implement the functions initialize and CalculateMaxWorkshops
+struct Workshop
+{
+    int start_time_ = 0;
+    int duration_ = 0;
+    int end_time_ = 0;
+};
+
+struct Available_Workshops
+{
+    int n_ = 0;
+    Workshop* workshops_ = nullptr;
+};
+
+Available_Workshops* initialize(int start_time[], int duration[], int n)
+{
+    Available_Workshops* w = new Available_Workshops;
+    w->n_ = n;
+    w->workshops_ = new Workshop[n];
+    for (size_t i = 0; i < n; ++i) {
+        w->workshops_[i].start_time_ = start_time[i];
+        w->workshops_[i].duration_ = duration[i];
+        w->workshops_[i].end_time_ = start_time[i] + duration[i];
+    }
+    return w;
+}
+
+ostream& operator<<(ostream& os, const Workshop& w)
+{
+    os << "[" << w.start_time_ << "," << w.duration_ << "," << w.end_time_ << "]";
+    return os;
+}
+
+ostream& operator<<(ostream& os, Available_Workshops* w)
+{
+    if (w==nullptr)
+        return os;
+    os << "size: " << w->n_ << endl;
+    for (size_t i = 0; i < w->n_; ++i) {
+        os << w->workshops_[i];
+    }
+    return os;
+}
+
+int CalculateMaxWorkshops(Available_Workshops* w)
+{
+    // sort in-place by end-time ascending
+    sort(w->workshops_, w->workshops_ + w->n_, [](const Workshop& l, const Workshop& r) { return l.end_time_ < r.end_time_; });
+//    cout << w << endl;
+    int max_workshops = 0;
+    // implemente greedy-algorithm: each loop pick workshop with closest end-time
+    for (size_t i = 0; i < w->n_;) {
+        ++max_workshops;
+        size_t j = i + 1;
+        for (; (j < w->n_) && (w->workshops_[j].start_time_ < w->workshops_[i].end_time_); ++j );
+        i = j;
+    }
+    return max_workshops;
+}
 
 int main(int argc, char *argv[]) {
     int n; // number of workshops
@@ -1164,7 +1224,371 @@ int main(int argc, char *argv[]) {
 
     Available_Workshops * ptr;
     ptr = initialize(start_time,duration, n);
+//    cout << ptr << endl;
     cout << CalculateMaxWorkshops(ptr) << endl;
     return 0;
 }
 #endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Competitions::Code.cpp 3::Attribute Parser
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <set>
+#include <map>
+#include <stack>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <algorithm>
+#include <memory>
+using namespace std;
+
+namespace
+{
+
+    struct Tag;
+
+    using Attributes = map<string, string>;
+    using Tags = set<Tag>;
+
+    struct Tag
+    {
+        Tag(const string& name):
+            name_(name)
+        {}
+        string name_;
+        Attributes attributes_;
+        Tags nested_tags_;
+    };
+
+    bool operator<(const Tag& l, const Tag& r)
+    {
+        return l.name_ < r.name_;
+    }
+
+    ostream& operator<<(ostream& os, const Tag& tag)
+    {
+        os << "<" << tag.name_ << ">";
+        os << " attributes: ";
+        if (tag.nested_tags_.size()) {
+            os << " nested tags: ";
+            for (auto t: tag.nested_tags_) {
+                os << t.name_ << " ";
+            }
+            os << endl;
+            for (auto t: tag.nested_tags_) {
+                os << t << endl;
+            }
+        }
+        return os;
+    }
+
+    struct Query
+    {
+        vector<string> nested_tags_;
+        string attribute_;
+    };
+
+    using Queries = vector<Query>;
+
+    enum class Parsing_state
+    {
+        Start_tag,
+        Tag_attribute,
+    };
+
+    Tag input_tags(size_t n_lines)
+    {
+        Tag root_tag("root");
+        stack<Tag*> tag_stack;
+        tag_stack.push(&root_tag);
+        Parsing_state state = Parsing_state::Start_tag;
+        for (size_t l = 0; l < n_lines; ++l) {
+            string line;
+            getline(cin, line);
+            // strip <>
+            line.erase(remove_if(line.begin(), line.end(), [](unsigned char x){ return (x == '<' || x == '>'); }), line.end());
+            for (istringstream iss(line); iss;) {
+                string token;
+                iss >> token;
+                if (!token.size())
+                    continue;
+
+                // end of tag, pop from stack
+                if (token[0] == '/') {
+                    if (!tag_stack.empty())
+                        tag_stack.pop();
+//                    cout << "[dbg::input_tags]: token:"<<token<<",state:"<<(int)state<<endl;
+                    state = Parsing_state::Start_tag;
+                }
+                else {
+                    switch (state) {
+                    case Parsing_state::Start_tag:
+                    {
+                        // new tag name: add to parent set of tags, push to stack
+                        Tag tag(token);
+                        Tag& parent_tag = tag_stack.top();
+                        parent_tag.nested_tags_.insert(tag);
+                        tag_stack.push(tag);
+//                        cout << "[dbg::input_tags]: token:"<<token<<",state:"<<(int)state<<endl;
+//                        cout << "[dbg::input_tags]: parent:\n" << parent_tag << endl;
+                        state = Parsing_state::Tag_attribute;
+                    }
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
+            state = Parsing_state::Start_tag;
+        }
+        return tag_stack.top();
+    }
+
+    void input_queries(Queries& queries, size_t n_queries)
+    {
+
+    }
+
+    string execute_query(const Tags& tags, const Query& query)
+    {
+        return "";
+    }
+
+}
+
+int main()
+{
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */
+    size_t n_lines = 0, n_queries = 0;
+    cin >> n_lines >> n_queries;
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    Queries queries;
+    Tag root_tag = input_tags(n_lines);
+    cout << root_tag << endl;
+//    input_queries(queries, n_queries);
+//    for (size_t q = 0; q < n_queries; ++q) {
+//        string result = execute_query(tags, queries[q]);
+//        cout << result << endl;
+//    }
+    return 0;
+}
+#endif
+
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <set>
+#include <map>
+#include <stack>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <algorithm>
+#include <memory>
+using namespace std;
+
+namespace
+{
+    constexpr const char* Not_found_msg = "Not Found!";
+
+    using Attributes = map<string, string>;
+
+    struct Tag
+    {
+        struct Shared_ptr_cmp
+        {
+            bool operator()(const shared_ptr<Tag>& l, const shared_ptr<Tag>& r)
+            {
+                return (*l).name_ < (*r).name_;
+            }
+        };
+
+        using Tags = set<shared_ptr<Tag>, Shared_ptr_cmp>;
+
+        Tag(const string& name):
+            name_(name)
+        {}
+        string name_;
+        Attributes attributes_;
+        Tags nested_tags_;
+    };
+
+    ostream& operator<<(ostream& os, const Tag& tag)
+    {
+        os << "<" << tag.name_ << ">";
+        if (tag.attributes_.size()) {
+            os << " attributes: ";
+            for (auto a: tag.attributes_) {
+                os << "(" << a.first << "," << a.second << ")";
+            }
+            os << endl;
+        }
+        if (tag.nested_tags_.size()) {
+            os << " nested tags: ";
+            for (auto t: tag.nested_tags_) {
+                os << t->name_ << " ";
+            }
+            os << endl;
+            for (auto t: tag.nested_tags_) {
+                os << *t << endl;
+            }
+        }
+        return os;
+    }
+
+    struct Query
+    {
+        vector<string> nested_tags_;
+        string attribute_;
+    };
+
+    using Queries = vector<Query>;
+
+    ostream& operator<<(ostream& os, const Query& q)
+    {
+        for (size_t i = 0; i < q.nested_tags_.size(); ++i) {
+            os << q.nested_tags_[i];
+            if (i != q.nested_tags_.size() - 1)
+                os << ".";
+        }
+        os << "~" << q.attribute_;
+        return os;
+    }
+
+    enum class Parsing_state
+    {
+        Start_tag,
+        Tag_attribute,
+    };
+
+    shared_ptr<Tag> input_tags(size_t n_lines)
+    {
+        stack<shared_ptr<Tag>> tag_stack;
+        tag_stack.push(make_shared<Tag>("root"));
+        Parsing_state state = Parsing_state::Start_tag;
+        for (size_t l = 0; l < n_lines; ++l) {
+            string line;
+            getline(cin, line);
+            // strip <>
+            line.erase(remove_if(line.begin(), line.end(), [](unsigned char x){ return (x == '<' || x == '>'); }), line.end());
+            for (istringstream iss(line); iss;) {
+                string token;
+                iss >> token;
+                if (!token.size())
+                    continue;
+
+                // end of tag, pop from stack
+                if (token[0] == '/') {
+                    if (!tag_stack.empty())
+                        tag_stack.pop();
+                    state = Parsing_state::Start_tag;
+                }
+                else {
+                    switch (state) {
+                    case Parsing_state::Start_tag:
+                    {
+                        // new tag name: add to parent set of tags, push to stack
+                        auto tag = make_shared<Tag>(token);
+                        tag_stack.top()->nested_tags_.insert(tag);
+                        tag_stack.push(tag);
+                        state = Parsing_state::Tag_attribute;
+                    }
+                        break;
+                    case Parsing_state::Tag_attribute:
+                    {
+                        // read = and attribute value
+                        string delim, attr_value;
+                        iss >> delim >> attr_value;
+                        // strip ""
+                        attr_value.erase(remove_if(attr_value.begin(), attr_value.end(), [](unsigned char x){ return (x == '"'); }), attr_value.end());
+                        // add attribute to tag in stack
+                        tag_stack.top()->attributes_.insert({token, attr_value});
+                        // stay on the same state
+                    }
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
+            state = Parsing_state::Start_tag;
+        }
+        return tag_stack.top();
+    }
+
+    void input_queries(Queries& queries, size_t n_queries)
+    {
+        for (size_t l = 0; l < n_queries; ++l) {
+            string line;
+            getline(cin, line);
+            Query q;
+            for (size_t curr_pos = 0; curr_pos != string::npos; ) {
+                size_t dot_pos = line.find('.', curr_pos);
+                if (dot_pos == string::npos) {
+                    size_t tilda_pos = line.find('~', curr_pos);
+                    if (tilda_pos == string::npos) {
+                        // wrong query: TBD
+                        curr_pos = string::npos;
+                        continue;
+                    }
+                    else {
+                       q.nested_tags_.push_back(line.substr(curr_pos, tilda_pos - curr_pos));
+                       q.attribute_ = line.substr(tilda_pos + 1);
+                       curr_pos = string::npos;
+                       continue;
+                    }
+                }
+                else {
+                    q.nested_tags_.push_back(line.substr(curr_pos, dot_pos - curr_pos));
+                    curr_pos = dot_pos + 1;
+                    continue;
+                }
+            }
+            queries.push_back(q);
+        }
+    }
+
+    string execute_query(shared_ptr<Tag> root_tag, const Query& query)
+    {
+        if (!query.nested_tags_.size())
+            return Not_found_msg;
+        shared_ptr<Tag> curr_tag = root_tag;
+        for (auto q: query.nested_tags_) {
+            auto it = curr_tag->nested_tags_.find(make_shared<Tag>(q));
+            if (it == curr_tag->nested_tags_.end()) {
+                return Not_found_msg;
+            }
+            else {
+                curr_tag = *it;
+            }
+        }
+        // curr_tag points to target tag, look for attribute
+        auto it = curr_tag->attributes_.find(query.attribute_);
+        if (it == curr_tag->attributes_.end())
+            return Not_found_msg;
+        else
+            return it->second;
+    }
+
+}
+
+int main()
+{
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */
+    size_t n_lines = 0, n_queries = 0;
+    cin >> n_lines >> n_queries;
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    Queries queries;
+    shared_ptr<Tag> root_tag = input_tags(n_lines);
+    input_queries(queries, n_queries);
+    for (size_t q = 0; q < queries.size(); ++q) {
+        string result = execute_query(root_tag, queries[q]);
+        cout << result << endl;
+    }
+    return 0;
+}
