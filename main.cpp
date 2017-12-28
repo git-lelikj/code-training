@@ -1249,151 +1249,6 @@ using namespace std;
 
 namespace
 {
-
-    struct Tag;
-
-    using Attributes = map<string, string>;
-    using Tags = set<Tag>;
-
-    struct Tag
-    {
-        Tag(const string& name):
-            name_(name)
-        {}
-        string name_;
-        Attributes attributes_;
-        Tags nested_tags_;
-    };
-
-    bool operator<(const Tag& l, const Tag& r)
-    {
-        return l.name_ < r.name_;
-    }
-
-    ostream& operator<<(ostream& os, const Tag& tag)
-    {
-        os << "<" << tag.name_ << ">";
-        os << " attributes: ";
-        if (tag.nested_tags_.size()) {
-            os << " nested tags: ";
-            for (auto t: tag.nested_tags_) {
-                os << t.name_ << " ";
-            }
-            os << endl;
-            for (auto t: tag.nested_tags_) {
-                os << t << endl;
-            }
-        }
-        return os;
-    }
-
-    struct Query
-    {
-        vector<string> nested_tags_;
-        string attribute_;
-    };
-
-    using Queries = vector<Query>;
-
-    enum class Parsing_state
-    {
-        Start_tag,
-        Tag_attribute,
-    };
-
-    Tag input_tags(size_t n_lines)
-    {
-        Tag root_tag("root");
-        stack<Tag*> tag_stack;
-        tag_stack.push(&root_tag);
-        Parsing_state state = Parsing_state::Start_tag;
-        for (size_t l = 0; l < n_lines; ++l) {
-            string line;
-            getline(cin, line);
-            // strip <>
-            line.erase(remove_if(line.begin(), line.end(), [](unsigned char x){ return (x == '<' || x == '>'); }), line.end());
-            for (istringstream iss(line); iss;) {
-                string token;
-                iss >> token;
-                if (!token.size())
-                    continue;
-
-                // end of tag, pop from stack
-                if (token[0] == '/') {
-                    if (!tag_stack.empty())
-                        tag_stack.pop();
-//                    cout << "[dbg::input_tags]: token:"<<token<<",state:"<<(int)state<<endl;
-                    state = Parsing_state::Start_tag;
-                }
-                else {
-                    switch (state) {
-                    case Parsing_state::Start_tag:
-                    {
-                        // new tag name: add to parent set of tags, push to stack
-                        Tag tag(token);
-                        Tag& parent_tag = tag_stack.top();
-                        parent_tag.nested_tags_.insert(tag);
-                        tag_stack.push(tag);
-//                        cout << "[dbg::input_tags]: token:"<<token<<",state:"<<(int)state<<endl;
-//                        cout << "[dbg::input_tags]: parent:\n" << parent_tag << endl;
-                        state = Parsing_state::Tag_attribute;
-                    }
-                        break;
-                    default:
-                        break;
-                    }
-                }
-            }
-            state = Parsing_state::Start_tag;
-        }
-        return tag_stack.top();
-    }
-
-    void input_queries(Queries& queries, size_t n_queries)
-    {
-
-    }
-
-    string execute_query(const Tags& tags, const Query& query)
-    {
-        return "";
-    }
-
-}
-
-int main()
-{
-    /* Enter your code here. Read input from STDIN. Print output to STDOUT */
-    size_t n_lines = 0, n_queries = 0;
-    cin >> n_lines >> n_queries;
-    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    Queries queries;
-    Tag root_tag = input_tags(n_lines);
-    cout << root_tag << endl;
-//    input_queries(queries, n_queries);
-//    for (size_t q = 0; q < n_queries; ++q) {
-//        string result = execute_query(tags, queries[q]);
-//        cout << result << endl;
-//    }
-    return 0;
-}
-#endif
-
-#include <cmath>
-#include <cstdio>
-#include <vector>
-#include <set>
-#include <map>
-#include <stack>
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <algorithm>
-#include <memory>
-using namespace std;
-
-namespace
-{
     constexpr const char* Not_found_msg = "Not Found!";
 
     using Attributes = map<string, string>;
@@ -1590,5 +1445,23 @@ int main()
         string result = execute_query(root_tag, queries[q]);
         cout << result << endl;
     }
+    return 0;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Competitions::Code.cpp 3::Bit Array
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+
+int main() {
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */
     return 0;
 }
