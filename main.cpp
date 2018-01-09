@@ -1452,16 +1452,149 @@ int main()
 // ---------------------------------------------------------------------------------------------------------------------------------------
 //    Competitions::Code.cpp 3::Bit Array
 // ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+int main() {
+#if 0
+    bitset<Num_of_bits> bitset_array;
 
-#include <cmath>
-#include <cstdio>
-#include <vector>
+    uint32_t N = 0, S = 0, P = 0, Q = 0;
+
+    cin >> N >> S >> P >> Q;
+
+    uint32_t prev_value = S % Num_of_bits;
+    uint32_t curr_value = 0;
+    for (size_t i = 1; i < N; ++i) {
+        curr_value = (prev_value * P + Q) % Num_of_bits;
+    }
+#endif
+
+    Bitset bitset(Num_of_bits);
+
+    cout << "size of Bitset(1024): " << sizeof(bitset) << ", n_bytes: " << bitset.get_n_bytes() << endl;
+
+    bitset.set_bit(0);
+    bitset.set_bit(1);
+    bitset.set_bit(15);
+
+    cout << bitset << endl;
+
+    cout << "bit 0: " << bitset.get_bit(0) << endl;
+    cout << "bit 1: " << bitset.get_bit(1) << endl;
+    cout << "bit 2: " << bitset.get_bit(2) << endl;
+    cout << "bit 15: " << bitset.get_bit(15) << endl;
+
+    return 0;
+}
+#endif
+
 #include <iostream>
+#include <bitset>
+#include <memory>
 #include <algorithm>
+#include <iterator>
+#include <iomanip>
+
 using namespace std;
 
+namespace
+{
+    constexpr uint32_t Num_of_bits = (1 << 31);
+
+    class Bitset
+    {
+    public:
+        Bitset(size_t n_bits)
+            : n_bits_(n_bits)
+        {
+            n_bytes_ = n_bits / 8 + ( n_bits % 8 ? 1 : 0 );
+
+            bit_rep_.reset(new uint8_t[n_bytes_]);
+            fill(bit_rep_.get(), bit_rep_.get() + n_bytes_, 0);
+        }
+
+        size_t get_n_bytes() const
+        {
+            return n_bytes_;
+        }
+
+        bool get_bit(size_t bit_index) const
+        {
+            size_t byte_index = bit_index / 8;
+            if (byte_index > n_bytes_) {
+                return false;
+            }
+            return ( bit_rep_[byte_index] & (1 << (bit_index % 8)) ? true : false );
+        }
+
+        void set_bit(size_t bit_index)
+        {
+            size_t byte_index = bit_index / 8;
+            if (byte_index > n_bytes_) {
+                return;
+            }
+            bit_rep_[byte_index] |= (1 << (bit_index % 8));
+        }
+
+        uint8_t* get_raw_ptr() const
+        {
+            return bit_rep_.get();
+        }
+
+    private:
+        size_t n_bits_ = 0;
+        size_t n_bytes_ = 0;
+        unique_ptr<uint8_t[]> bit_rep_ = nullptr;
+    };
+
+    uint64_t modulo(uint64_t value, uint64_t base)
+    {
+//        return (value - (uint64_t)(value / base) * base);
+        return value & (base - 1);
+    }
+}
+
+ostream& operator<<(ostream& os, const Bitset& b)
+{
+    uint8_t* raw_ptr = b.get_raw_ptr();
+    for (int byte = b.get_n_bytes() - 1 ; byte >= 0; --byte) {
+        os << hex << setw(2) << setfill('0') << +raw_ptr[byte] << " ";
+    }
+    os << dec;
+    return os;
+}
 
 int main() {
-    /* Enter your code here. Read input from STDIN. Print output to STDOUT */
+#if 0
+    Bitset bitset_array(Num_of_bits);
+
+    long long N = 0, S = 0, P = 0, Q = 0;
+
+    cin >> N >> S >> P >> Q;
+
+    long long prev_value = S % Num_of_bits;
+    long long curr_value = 0;
+    size_t n_distinct_values = 0;
+    for (size_t i = 0; i < N; ++i) {
+        if (i == 0)
+            curr_value = prev_value;
+        else
+            curr_value = ((prev_value * P) + Q) % (long long)Num_of_bits;
+        cout << "curr value: " << curr_value << endl;
+        if (bitset_array.get_bit(curr_value)==false) {
+            ++n_distinct_values;
+            bitset_array.set_bit(curr_value);
+        }
+        else {
+            if (n_distinct_values > 0)
+                --n_distinct_values;
+        }
+        prev_value = curr_value;
+    }
+    cout << n_distinct_values << endl;
+#endif
+
+    uint64_t value = (uint64_t)(1 << 31);
+    uint64_t base = 1 << 31;
+    cout << value << " modulo(" << base << ") = " << modulo(value, base) << endl;
     return 0;
 }
