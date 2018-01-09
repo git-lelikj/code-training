@@ -535,3 +535,87 @@ int main() {
     return 0;
 }
 #endif
+
+// -------------------------------------------------------------------------------------------------------
+// Bit Array
+// -------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <bitset>
+
+using namespace std;
+
+int main() {
+
+    {
+        bitset<1024> bits;
+        cout << "size of bitset<1024>: " << sizeof(bits) << endl;
+    }
+
+    {
+        uint16_t value = 0x5555;
+        bitset<16> bits(value);
+        cout << hex << "value " << value << " in binary: " << bits << endl;
+        cout << "bit 0: " << bits[0] << endl;
+        cout << "bit 1: " << bits[1] << endl;
+        cout << "bit 2: " << bits[2] << endl;
+        cout << "bit 3: " << bits[3] << endl;
+        cout << "total bits: " << dec << bits.size() << ", n of 1s: " << bits.count() << ", n of 0s: " << bits.size() - bits.count() << endl;
+    }
+
+    {
+        cout << "decimal of 111: " << bitset<8>("111").to_ulong() << endl;
+    }
+
+    return 0;
+}
+#endif
+
+// -------------------------------------------------------------------------------------------------------
+// Find Duplicates of array using bit array
+//    You have an array of N numbers, where N is at most 32,000. The array may have duplicates entries and you do not know what N is.
+//    With only 4 Kilobytes of memory available, how would print all duplicates elements in the array ?.
+//    Examples:
+//    Input : arr[] = {1, 5, 1, 10, 12, 10}
+//    Output : 1 10
+//    1 and 10 appear more than once in given
+//    array.
+//    Input : arr[] = {50, 40, 50}
+//    Output : 50
+// -------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <bitset>
+
+using namespace std;
+
+namespace
+{
+    constexpr size_t NUM_OF_BITS = 1024 * 4 * 8;
+}
+
+int main() {
+
+    size_t N = 0;
+    cin >> N;
+    if (N > NUM_OF_BITS) {
+        cout << "N is too large: " << N << endl;
+        return -1;
+    }
+
+
+    bitset<NUM_OF_BITS> bitset_array;
+    for (size_t i = 0; i < N; ++i) {
+        int input_value = 0;
+        cin >> input_value;
+        if (bitset_array[input_value]) {
+            cout << input_value << " ";
+        }
+        else
+            bitset_array.set(input_value);
+    }
+    cout << endl;
+
+    return 0;
+}
+#endif
