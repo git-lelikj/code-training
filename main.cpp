@@ -1486,7 +1486,7 @@ int main() {
     return 0;
 }
 #endif
-
+#if 0
 #include <iostream>
 #include <bitset>
 #include <memory>
@@ -1564,21 +1564,22 @@ ostream& operator<<(ostream& os, const Bitset& b)
 }
 
 int main() {
-#if 0
+
     Bitset bitset_array(Num_of_bits);
 
     long long N = 0, S = 0, P = 0, Q = 0;
 
     cin >> N >> S >> P >> Q;
 
-    long long prev_value = S % Num_of_bits;
+    long long prev_value = S & (0x7fffffff);
     long long curr_value = 0;
     size_t n_distinct_values = 0;
     for (size_t i = 0; i < N; ++i) {
         if (i == 0)
             curr_value = prev_value;
         else
-            curr_value = ((prev_value * P) + Q) % (long long)Num_of_bits;
+//            curr_value = ((prev_value * P) + Q) % (long long)Num_of_bits;
+            curr_value = (long long)((long long)((long long)(prev_value * P) + Q) & (long long)(0x7fffffff));
         cout << "curr value: " << curr_value << endl;
         if (bitset_array.get_bit(curr_value)==false) {
             ++n_distinct_values;
@@ -1591,10 +1592,28 @@ int main() {
         prev_value = curr_value;
     }
     cout << n_distinct_values << endl;
+
+    return 0;
+}
 #endif
 
-    uint64_t value = (uint64_t)(1 << 31);
-    uint64_t base = 1 << 31;
-    cout << value << " modulo(" << base << ") = " << modulo(value, base) << endl;
+#include <bits/stdc++.h>
+using namespace std;
+typedef unsigned long long Int;
+
+int main() {
+    ios::sync_with_stdio(0);
+    Int n, s, p, q, a, b;
+    cin >> n >> s >> p >> q;
+    a =  s & 0x7fffffff;
+    Int cnt = 1;
+    for(Int i = 1; i < n; ++i) {
+        b = a*p+q;
+        b &= 0x7fffffff;
+        if(a^b)
+            cnt++;
+        a = b;
+    }
+    cout << cnt;
     return 0;
 }
