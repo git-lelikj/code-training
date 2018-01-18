@@ -388,10 +388,12 @@ int main() {
 #endif
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------
-// Largest Sum Contiguous Subarray
+// Largest Sum Contiguous Subarray (Kadane's Algorithm)
 //    Given an array containing both negative and positive integers. Find the contiguous sub-array with maximum sum.
 //    Input:
-//    The first line of input contains an integer T denoting the number of test cases. The description of T test cases follows. The first line of each test case contains a single integer N denoting the size of array. The second line contains N space-separated integers A1, A2, ..., AN denoting the elements of the array.
+//    The first line of input contains an integer T denoting the number of test cases. The description of T test cases follows.
+//    The first line of each test case contains a single integer N denoting the size of array.
+//    The second line contains N space-separated integers A1, A2, ..., AN denoting the elements of the array.
 //    Output:
 //    Print the maximum sum of the contiguous sub-array in a separate line for each test case.
 //    Constraints:
@@ -411,14 +413,268 @@ int main() {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------
 #if 0
 #include <iostream>
+#include <vector>
+#include <algorithm>
 using namespace std;
 
-int main() {
-    //code
+vector<int> input_array(size_t num_elements)
+{
+    vector<int> a(num_elements, 0);
+    for (size_t i = 0; i < num_elements; ++i) {
+        cin >> a[i];
+    }
+    return a;
+}
+
+int max_subarray_sum(const vector<int>& a)
+{
+    if (!a.size())
+        return 0;
+    int max_ending_here = a[0];
+    int max_total = a[0];
+    for (size_t i = 1; i < a.size(); ++i) {
+        max_ending_here = max(a[i], a[i] + max_ending_here);
+        max_total = max(max_total, max_ending_here);
+    }
+    return max_total;
+}
+
+int main()
+{
+    size_t T = 0;
+    cin >> T;
+    for (size_t t = 0; t < T; ++t) {
+        size_t N = 0;
+        cin >> N;
+        vector<int> a = input_array(N);
+        cout << max_subarray_sum(a) << endl;
+    }
     return 0;
 }
 #endif
 
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+// 0 - 1 Knapsack Problem
+//    You are given weights and values of N items, put these items in a knapsack of capacity W to get the maximum total value in the knapsack.
+//    Note that we have only one quantity of each item, In other words, given two integer arrays val[0..N-1] and wt[0..N-1] which represent values and
+//    weights associated with N items respectively. Also given an integer W which represents knapsack capacity,
+//    find out the maximum value subset of val[] such that sum of the weights of this subset is smaller than or equal to W.
+//    You cannot break an item, either pick the complete item, or don’t pick it (0-1 property).
+//    Input:
+//    The first line of input contains an integer T denoting the number of test cases. Then T test cases follow. Each test case consists of four lines.
+//    The first line consists of N the number of items. The second line consists of W, the maximum capacity of the knapsack. In the next  line are N space
+//    separated positive integers denoting the values of the N items and in the fourth line are N space separated positive integers denoting the weights of the
+//    corresponding items.
+//    Output:
+//    Print the maximum possible value you can get with the given conditions that you can obtain for each test case in a new line.
+//    Constraints:
+//    1≤T≤100
+//    1≤N≤100
+//    1≤W≤100
+//    1≤wt[i]≤100
+//    1≤v[i]≤100
+//    Example:
+//    Input:
+//    1
+//    3
+//    4
+//    1 2 3
+//    4 5 1
+//    Output:
+//    3
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int knapsack01(size_t n_items, int target_weight, const vector<int>& wt, const vector<int>& v, vector<int>& result_items)
+{
+    vector<vector<int>> dp(n_items + 1, vector<int>(target_weight + 1));
+    for (size_t i = 1; i <= n_items; ++i) {
+        for (size_t w = 1; w <= target_weight; ++w) {
+            if (wt[i-1] <= w) {
+                dp[i][w] = max(dp[i-1][w], dp[i-1][w-wt[i-1]] + v[i-1]);
+            }
+            else {
+                dp[i][w] = dp[i-1][w];
+            }
+        }
+    }
+    return dp[n_items][target_weight];
+}
+
+int main() {
+    size_t n_tests = 0;
+    cin >> n_tests;
+    for (size_t t = 0; t < n_tests; ++t) {
+        size_t n_items = 0;
+        int W = 0;
+        cin >> n_items >> W;
+        vector<int> values(n_items);
+        for (size_t i = 0; i < n_items; ++i) {
+            cin >> values[i];
+        }
+        vector<int> weights(n_items);
+        for (size_t i = 0; i < n_items; ++i) {
+            cin >> weights[i];
+        }
+
+        vector<int> result_items;
+        int optimal_weight = knapsack01(n_items, W, weights, values, result_items);
+        cout << optimal_weight << endl;
+    }
+    return 0;
+}
+#endif
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+// Egg Dropping Puzzle
+//    The following is a description of the instance of this famous puzzle involving n=2 eggs and a building with k=36 floors.
+//    Suppose that we wish to know which stories in a 36-story building are safe to drop eggs from, and which will cause the eggs to break on landing.
+//    We make a few assumptions:
+//    …..An egg that survives a fall can be used again.
+//    …..A broken egg must be discarded.
+//    …..The effect of a fall is the same for all eggs.
+//    …..If an egg breaks when dropped, then it would break if dropped from a higher floor.
+//    …..If an egg survives a fall then it would survive a shorter fall.
+//    …..It is not ruled out that the first-floor windows break eggs, nor is it ruled out that the 36th-floor do not cause an egg to break.
+//    In this problem you have to find minimum trials to solve for n eggs and k floors.
+//    For more description on this problem see wiki page
+//    Input:
+//    The first line contains an integer T, depicting total number of test cases.
+//    Then following T lines contains 2 integers n and k.
+//    Output:
+//    Print the minimum trials required to solve the problem.
+//    Constraints:
+//    1<=T<=30
+//    1<=n<=10
+//    1<=k<=50
+//    Example:
+//    Input:
+//    1
+//    2 10
+//    Output:
+//    4
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+//  Geeks for Geeks original submission
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <vector>
+#include <limits>
+using namespace std;
+
+int min_egg_dropping(int n_eggs, int n_floors)
+{
+    if (n_floors == 1 || n_floors == 0)
+        return n_floors;
+    if (n_eggs == 0)
+        return 0;
+    if (n_eggs == 1)
+        return n_floors;
+
+//    cout << "floors: " << n_floors << ", eggs: " << n_eggs << endl;
+
+    vector<vector<int>> dp(n_eggs+1, vector<int>(n_floors+1));
+    for (size_t i = 1; i <= n_eggs; ++i)
+        dp[i][1] = 1;
+    for (size_t j = 1; j <= n_floors; ++j)
+        dp[1][j] = j;
+
+    for (size_t i = 2; i <= n_eggs; ++i) {
+        for (size_t j = 2; j <= n_floors; ++j) {
+            int min_of_max = numeric_limits<int>::max();
+            for (size_t x = 1; x <= j; ++x) {
+                min_of_max = min(min_of_max, max(dp[i][j-x], dp[i-1][x-1]) + 1);
+//                cout << "i: " << i << ", j: " << j << ", x: " << x << ", min_of_max: " << min_of_max << endl;
+            }
+            dp[i][j] = min_of_max;
+        }
+    }
+
+    return dp[n_eggs][n_floors];
+}
+
+int main() {
+    size_t n_tests = 0;
+    cin >> n_tests;
+    for (size_t t = 0; t < n_tests; ++t) {
+        int n_floors = 0, n_eggs = 0;
+        cin >> n_eggs >> n_floors;
+        cout << min_egg_dropping(n_eggs, n_floors) << endl;
+    }
+    return 0;
+}
+#endif
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+//  Geeks for Geeks original submission + solution reconstruction
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+#include <iostream>
+#include <vector>
+#include <limits>
+using namespace std;
+
+namespace
+{
+    struct dp_node
+    {
+        int dp_value_ = 0;
+        size_t optimal_solution_ = 0;
+    };
+}
+
+int min_egg_dropping(int n_eggs, int n_floors, vector<size_t>& optimal_solution)
+{
+    if (n_floors == 1 || n_floors == 0)
+        return n_floors;
+    if (n_eggs == 0)
+        return 0;
+    if (n_eggs == 1)
+        return n_floors;
+
+//    cout << "floors: " << n_floors << ", eggs: " << n_eggs << endl;
+
+    vector<vector<dp_node>> dp(n_eggs+1, vector<dp_node>(n_floors+1));
+    for (size_t i = 1; i <= n_eggs; ++i)
+        dp[i][1].dp_value_ = 1;
+    for (size_t j = 1; j <= n_floors; ++j)
+        dp[1][j].dp_value_ = j;
+
+    for (size_t i = 2; i <= n_eggs; ++i) {
+        for (size_t j = 2; j <= n_floors; ++j) {
+            int min_of_max = numeric_limits<int>::max();
+            for (size_t x = 1; x <= j; ++x) {
+                size_t max_val = max(dp[i][j-x].dp_value_, dp[i-1][x-1].dp_value_) + 1;
+                if (max_val < min_of_max) {
+                    min_of_max = max_val;
+                    dp[i][j].optimal_solution_ = x;
+                }
+//                cout << "i: " << i << ", j: " << j << ", x: " << x << ", min_of_max: " << min_of_max << endl;
+            }
+            dp[i][j].dp_value_ = min_of_max;
+        }
+    }
+
+    // reconstruct optimal solution
+
+
+    return dp[n_eggs][n_floors].dp_value_;
+}
+
+int main() {
+    size_t n_tests = 0;
+    cin >> n_tests;
+    for (size_t t = 0; t < n_tests; ++t) {
+        int n_floors = 0, n_eggs = 0;
+        cin >> n_eggs >> n_floors;
+        cout << min_egg_dropping(n_eggs, n_floors) << endl;
+    }
+    return 0;
+}
 
 // -------------------------------------------------------------------------------------------------------
 // Greedy
@@ -619,3 +875,4 @@ int main() {
     return 0;
 }
 #endif
+
