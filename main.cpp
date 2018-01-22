@@ -616,6 +616,7 @@ int main() {
 #include <iostream>
 #include <vector>
 #include <limits>
+#include <algorithm>
 using namespace std;
 
 namespace
@@ -653,14 +654,18 @@ int min_egg_dropping(int n_eggs, int n_floors, vector<size_t>& optimal_solution)
                     min_of_max = max_val;
                     dp[i][j].optimal_solution_ = x;
                 }
-//                cout << "i: " << i << ", j: " << j << ", x: " << x << ", min_of_max: " << min_of_max << endl;
             }
             dp[i][j].dp_value_ = min_of_max;
         }
     }
 
     // reconstruct optimal solution
-
+    size_t optimal_floor = n_floors;
+    for (size_t egg = n_eggs; egg > 0; --egg) {
+        optimal_solution.push_back(dp[egg][optimal_floor].optimal_solution_);
+        optimal_floor = dp[egg][optimal_floor].optimal_solution_;
+    }
+    reverse(optimal_solution.begin(), optimal_solution.end());
 
     return dp[n_eggs][n_floors].dp_value_;
 }
@@ -671,7 +676,12 @@ int main() {
     for (size_t t = 0; t < n_tests; ++t) {
         int n_floors = 0, n_eggs = 0;
         cin >> n_eggs >> n_floors;
-        cout << min_egg_dropping(n_eggs, n_floors) << endl;
+        vector<size_t> optimal_solution;
+        cout << min_egg_dropping(n_eggs, n_floors, optimal_solution) << endl;
+        cout << "optimal solution:\n";
+        for (auto s: optimal_solution)
+            cout << s << " ";
+        cout << endl;
     }
     return 0;
 }
