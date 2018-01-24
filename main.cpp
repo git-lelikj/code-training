@@ -613,6 +613,7 @@ int main() {
 // -------------------------------------------------------------------------------------------------------------------------------------------------------
 //  Geeks for Geeks original submission + solution reconstruction
 // -------------------------------------------------------------------------------------------------------------------------------------------------------
+#if 0
 #include <iostream>
 #include <vector>
 #include <limits>
@@ -683,6 +684,118 @@ int main() {
             cout << s << " ";
         cout << endl;
     }
+    return 0;
+}
+#endif
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+// Weighted Job Scheduling
+//    Given N jobs where every job is represented by following three elements of it.
+//    Start Time
+//    Finish Time
+//    Profit or Value Associated
+//    Find the maximum profit subset of jobs such that no two jobs in the subset overlap.
+//    Example:
+//    Input: Number of Jobs n = 4
+//           Job Details {Start Time, Finish Time, Profit}
+//           Job 1:  {1, 2, 50}
+//           Job 2:  {3, 5, 20}
+//           Job 3:  {6, 19, 100}
+//           Job 4:  {2, 100, 200}
+//    Output: The maximum profit is 250.
+//    We can get the maximum profit by scheduling jobs 1 and 4.
+//    Note that there is longer schedules possible Jobs 1, 2 and 3
+//    but the profit with this schedule is 20+50+100 which is less than 250
+// -------------------------------------------------------------------------------------------------------------------------------------------------------
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cassert>
+using namespace std;
+
+namespace
+{
+    struct Job
+    {
+        int start_ = 0;
+        int finish_ = 0;
+        int profit_ = 0;
+    };
+}
+
+istream& operator>>(istream& is, Job& job)
+{
+    is >> job.start_ >> job.finish_ >> job.profit_;
+    return is;
+}
+
+ostream& operator<<(ostream& os, const Job& job)
+{
+    os << job.start_ << "," << job.finish_ << "," << job.profit_;
+    return os;
+}
+
+ostream& operator<<(ostream& os, const vector<Job>& jobs)
+{
+    for (auto j: jobs) {
+        os << j << endl;
+    }
+    return os;
+}
+
+vector<Job> input_jobs(size_t n_jobs)
+{
+    vector <Job> result;
+    for (size_t i = 0; i < n_jobs; ++i) {
+        Job job;
+        cin >> job;
+        result.push_back(job);
+    }
+    return result;
+}
+
+int find_first_not_overlapped(const vector<Job>& jobs, size_t i)
+{
+    if (i <= 0)
+        return -1;
+    if (i >= jobs.size())
+        return jobs.size() - 1;
+    for (int j = i - 1; j >= 0; --j) {
+        if (jobs[j].finish_ <= jobs[i].start_)
+            return j;
+    }
+    return -1;
+}
+
+int max_wjs_profit(vector<Job> jobs)
+{
+    size_t n_jobs = jobs.size();
+    if (n_jobs == 0)
+        return 0;
+    if (n_jobs == 1)
+        return jobs[0].profit_;
+    // sort jobs acc.to finish time
+    sort(jobs.begin(), jobs.end(),
+         [](const Job& l, const Job& r) { return l.finish_ < r.finish_; }
+    );
+    vector<int> dp_solutions(n_jobs);
+    dp_solutions[0] = jobs[0].profit_;
+    for (int i = 1; i < n_jobs; ++i) {
+        int j = find_first_not_overlapped(jobs, i);
+        assert(j >= -1 && j < i);
+        dp_solutions[i] = max(dp_solutions[i-1], ( (j == -1) ? jobs[i].profit_ : dp_solutions[j] + jobs[i].profit_ ));
+//        cout << "i: " << i << ", first not over: " << j << ", dp[i]: " << dp_solutions[i] <<  endl;
+    }
+    return dp_solutions[n_jobs-1];
+}
+
+int main() {
+
+    size_t n_jobs = 0;
+    cin >> n_jobs;
+    vector<Job> jobs = input_jobs(n_jobs);
+    cout << "max wjs profit: " << max_wjs_profit(jobs) << endl;
+
     return 0;
 }
 
