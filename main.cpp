@@ -707,6 +707,7 @@ int main() {
 //    Note that there is longer schedules possible Jobs 1, 2 and 3
 //    but the profit with this schedule is 20+50+100 which is less than 250
 // -------------------------------------------------------------------------------------------------------------------------------------------------------
+#if 0
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -798,7 +799,7 @@ int main() {
 
     return 0;
 }
-
+#endif
 // -------------------------------------------------------------------------------------------------------
 // Greedy
 // -------------------------------------------------------------------------------------------------------
@@ -999,3 +1000,109 @@ int main() {
 }
 #endif
 
+// -------------------------------------------------------------------------------------------------------
+// Hashing
+// -------------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------------
+// Print a Binary Tree in Vertical Order
+//    Given a binary tree, your task is to complete the function verticalOrder which takes one argument the root of the binary tree and
+//    prints the node of the binary tree in vertical order .
+//              1
+//           /     \
+//         2       3
+//       /        /
+//    4       5
+//    The nodes of the above tree printed in vertical order will be
+//    4
+//    2
+//    1 5
+//    3
+//    Your output should be 4 $2 $1 5 $3 $
+//    Note: Each vertical line will be separated by a "$" without quotes.
+//    Input:
+//    The task is to complete the method which takes one argument, root of Binary Tree. There are multiple test cases. For each test case, this method will be called individually.
+//    Output:
+//    The function should print nodes in vertical order where  each vertical line is separated by a "$" without quotes.
+//    Constraints:
+//    1 <=T<= 30
+//    1 <= Number of nodes<= 20
+//    Example:
+//    Input:
+//    2
+//    2
+//    1 2 R 1 3 L
+//    4
+//    10 20 L 10 30 R 20 40 L 20 60 R
+//    Output:
+//    3 $1 $2 $
+//    40 $20 $10 60 $30 $
+// -------------------------------------------------------------------------------------------------------
+/*
+Please note that it's Function problem i.e.
+you need to write your solution in the form of Function(s) only.
+Driver Code to call/invoke your function would be added by GfG's Online Judge.*/
+
+#include <iostream>
+#include <map>
+
+using namespace std;
+
+/* A binary tree node has data, pointer to left child
+   and a pointer to right child */
+struct Node
+{
+    int data;
+    Node* left;
+    Node* right;
+};
+/* Should print vertical order such that each vertical line
+   is separated by $ */
+
+using Vertical_tree = multimap<int, int>;
+
+void verticalOrder_impl(Node* node, Vertical_tree& vt, int cur_level)
+{
+    vt.insert({cur_level, node->data});
+    if (node->left)
+        verticalOrder_impl(node->left, vt, cur_level-1);
+    if (node->right)
+        verticalOrder_impl(node->right, vt, cur_level+1);
+}
+
+void verticalOrder(Node *root)
+{
+    if (root == nullptr)
+        return;
+    Vertical_tree vt;
+    verticalOrder_impl(root, vt, 0);
+    for (auto it = vt.begin(), prev_it = it; it != vt.end(); ++it) {
+        if (prev_it->first != it->first) {
+            cout << "$";
+            prev_it = it;
+        }
+        cout << it->second << " ";
+    }
+    cout << "$";
+}
+
+int main()
+{
+    Node* root = new Node;
+    root->data = 1;
+    Node* left = new Node;
+    left->data = 2;
+    Node* right = new Node;
+    right->data = 3;
+    root->left = left;
+    root->right = right;
+    Node* left_left = new Node;
+    left_left->data = 4;
+    left->left = left_left;
+    Node* right_left = new Node;
+    right_left->data = 5;
+    right->left = right_left;
+
+    verticalOrder(root);
+
+    return 0;
+}
