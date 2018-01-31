@@ -1041,7 +1041,7 @@ int main() {
 Please note that it's Function problem i.e.
 you need to write your solution in the form of Function(s) only.
 Driver Code to call/invoke your function would be added by GfG's Online Judge.*/
-
+#if 0
 #include <iostream>
 #include <map>
 
@@ -1104,5 +1104,86 @@ int main()
 
     verticalOrder(root);
 
+    return 0;
+}
+#endif
+
+// -------------------------------------------------------------------------------------------------------
+// Array Subset of another array
+// -------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <vector>
+#include <unordered_set>
+
+using namespace std;
+
+vector<int> input_array(size_t n)
+{
+    vector<int> in_array;
+    for (size_t i = 0; i < n; ++i) {
+        int elem = 0;
+        cin >> elem;
+        in_array.push_back(elem);
+    }
+    return in_array;
+}
+
+bool is_subset(const vector<int>& arr_1, const vector<int>& arr_2)
+{
+    unordered_set<int> hash(arr_1.begin(), arr_1.end());
+    for (auto elem: arr_2) {
+        if (hash.find(elem) == hash.end())
+            return false;
+    }
+    return true;
+}
+
+int main()
+{
+    size_t T = 0;
+    cin >> T;
+    for (size_t t = 0; t < T; ++t) {
+        size_t n_1 = 0, n_2 = 0;
+        cin >> n_1 >> n_2;
+        vector<int> arr_1 = input_array(n_1);
+        vector<int> arr_2 = input_array(n_2);
+        cout << ( is_subset(arr_1, arr_2) ? "Yes\n" : "No\n" );
+    }
+}
+#endif
+
+// -------------------------------------------------------------------------------------------------------
+// Find Itinerary from a given list of tickets
+// -------------------------------------------------------------------------------------------------------
+
+#include <iostream>
+#include <string>
+#include <unordered_map>
+
+using namespace std;
+
+unordered_map<string, string> input_tickets(size_t n_tickets)
+{
+    unordered_map<string, string> tickets;
+    for (size_t i = 0; i < n_tickets; ++i) {
+        string src, dest;
+        cin >> src >> dest;
+        tickets.insert({src, dest});
+    }
+    return tickets;
+}
+
+void print_itinerary(const unordered_map<string, string>& tickets)
+{
+
+}
+
+int main()
+{
+    size_t n_tickets = 0;
+    cin >> n_tickets;
+    unordered_map<string, string> tickets = input_tickets(n_tickets);
+    print_itinerary(tickets);
     return 0;
 }
