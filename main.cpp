@@ -1156,10 +1156,11 @@ int main()
 // -------------------------------------------------------------------------------------------------------
 // Find Itinerary from a given list of tickets
 // -------------------------------------------------------------------------------------------------------
-
+#if 0
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 
 using namespace std;
 
@@ -1176,7 +1177,24 @@ unordered_map<string, string> input_tickets(size_t n_tickets)
 
 void print_itinerary(const unordered_map<string, string>& tickets)
 {
-
+    // build hash of destinations
+    unordered_set<string> destinations;
+    for (auto ticket: tickets) {
+        destinations.insert(ticket.second);
+    }
+    // find itinerary start: first source not present in destinations
+    auto it = tickets.begin();
+    for (; it != tickets.end(); ++it) {
+        if (destinations.find(it->first) == destinations.end())
+            break;
+    }
+    if (it == tickets.end())
+        cout << "Error: loop in itinerary?\n";
+    for (; it != tickets.end();) {
+        cout << it->first << "->" << it->second << ", ";
+        it = tickets.find(it->second);
+    }
+    cout << endl;
 }
 
 int main()
@@ -1185,5 +1203,104 @@ int main()
     cin >> n_tickets;
     unordered_map<string, string> tickets = input_tickets(n_tickets);
     print_itinerary(tickets);
+    return 0;
+}
+#endif
+
+// -------------------------------------------------------------------------------------------------------
+// Clone a Binary Tree
+// -------------------------------------------------------------------------------------------------------
+/*
+Please note that it's Function problem i.e.
+you need to write your solution in the form of Function(s) only.
+Driver Code to call/invoke your function would be added by GfG's Online Judge.*/
+
+#include <iostream>
+#include <unordered_map>
+
+using namespace std;
+
+/* A binary tree node has data, pointer to left child
+   and a pointer to right child
+   */
+struct Node
+{
+    int data;
+    Node* left;
+    Node* right;
+    Node *random;
+};
+
+Node* create_node(int data)
+{
+    Node* node = new Node;
+    node->data = data;
+    node->left = nullptr;
+    node->right = nullptr;
+    node->random = nullptr;
+}
+
+using Hash_nodes = unordered_map<int, Node*>;
+
+ostream& operator<<(ostream& os, const Hash_nodes& hash)
+{
+    for (auto entry: hash) {
+        cout << dec << entry.first << "->0x" << hex << (std::uint64_t)entry.second << endl;
+    }
+    return os;
+}
+
+void clone_impl(Node* src, Node*& dst, Hash_nodes& hash_nodes)
+{
+    if (src==nullptr)
+        return;
+    dst = create_node(src->data);
+    hash_nodes.insert({dst->data, dst});
+    clone_impl(src->left, dst->left, hash_nodes);
+    clone_impl(src->right, dst->right, hash_nodes);
+}
+
+void random_ptr_impl(Node* src, Node* dst, const Hash_nodes& hash_nodes)
+{
+    if ((src == nullptr) || (dst == nullptr))
+        return;
+    if (src->random != nullptr) {
+        auto it = hash_nodes.find(src->random->data);
+        if (it != hash_nodes.end()) {
+            dst->random = it->second;
+        }
+    }
+    random_ptr_impl(src->left, dst->left, hash_nodes);
+    random_ptr_impl(src->right, dst->right, hash_nodes);
+}
+
+/* The function should clone the passed tree and return
+   root of the cloned tree */
+Node* cloneTree(Node* tree)
+{
+    Hash_nodes hash_nodes;
+    Node* clone_root = nullptr;
+    // clone the tree, dont process random pointers, populate hash data->Node*
+    clone_impl(tree, clone_root, hash_nodes);
+    // populate random node pointers based on hash
+    random_ptr_impl(tree, clone_root, hash_nodes);
+}
+
+int main()
+{
+    Node* root = create_node(1);
+    Node* l = create_node(2);
+    Node* r = create_node(3);
+    Node* ll = create_node(4);
+    Node* lr = create_node(5);
+    Node* rr = create_node(6);
+    l->left = ll;
+    l->right = lr;
+    r->right = rr;
+    root->left = l;
+    root->right = r;
+
+    Node* clone = cloneTree(root);
+
     return 0;
 }
