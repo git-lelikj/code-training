@@ -145,6 +145,9 @@ int main(int argc, char *argv[])
 #include <condition_variable>
 #include <future>
 #include <string>
+#include <chrono>
+#include <utility>
+#include <tuple>
 
 using namespace std;
 
@@ -185,7 +188,8 @@ namespace
     class Active_object
     {
     public:
-        using Activation_queue = Concurrent_queue<function<void()>>;
+        using Method_request = function<void()>;
+        using Activation_queue = Concurrent_queue<Method_request>;
 
         thread activate()
         {
@@ -198,28 +202,55 @@ namespace
             activation_q_.enqueue([this]{ done = true; });
         }
 
+        void send(Method_request mr)
+        {
+            activation_q_.enqueue(mr);
+        }
+        template <typename F, typename... Args>
+        void concurrent_call(F f, Args... args)
+        {
+#if 0 // supported starting from gcc 4.9
+            auto mr = [=]{ f(args...); };
+            activation_q_.enqueue(mr);
+#endif
+//            auto t = make_tuple(args...);
+            auto mr = [f, t = make_tuple(args...)]{ };
+        }
+    private:
+        Activation_queue activation_q_;
+        bool done = false;
+    };
+
+    class Concrete: public Active_object
+    {
+    public:
         void interface_f(int a, string b, double c)
         {
-            activation_q_.enqueue([=]{ interface_f_impl(a, b, c); });
+            this->send([=]{ interface_f_impl(a, b, c); });
+#if 0
+            this->concurrent_call(interface_f_impl, a, b, c);
+#endif
+
         }
 
     protected:
         void interface_f_impl(int a, string b, double c)
         {
-            cout << "impl: " << a << b << c << endl;
+            cout << "impl: thread: " << this_thread::get_id() << ", prms: " << a << "," << b << "," << c << endl;
         }
-
-    private:
-        Activation_queue activation_q_;
-        bool done = false;
-
     };
 }
 
 int main(int argc, char *argv[])
 {
-    Active_object ao;
+    cout << "main thread: " << this_thread::get_id() << ", starting ao...\n";
+    Concrete ao;
     thread t = ao.activate();
+
+    ao.interface_f(5, "major Tom", 3.14);
+    this_thread::sleep_for(chrono::milliseconds(3000));
+    ao.stop();
+
     t.join();
 
     return 0;
