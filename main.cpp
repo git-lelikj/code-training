@@ -138,6 +138,7 @@ int main(int argc, char *argv[])
 // --------------------------------------------------------------------------------------------------------------------------
 // Active Object: draft
 // --------------------------------------------------------------------------------------------------------------------------
+#if 0
 #include <iostream>
 #include <thread>
 #include <queue>
@@ -148,6 +149,7 @@ int main(int argc, char *argv[])
 #include <chrono>
 #include <utility>
 #include <tuple>
+#include <exception>
 
 using namespace std;
 
@@ -171,11 +173,11 @@ namespace
         }
 
         //  push an element to the back of the queue.
-        void enqueue(const T& item)
+        void enqueue(T item)
         {
             {
                 lock_guard<mutex> l(mutex_);
-                queue_.push(item);
+                queue_.push(move(item));
             }
             not_empty_cond_.notify_one();
         }
@@ -191,15 +193,68 @@ namespace
         using Method_request = function<void()>;
         using Activation_queue = Concurrent_queue<Method_request>;
 
-        thread activate()
+        void activation_queue_loop()
         {
-            thread t([this]{ while(!done) { activation_q_.dequeue()(); } });
-            return t;
+            try {
+                // loop on activation queue, dequeue method request and invoke
+                while(!done) {
+                    activation_q_.dequeue()();
+                }
+                // set promise value to default, it is not used anyway,
+                // we only use promise for exception propagation to a main thread
+                promise_.set_value(0);
+            }
+            catch(const exception& e) {
+                // set promise exception, this way it is propagated to the main thread
+                promise_.set_exception(current_exception());
+            }
+            catch(...) {
+                // set promise exception, this way it is propagated to the main thread
+                promise_.set_exception(current_exception());
+            }
+        }
+
+        void start()
+        {
+            thread_ = move(thread([this](){ activation_queue_loop(); }));
+#if 0
+            thread_ = move(
+                thread(
+                [this]()
+                {
+                    try {
+                        while(!done) {
+                            activation_q_.dequeue()();
+                        }
+                        promise_.set_value/*_at_thread_exit*/(0);
+                        cout << "[active_object]: exited thread loop\n";
+                    }
+                    catch(const exception& e) {
+                        cout << "[active_object]: caught exception: " << e.what() << endl;
+                        promise_.set_exception(current_exception());
+                    }
+                    catch(...) {
+                        cout << "[active_object]: caught exception: unknown\n";
+                        promise_.set_exception(current_exception());
+                    }
+                }
+            ));
+#endif
         }
 
         void stop()
         {
             activation_q_.enqueue([this]{ done = true; });
+        }
+
+        int get_promise()
+        {
+            return future<int>(promise_.get_future()).get();
+        }
+
+        void wait()
+        {
+            thread_.join();
         }
 
         void send(Method_request mr)
@@ -217,8 +272,10 @@ namespace
             auto mr = [f, t = make_tuple(args...)]{ };
         }
     private:
+        thread thread_;
         Activation_queue activation_q_;
         bool done = false;
+        promise<int> promise_;
     };
 
     class Concrete: public Active_object
@@ -227,31 +284,246 @@ namespace
         void interface_f(int a, string b, double c)
         {
             this->send([=]{ interface_f_impl(a, b, c); });
-#if 0
-            this->concurrent_call(interface_f_impl, a, b, c);
-#endif
-
         }
 
     protected:
         void interface_f_impl(int a, string b, double c)
         {
             cout << "impl: thread: " << this_thread::get_id() << ", prms: " << a << "," << b << "," << c << endl;
+//            throw std::runtime_error("Alrightythen");
+        }
+    };
+
+    class Concrete2: public Active_object
+    {
+    public:
+        void interface_f(int a, string b, double c)
+        {
+            this->send([=]{ interface_f_impl(a, b, c); });
+        }
+
+    protected:
+        void interface_f_impl(int a, string b, double c)
+        {
+            cout << "impl: thread: " << this_thread::get_id() << ", prms: " << a << "," << b << "," << c << endl;
+//            throw std::runtime_error("Like a glove");
         }
     };
 }
 
 int main(int argc, char *argv[])
 {
-    cout << "main thread: " << this_thread::get_id() << ", starting ao...\n";
-    Concrete ao;
-    thread t = ao.activate();
+    Concrete ao1;
+    Concrete2 ao2;
+    try {
+        cout << "[main]: " << this_thread::get_id() << ", starting aos...\n";
+        ao1.start();
+        ao2.start();
 
-    ao.interface_f(5, "major Tom", 3.14);
-    this_thread::sleep_for(chrono::milliseconds(3000));
-    ao.stop();
+        ao1.interface_f(5, "Major Tom", 3.14);
+        ao2.interface_f(10, "Ace Ventura", 3.28);
+        this_thread::sleep_for(chrono::milliseconds(5000));
+        ao1.stop();
+        ao2.stop();
 
-    t.join();
+        cout << "[main]: thread 1 promise value: " << ao1.get_promise() << endl;
+        cout << "[main]: thread 2 promise value: " << ao2.get_promise() << endl;
+    }
+    catch (const exception& e) {
+        cout << "[main]: exception: " << e.what() << endl;
+    }
+    catch (...) {
+        cout << "[main]: unknown exception\n";
+    }
+    ao1.wait();
+    ao2.wait();
+
+    return 0;
+}
+#endif
+
+#include <iostream>
+#include <thread>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
+#include <future>
+#include <string>
+#include <chrono>
+#include <utility>
+#include <tuple>
+#include <exception>
+
+using namespace std;
+
+namespace
+{
+    template <typename T>
+    class Concurrent_queue
+    {
+    public:
+        // pop an element and return a copy. Block if queue empty.
+        T dequeue()
+        {
+            T t;
+            {
+                unique_lock<mutex> l(mutex_);
+                not_empty_cond_.wait(l, [this]{ return !queue_.empty(); });
+                t = queue_.front();
+                queue_.pop();
+            }
+            return t;
+        }
+
+        //  push an element to the back of the queue.
+        void enqueue(T item)
+        {
+            {
+                lock_guard<mutex> l(mutex_);
+                queue_.push(move(item));
+            }
+            not_empty_cond_.notify_one();
+        }
+    private:
+        queue<T> queue_;
+        mutable mutex mutex_;
+        mutable condition_variable not_empty_cond_;
+    };
+
+    class Active_object
+    {
+    public:
+        using Method_request = function<void()>;
+        using Activation_queue = Concurrent_queue<Method_request>;
+
+        ~Active_object()
+        {
+            if (thread_.joinable())
+                thread_.join();
+        }
+
+        void activation_queue_loop()
+        {
+            try {
+                // loop on activation queue, dequeue method request and invoke
+                while(!done) {
+                    activation_q_.dequeue()();
+                }
+                // set promise value to default, it is not used anyway,
+                // we only use promise for exception propagation to a main thread
+//                promise_.set_value(0);
+            }
+            catch(const exception& e) {
+                // set promise exception, this way it is propagated to the main thread
+                promise_.set_exception(current_exception());
+            }
+            catch(...) {
+                // set promise exception, this way it is propagated to the main thread
+                promise_.set_exception(current_exception());
+            }
+        }
+
+        void start()
+        {
+            thread_ = thread([this](){ activation_queue_loop(); });
+        }
+
+        void stop()
+        {
+            activation_q_.enqueue([this]{ cout << "[Active object]: stop-lambda\n"; done = true; });
+        }
+
+        int get_promise()
+        {
+            return future<int>(promise_.get_future()).get();
+        }
+
+        void wait()
+        {
+            if (thread_.joinable())
+                thread_.join();
+        }
+
+        void send(Method_request mr)
+        {
+            activation_q_.enqueue(mr);
+        }
+        template <typename F, typename... Args>
+        void concurrent_call(F f, Args... args)
+        {
+#if 0 // supported starting from gcc 4.9
+            auto mr = [=]{ f(args...); };
+            activation_q_.enqueue(mr);
+#endif
+//            auto t = make_tuple(args...);
+            auto mr = [f, t = make_tuple(args...)]{ };
+        }
+    private:
+        thread thread_;
+        Activation_queue activation_q_;
+        bool done = false;
+        promise<int> promise_;
+    };
+
+    class Concrete: public Active_object
+    {
+    public:
+        void interface_f(int a, string b, double c)
+        {
+            this->send([=]{ interface_f_impl(a, b, c); });
+        }
+
+    protected:
+        void interface_f_impl(int a, string b, double c)
+        {
+            cout << "impl: thread: " << this_thread::get_id() << ", prms: " << a << "," << b << "," << c << endl;
+//            throw std::runtime_error("Alrightythen");
+        }
+    };
+
+    class Concrete2: public Active_object
+    {
+    public:
+        void interface_f(int a, string b, double c)
+        {
+            this->send([=]{ interface_f_impl(a, b, c); });
+        }
+
+    protected:
+        void interface_f_impl(int a, string b, double c)
+        {
+            cout << "impl: thread: " << this_thread::get_id() << ", prms: " << a << "," << b << "," << c << endl;
+//            throw std::runtime_error("Like a glove");
+        }
+    };
+}
+
+int main(int argc, char *argv[])
+{
+    auto ao1 = make_shared<Concrete>();
+    auto ao2 = make_shared<Concrete2>();
+    try {
+        cout << "[main]: " << this_thread::get_id() << ", starting aos...\n";
+        ao1->start();
+        ao2->start();
+
+        ao1->interface_f(5, "Major Tom", 3.14);
+        ao2->interface_f(10, "Ace Ventura", 3.28);
+        this_thread::sleep_for(chrono::milliseconds(5000));
+        ao1->stop();
+        ao2->stop();
+
+//        cout << "[main]: thread 1 promise value: " << ao1.get_promise() << endl;
+//        cout << "[main]: thread 2 promise value: " << ao2.get_promise() << endl;
+    }
+    catch (const exception& e) {
+        cout << "[main]: exception: " << e.what() << endl;
+    }
+    catch (...) {
+        cout << "[main]: unknown exception\n";
+    }
+//    ao1->wait();
+//    ao2->wait();
 
     return 0;
 }
