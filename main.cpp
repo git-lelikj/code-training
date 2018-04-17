@@ -1606,7 +1606,7 @@ int main() {
 // ---------------------------------------------------------------------------------------------------------------------------------------
 //    Competitions::Code.cpp 3::Bit Array: XOR solution from discussions
 // ---------------------------------------------------------------------------------------------------------------------------------------
-
+#if 0
 #include <bits/stdc++.h>
 using namespace std;
 typedef unsigned long long Int;
@@ -1625,5 +1625,207 @@ int main() {
         a = b;
     }
     cout << cnt;
+    return 0;
+}
+#endif
+#if 0
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Competitions::Code.cpp Sept 2015::Classes and Objects
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <cassert>
+#include <array>
+#include <numeric>
+using namespace std;
+
+class Student
+{
+public:
+    constexpr static const size_t N_SCORES = 5;
+
+    void input()
+    {
+        for (auto& score: scores) {
+            cin >> score;
+        }
+    }
+
+    int calculateTotalScore()
+    {
+        return accumulate(scores.begin(), scores.end(), 0);
+    }
+
+private:
+    array<int, N_SCORES> scores;
+};
+
+int main() {
+    int n; // number of students
+    cin >> n;
+    Student *s = new Student[n]; // an array of n students
+
+    for(int i = 0; i < n; i++){
+        s[i].input();
+    }
+
+    // calculate kristen's score
+    int kristen_score = s[0].calculateTotalScore();
+    cout << kristen_score << " ";
+
+    // determine how many students scored higher than kristen
+    int count = 0;
+    for(int i = 1; i < n; i++){
+        int total = s[i].calculateTotalScore();
+        cout << total << " ";
+        if(total > kristen_score){
+            count++;
+        }
+    }
+    cout << endl;
+
+    // print result
+    cout << count << endl;
+
+    return 0;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Competitions::Code.cpp Sept 2015::C++ Class Templates
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <cassert>
+using namespace std;
+
+template<typename T>
+class AddElements
+{
+public:
+    AddElements(const T& e)
+        : element_(e)
+    {}
+
+    T add(const T& e)
+    {
+        element_ += e;
+        return element_;
+    }
+
+private:
+    T element_;
+};
+
+template<>
+class AddElements<string>
+{
+public:
+    AddElements(const string& s)
+        : element_(s)
+    {}
+
+    string concatenate(const string& s)
+    {
+        element_ += s;
+        return element_;
+    }
+
+private:
+    string element_;
+};
+
+int main () {
+  int n,i;
+  cin >> n;
+  for(i=0;i<n;i++) {
+    string type;
+    cin >> type;
+    if(type=="float") {
+        double element1,element2;
+        cin >> element1 >> element2;
+        AddElements<double> myfloat (element1);
+        cout << myfloat.add(element2) << endl;
+    }
+    else if(type == "int") {
+        int element1, element2;
+        cin >> element1 >> element2;
+        AddElements<int> myint (element1);
+        cout << myint.add(element2) << endl;
+    }
+    else if(type == "string") {
+        string element1, element2;
+        cin >> element1 >> element2;
+        AddElements<string> mystring (element1);
+        cout << mystring.concatenate(element2) << endl;
+    }
+  }
+  return 0;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Competitions::Code.cpp Sept 2015::Rectangle Area
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#include <iostream>
+
+using namespace std;
+
+class Rectangle
+{
+public:
+    virtual void display()
+    {
+        cout << width_ << " " << height_ << endl;
+    }
+
+protected:
+    int width_ = 0;
+    int height_ = 0;
+};
+
+class RectangleArea: public Rectangle
+{
+public:
+    void read_input()
+    {
+        cin >> width_ >> height_;
+    }
+
+    void display()
+    {
+        cout << width_ * height_ << endl;
+    }
+};
+
+int main()
+{
+    /*
+     * Declare a RectangleArea object
+     */
+    RectangleArea r_area;
+
+    /*
+     * Read the width and height
+     */
+    r_area.read_input();
+
+    /*
+     * Print the width and height
+     */
+    r_area.Rectangle::display();
+
+    /*
+     * Print the area
+     */
+    r_area.display();
+
     return 0;
 }
