@@ -18,9 +18,6 @@
 //    Output:
 //    Print the Max length of the subsequence in a separate line.
 //    Constraints:
-//    1 ≤ T ≤ 100
-//    1 ≤ N ≤ 1000
-//    0 ≤ A[i] ≤ 300
 //    Example:
 //    Input
 //    1
@@ -208,7 +205,6 @@ int main() {
 //    3
 //    2
 //    Explanation
-//    LCS for input Sequences “ABCDGH” and “AEDFHR” is “ADH” of length 3.
 //    LCS of "ABC" and "AC" is "AC" of length 2
 // -------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -329,7 +325,7 @@ int main() {
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------
 // Longest Repeating Subsequence
-//    Given a string str, find length of the longest repeating subseequence such that the two subsequence don’t have same string character at same position, i.e., any i’th character in the two subsequences shouldn’t have the same index in the original string.
+//    Given a string str, find length of the longest repeating subseequence such that the two subsequence dont have same string character at same position, i.e., any ith character in the two subsequences shouldnt have the same index in the original string.
 //    Input:
 //    The first line of input contains an integer T denoting the number of test cases. Then T test cases follow. The first line of each test case contains an integer N denoting the length of string str.
 //    The second line of each test case contains the string str consisting only of lower case english alphabets.
@@ -397,9 +393,6 @@ int main() {
 //    Output:
 //    Print the maximum sum of the contiguous sub-array in a separate line for each test case.
 //    Constraints:
-//    1 ≤ T ≤ 200
-//    1 ≤ N ≤ 1000
-//    -100 ≤ A[i] <= 100
 //    Example:
 //    Input
 //    2
@@ -459,7 +452,7 @@ int main()
 //    Note that we have only one quantity of each item, In other words, given two integer arrays val[0..N-1] and wt[0..N-1] which represent values and
 //    weights associated with N items respectively. Also given an integer W which represents knapsack capacity,
 //    find out the maximum value subset of val[] such that sum of the weights of this subset is smaller than or equal to W.
-//    You cannot break an item, either pick the complete item, or don’t pick it (0-1 property).
+//    You cannot break an item, either pick the complete item, or dont pick it (0-1 property).
 //    Input:
 //    The first line of input contains an integer T denoting the number of test cases. Then T test cases follow. Each test case consists of four lines.
 //    The first line consists of N the number of items. The second line consists of W, the maximum capacity of the knapsack. In the next  line are N space
@@ -468,11 +461,6 @@ int main()
 //    Output:
 //    Print the maximum possible value you can get with the given conditions that you can obtain for each test case in a new line.
 //    Constraints:
-//    1≤T≤100
-//    1≤N≤100
-//    1≤W≤100
-//    1≤wt[i]≤100
-//    1≤v[i]≤100
 //    Example:
 //    Input:
 //    1
@@ -533,12 +521,12 @@ int main() {
 //    The following is a description of the instance of this famous puzzle involving n=2 eggs and a building with k=36 floors.
 //    Suppose that we wish to know which stories in a 36-story building are safe to drop eggs from, and which will cause the eggs to break on landing.
 //    We make a few assumptions:
-//    …..An egg that survives a fall can be used again.
-//    …..A broken egg must be discarded.
-//    …..The effect of a fall is the same for all eggs.
-//    …..If an egg breaks when dropped, then it would break if dropped from a higher floor.
-//    …..If an egg survives a fall then it would survive a shorter fall.
-//    …..It is not ruled out that the first-floor windows break eggs, nor is it ruled out that the 36th-floor do not cause an egg to break.
+//    ..An egg that survives a fall can be used again.
+//    ..A broken egg must be discarded.
+//    ..The effect of a fall is the same for all eggs.
+//    ..If an egg breaks when dropped, then it would break if dropped from a higher floor.
+//    ..If an egg survives a fall then it would survive a shorter fall.
+//    ..It is not ruled out that the first-floor windows break eggs, nor is it ruled out that the 36th-floor do not cause an egg to break.
 //    In this problem you have to find minimum trials to solve for n eggs and k floors.
 //    For more description on this problem see wiki page
 //    Input:
@@ -813,9 +801,6 @@ int main() {
 //    Output:
 //    In each separate line print the order in which the meetings take place separated by a space.
 //    Constraints:
-//    1 ≤ T ≤ 70
-//    1 ≤ N ≤ 100
-//    1 ≤ S[ i ], F[ i ] ≤ 100000
 //    Example:
 //    Input:
 //    2
@@ -1352,3 +1337,47 @@ int main()
     cout << a[1+3] << "," << (1+3)[a] << endl;
 }
 #endif
+
+// -------------------------------------------------------------------------------------------------------
+// Anagram
+// -------------------------------------------------------------------------------------------------------
+#include <iostream>
+#include <string>
+#include <array>
+#include <algorithm>
+using namespace std;
+
+bool is_permutation(const string& s1, const string& s2)
+{
+    if (!s1.size() || !s2.size() || s1.size() != s2.size())
+        return false;
+    array<int, 255> char_count{};
+    for (auto one_char: s1)
+        ++char_count[static_cast<int>(one_char)];
+//    cout << "before\n";
+//    for (auto count: char_count) {
+//        cout << count;
+//    }
+//    cout << endl;
+    for (auto one_char: s2) {
+        if (--char_count[static_cast<int>(one_char)] < 0)
+            return false;
+    }
+//    cout << "after\n";
+//    for (auto count: char_count) {
+//        cout << count;
+//    }
+//    cout << endl;
+    return ( find_if(char_count.begin(), char_count.end(), [](int count){ return (count ? true : false); }) != char_count.end() ? false : true );
+}
+
+int main() {
+    size_t T = 0;
+    cin >> T;
+    for (size_t i = 0; i < T; ++i) {
+        string s1, s2;
+        cin >> s1 >> s2;
+        cout << (is_permutation(s1, s2) ? "YES" : "NO") << endl;
+    }
+	return 0;
+}
