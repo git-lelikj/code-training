@@ -37,6 +37,7 @@ Module.symvers
 /build
 *.user
 *.cpp.*
+*.out
 
 #
 # git files that we don't want to ignore even it they are dot-files

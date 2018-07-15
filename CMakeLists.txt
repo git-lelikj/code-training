@@ -7,3 +7,8 @@ set (EXTRA_CXXFLAGS "-std=c++11")
 
 # add extra flags to CFLAGS and CXXFLAGS
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_CXXFLAGS}")
+
+add_custom_target(headers SOURCES
+singleton.h
+class_factory.h
+)
