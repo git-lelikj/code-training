@@ -1,6 +1,8 @@
 #ifndef CLASS_FACTORY_H
 #define CLASS_FACTORY_H
 
+#include "singleton.h"
+
 namespace Common
 {
 
@@ -21,7 +23,7 @@ template <
     typename Base,
     typename Factory_function
 >
-class Factory
+class Factory: public Shared_singleton<Factory<Class_id,Base,Factory_function>>
 {
 public:
     bool register_class(Class_id clsid, Factory_function creator)
@@ -50,6 +52,8 @@ public:
 
 private:
     map<Class_id, Factory_function> associations_;
+
+    friend class Shared_singleton<Factory>;
 };
 
 }

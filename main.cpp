@@ -2,9 +2,14 @@
 #include <map>
 #include <memory>
 #include <functional>
+#include <thread>
+#include <chrono>
+#include <string>
+#include <cassert>
 #include "public.h"
 #include "singleton.h"
 #include "class_factory.h"
+#include "active_object.h"
 using namespace std;
 
 namespace Common
@@ -90,12 +95,63 @@ namespace Singleton_test
     };
 }
 
+namespace AO_test
+{
+    using namespace Common;
+    using Class_factory = Factory<CLSID_type, ICommon, std::function<std::shared_ptr<ICommon>(void)>>;
+
+    class IInterface: public ICommon
+    {
+        virtual void fl1(int i, double d, string s) = 0;
+    };
+
+    class IControl: public ICommon
+    {
+        virtual void init() = 0;
+    };
+
+    class Proxy:    public IInterface
+    {
+    public:
+        void init()
+        {
+            impl_ = Class_factory::get_instance()->create_object<IInterface>(CLSID_Class1);
+        }
+
+        void f1(int i, double d, string s)
+        {
+            assert(impl_!=nullptr);
+            impl_->
+        }
+
+    private:
+        shared_ptr<IInterface> impl_;
+    };
+
+    class Active:   public Active_object,
+                    public IControl,
+                    public IInterface
+    {
+    public:
+        void init()
+        {
+            this->start();
+        }
+
+        void f1(int i, double d, string s)
+        {
+            cout << "[Active::f1]: i: " << i << ", d: " << d << ", s: " << s << endl;
+        }
+    };
+}
+
 int main(int argc, char *argv[])
 {
     using namespace Common;
     using namespace Cls_factory_test;
     using namespace Singleton_test;
-
+    using namespace AO_test;
+#if 0
     cout << "[main]: class factory test =============================================\n";
     {
         Class_factory factory;
@@ -192,7 +248,24 @@ int main(int argc, char *argv[])
             i2->f1();
         }
     }
-
+#endif
+#if 0
+    cout << "[main]: active object test =============================================\n";
+    {
+        cout << "[main]: start AO test, main thread id: " << this_thread::get_id() << endl;
+        Active_object ao;
+        ao.start();
+        this_thread::sleep_for(chrono::seconds(5));
+        ao.send([](){ cout << "[mr]: called\n"; });
+        this_thread::sleep_for(chrono::seconds(10));
+        ao.stop();
+        ao.wait();
+    }
+#endif
+    cout << "[main]: active object test =============================================\n";
+    {
+        auto factory = Class_factory::get_instance();
+    }
     cout << "[main]: end\n";
     return 0;
 }
