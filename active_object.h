@@ -63,8 +63,6 @@ public:
 
     ~Active_object()
     {
-//        if (thread_.joinable())
-//            thread_.join();
     }
 
     void send(Method_request mr)

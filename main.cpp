@@ -100,49 +100,68 @@ namespace AO_test
     using namespace Common;
     using Class_factory = Factory<CLSID_type, ICommon, std::function<std::shared_ptr<ICommon>(void)>>;
 
-    class IInterface: public ICommon
-    {
-        virtual void fl1(int i, double d, string s) = 0;
-    };
-
-    class IControl: public ICommon
-    {
-        virtual void init() = 0;
-    };
-
-    class Proxy:    public IInterface
+    class IInterface: virtual public ICommon
     {
     public:
-        void init()
-        {
-            impl_ = Class_factory::get_instance()->create_object<IInterface>(CLSID_Class1);
-        }
+        virtual void f1(int i, double d, string s) = 0;
+    };
 
-        void f1(int i, double d, string s)
-        {
-            assert(impl_!=nullptr);
-            impl_->
-        }
-
-    private:
-        shared_ptr<IInterface> impl_;
+    class IControl: virtual public ICommon
+    {
+    public:
+        virtual void init() = 0;
+        virtual void start() = 0;
+        virtual void stop() = 0;
+        virtual void wait() = 0;
     };
 
     class Active:   public Active_object,
-                    public IControl,
                     public IInterface
     {
     public:
-        void init()
-        {
-            this->start();
-        }
-
         void f1(int i, double d, string s)
         {
             cout << "[Active::f1]: i: " << i << ", d: " << d << ", s: " << s << endl;
         }
     };
+
+    class Proxy:    public IInterface,
+                    public IControl
+    {
+    public:
+        void init()
+        {
+            impl_ = unique_ptr<Active>(new Active);
+            assert(impl_!=nullptr);
+        }
+        void start()
+        {
+            assert(impl_!=nullptr);
+            impl_->start();
+        }
+
+        void stop()
+        {
+            assert(impl_!=nullptr);
+            impl_->stop();
+        }
+
+        void wait()
+        {
+            assert(impl_!=nullptr);
+            impl_->wait();
+        }
+
+        void f1(int i, double d, string s)
+        {
+            assert(impl_!=nullptr);
+            impl_->send([=](){ this->impl_->f1(i, d, s); });
+        }
+
+    private:
+        unique_ptr<Active> impl_;
+    };
+
 }
 
 int main(int argc, char *argv[])
@@ -264,7 +283,25 @@ int main(int argc, char *argv[])
 #endif
     cout << "[main]: active object test =============================================\n";
     {
+        cout << "[main]: start AO test, main thread id: " << this_thread::get_id() << endl;
+
         auto factory = Class_factory::get_instance();
+        cout << (factory->register_class(CLSID_Class1, &create_shared<AO_test::Proxy, ICommon>) == false?"[main]: failed to register CLSID_Class1\n":"[main]: registered CLSID_Class1\n");
+
+        shared_ptr<AO_test::IInterface> i = factory->create_object<AO_test::IInterface>(CLSID_Class1);
+        shared_ptr<AO_test::IControl> ictrl = query_interface<AO_test::IControl>(i);
+
+        ictrl->init();
+        ictrl->start();
+
+        this_thread::sleep_for(chrono::seconds(5));
+        cout << "[main]: calling ao interface...\n";
+        i->f1(5, 3.14, "alrightythen");
+        this_thread::sleep_for(chrono::seconds(10));
+
+//        ictrl->stop();
+
+        ictrl->wait();
     }
     cout << "[main]: end\n";
     return 0;
