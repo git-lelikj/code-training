@@ -1303,7 +1303,7 @@ int main()
     return 0;
 }
 #endif
-
+#if 0
 #include <iostream>
 using namespace std;
 
@@ -1319,4 +1319,52 @@ int main(int argc, char** argv)
   std::cout << std::hex << x << std::endl;
 
   return 0;
+}
+#endif
+
+#include <iostream>
+using namespace std;
+
+template <typename T>
+class A
+{
+public:
+    A() {}
+    int get_5() { return 5; }
+    virtual int get_rand() { return 0; }
+    template <typename U>
+    virtual int virt_tmpl(U u) { return 0; }
+private:
+};
+
+template <typename T>
+class B: public A<T>
+{
+public:
+    B() {}
+    int get_rand() { return 1; }
+};
+
+int main(int argc, char** argv)
+{
+    const char* string_lit = "alrightythen";
+
+    cout << string_lit << endl;
+
+    A<int> a;
+    cout << a.get_5() << endl;
+    cout << a.get_rand() << endl;
+
+    B<int> b;
+    cout << b.get_5() << endl;
+    cout << b.get_rand() << endl;
+
+    A<int>& c = b;
+    cout << c.get_5() << endl;
+    cout << c.get_rand() << endl;
+
+    a.virt_tmpl("why not");
+
+
+    return 0;
 }
