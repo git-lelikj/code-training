@@ -1569,7 +1569,7 @@ int main(int argc, char** argv)
 // -------------------------------------------------------------------------------------------------------
 //  Brute force solution: start from beginning of the string
 // -------------------------------------------------------------------------------------------------------
-
+#if 0
 #include <iostream>
 #include <string>
 #include <vector>
@@ -1705,6 +1705,54 @@ int main(int argc, char** argv)
     }
 
     cout << endl;
+
+    return 0;
+}
+#endif
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+namespace brute_force
+{
+
+    u_int fibonacci(size_t n)
+    {
+        if (n <= 0)
+            return 0;
+        if (n == 1)
+            return 1;
+        return fibonacci(n-1) + fibonacci(n-2);
+    }
+
+}
+
+namespace dp
+{
+
+    u_int fibonacci(size_t n)
+    {
+        if (n == 0)
+            return 0;
+        if (n == 1)
+            return 1;
+        vector<u_int> dp(n+1, 0);
+        dp[1] = 1;
+        for (size_t i = 2; i <= n; ++i) {
+            dp[i] = dp[i-1] + dp[i-2];
+        }
+        return dp[n];
+    }
+
+}
+
+int main(int argc, char** argv)
+{
+    size_t n = (argc > 1 ? atoi(argv[1]) : 0);
+    using namespace dp;
+
+    cout << "Result: " << n << "-th fibonacci: " << fibonacci(n) << endl;
 
     return 0;
 }
