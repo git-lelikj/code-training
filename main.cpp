@@ -402,3 +402,66 @@ int main()
     cout << "Resulting LIS: " << res << endl;
 }
 #endif
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// LCS
+// ---------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+namespace brute_force
+{
+
+int lcs(const string& p, const string& q, int i, int j)
+{
+    if ((i < 0) || (j < 0))
+        return 0;
+    if (p[i] == q[j])
+        return lcs(p, q, i-1, j-1) + 1;
+    else {
+        return max(lcs(p, q, i-1, j), lcs(p, q, i, j-1));
+    }
+}
+
+}
+
+namespace dp
+{
+
+int lcs(const string& p, const string& q)
+{
+    int n = p.size(), m = q.size();
+    if (!n || !m)
+        return 0;
+    vector<vector<int>> dp(n+1, vector<int>(m+1, 0));
+    for (size_t i=0; i<=n; ++i)
+        dp[i][0] = 0;
+    for (size_t j=0; j<=m; ++j)
+        dp[0][j] = 0;
+    for (size_t i=1; i<=n; ++i)
+        for (size_t j=1; j<=m; ++j) {
+            if (p[i-1] == q[j-1])
+                dp[i][j] = dp[i-1][j-1] + 1;
+            else {
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+            }
+        }
+    return dp[n][m];
+}
+
+}
+
+int main()
+{
+    using namespace dp;
+    string p, q;
+    cin >> p >> q;
+    cout << "input: p,q: " << p << "," << q << endl;
+    int lcs_res = lcs(p, q);
+    cout << "lcs: " << lcs_res << endl;
+    return 0;
+}
+#endif
