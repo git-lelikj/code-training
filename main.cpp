@@ -465,3 +465,61 @@ int main()
     return 0;
 }
 #endif
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// Knapsack 0:1
+// ---------------------------------------------------------------------------------------------------------------------------
+
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+namespace brute_force
+{
+
+int knapsack01_impl(const vector<int>& val, const vector<int>& wt, int W, size_t n)
+{
+    if (n==0 || W<=0)
+        return 0;
+    if (wt[n-1] > W)
+        return knapsack01_impl(val, wt, W, n-1);
+    return max(knapsack01_impl(val, wt, W-wt[n-1], n-1)+val[n-1], knapsack01_impl(val, wt, W, n-1));
+}
+
+}
+
+namespace dp
+{
+
+int knapsack01_impl(const vector<int>& val, const vector<int>& wt, int W, size_t n)
+{
+    vector<vector<int>> dp(n, vector<int>(W, 0));
+}
+
+}
+
+int knapsack01(const vector<int>& val, const vector<int>& wt, int W)
+{
+    using namespace brute_force;
+    if (!val.size() || val.size()!=wt.size() || W<=0)
+        return 0;
+    return knapsack01_impl(val, wt, W, val.size());
+}
+
+int main()
+{
+    int N = 0;
+    cin >> N;
+    int W = 0;
+    cin >> W;
+    vector<int> val(N, 0);
+    vector<int> wt(N, 0);
+    for (size_t i=0; i<N; ++i)
+        cin >> val[i];
+    for (size_t i=0; i<N; ++i)
+        cin >> wt[i];
+    int res = knapsack01(val, wt, W);
+    cout << "knapsack 0:1 : " << res << endl;
+    return 0;
+}
