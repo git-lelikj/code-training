@@ -1,3 +1,7 @@
+// ---------------------------------------------------------------------------------------------------------------------------
+// Active Object, Singleton, Factory
+// ---------------------------------------------------------------------------------------------------------------------------
+#if 0
 #include <iostream>
 #include <map>
 #include <memory>
@@ -306,3 +310,95 @@ int main(int argc, char *argv[])
     cout << "[main]: end\n";
     return 0;
 }
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// LIS
+// ---------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <vector>
+using namespace std;
+
+namespace brute_force
+{
+//    struct Lis_rec
+//    {
+//        int val_;
+//        int lis_;
+//    };
+
+    int lis_impl(const vector<int>& v, int i, int j)
+    {
+        cout << "[lis_impl]: i,j: " << i << "," << j << endl;
+        if (j <= i)
+            return 1;
+        int lis = 0;
+        for (int k = j-1; k >= i; --k) {
+            if (v[k] < v[j])
+                lis = max(lis, lis_impl(v, i, k));
+        }
+        return ++lis;
+    }
+}
+
+namespace dp
+{
+    struct Lis_rec
+    {
+        int val_;
+        int lis_;
+    };
+
+    int lis_impl(const vector<int>& v)
+    {
+        if (v.size() <= 1)
+            return 1;
+        vector<Lis_rec> dp(v.size(), {0, 0});
+        size_t i = 0;
+        for (const auto& e: v)
+            dp[i++].val_ = e;
+//        cout << "[lis_impl]: dp: ";
+//        for (const auto& e: dp)
+//            cout << "[" << e.val_ << "," << e.lis_ << "] ";
+//        cout << endl;
+        dp[0].lis_ = 1;
+        int res_lis = 1;
+        for (size_t j = 1; j < v.size(); ++j) {
+            int lis = 1;
+            for (size_t k = 0; k < j; ++k) {
+                if (dp[j].val_ > dp[k].val_)
+                    lis = max(lis, dp[k].lis_ + 1);
+            }
+            dp[j].lis_ = lis;
+            res_lis = max(res_lis, lis);
+        }
+        cout << "[lis_impl]: dp: ";
+        for (const auto& e: dp)
+            cout << "[" << e.val_ << "," << e.lis_ << "] ";
+        cout << endl;
+        return res_lis;
+    }
+}
+
+int lis(const vector<int>& v)
+{
+    using namespace dp;
+    return lis_impl(v);
+}
+
+int main()
+{
+    int N = 0;
+    cin >> N;
+    vector<int> a(N, 0);
+    for (size_t i=0; i<N; ++i)
+        cin >> a[i];
+    cout << "input: ";
+    for (const auto& e: a)
+        cout << e << " ";
+    cout << endl;
+    int res = lis(a);
+    cout << "Resulting LIS: " << res << endl;
+}
+#endif
