@@ -494,14 +494,24 @@ namespace dp
 
 int knapsack01_impl(const vector<int>& val, const vector<int>& wt, int W, size_t n)
 {
-    vector<vector<int>> dp(n, vector<int>(W, 0));
+    vector<vector<int>> dp(W+1, vector<int>(n+1, 0));
+    for (size_t i=1; i<=W; ++i)
+        for (size_t j=1; j<=n; ++j) {
+            if (wt[j-1] > i) {
+                dp[i][j] = dp[i][j-1];
+            }
+            else {
+                dp[i][j] = max(dp[i-wt[j-1]][j-1] + val[j-1], dp[i][j-1]);
+            }
+        }
+    return dp[W][n];
 }
 
 }
 
 int knapsack01(const vector<int>& val, const vector<int>& wt, int W)
 {
-    using namespace brute_force;
+    using namespace dp;
     if (!val.size() || val.size()!=wt.size() || W<=0)
         return 0;
     return knapsack01_impl(val, wt, W, val.size());
