@@ -12,6 +12,7 @@ add_custom_target(headers SOURCES
 singleton.h
 class_factory.h
 active_object.h
+data_struct.h
 )
 
 find_library (PTHREAD_LIB pthread)
