@@ -469,7 +469,7 @@ int main()
 // ---------------------------------------------------------------------------------------------------------------------------
 // Knapsack 0:1
 // ---------------------------------------------------------------------------------------------------------------------------
-
+#if 0
 #include <iostream>
 #include <string>
 #include <vector>
@@ -533,3 +533,259 @@ int main()
     cout << "knapsack 0:1 : " << res << endl;
     return 0;
 }
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// Disjoint sets (Union-find)
+// ---------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include "data_struct.h"
+
+using namespace  std;
+using namespace Common;
+
+int main()
+{
+    Disjoint_sets ds(10);
+
+    map<int, size_t> set_count = ds.count_sets();
+    cout << "[main]: initial set counts:\n";
+    for (const auto& e: set_count) { cout << "[" << e.first << ":" << e.second << "] "; } cout << endl;
+
+    ds.union_elements(2, 3);
+    ds.union_elements(2, 4);
+    ds.union_elements(5, 7);
+    ds.union_elements(5, 8);
+    ds.union_elements(2, 5);
+    ds.union_elements(0, 1);
+    ds.union_elements(6, 9);
+    set_count = ds.count_sets();
+    cout << "[main]: after join:\n";
+    for (const auto& e: set_count) { cout << "[" << e.first << ":" << e.second << "] "; } cout << endl;
+
+    return 0;
+}
+#endif
+// ---------------------------------------------------------------------------------------------------------------------------
+// Disjoint sets (Union-find): Hackerrank: Nuclear Rods Problem
+// ---------------------------------------------------------------------------------------------------------------------------
+//    The recovery costs per sortie proportional to square root of number of fused rods recovered.
+//    Find the minimal cost to recover all the radioactive rods by completing
+//    the given function.
+//    The first parameter integer n specifies the number of rods. The second
+//    parameter pairs is an array of pairs of rods that are fused together. Each
+//    item in the array contains exactly two integers, P and Q separated by a
+//    space (" "), which means that the rod numbered P is fused to the rod
+//    numbered Q. *Note - Each item in the array is a string which needs to be
+//    parsed to P and Q
+//    Output
+//    2
+//    Constraints
+//    2 ≤ N ≤ 100,000
+//    1 ≤ P, Q ≤ N
+//    P ≠ Q
+//    Sample Input
+//    4
+//    2
+//    1 2
+//    1 4
+//    Sample Output
+//    3
+#if 0
+#include <iostream>
+#include <vector>
+#include <utility>
+#include <cmath>
+#include "data_struct.h"
+
+using namespace  std;
+using namespace Common;
+
+int main()
+{
+    int N = 0, P = 0;
+    cin >> N >> P;
+    vector<pair<int,int>> fused;
+    for (size_t i=0; i < P; ++i) {
+        pair<int,int> p;
+        cin >> p.first >> p.second;
+        fused.push_back(p);
+    }
+    Disjoint_sets ds(N);
+    for (const auto& f: fused) {
+        ds.union_elements(f.first-1, f.second-1);
+    }
+    map<int, size_t> set_count = ds.count_sets();
+    cout << "[main]: set counts after fuse:\n";
+    for (const auto& e: set_count) { cout << "[" << e.first << ":" << e.second << "] "; } cout << endl;
+    int costs = 0;
+    for (const auto& e: set_count) {
+        costs += ceil(sqrt(e.second));
+    }
+    cout << "[main]: min recovery costs: " << costs << endl;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// Disjoint sets (Union-find): Geeks: Find cycle in graph
+// ---------------------------------------------------------------------------------------------------------------------------
+
+//    Given a undirected graph  your task is to complete the method isCycle  to detect if there is a cycle in the undirected graph or not. You should not read any input from stdin/console.
+//    There are multiple test cases. For each test case, this method will be called individually.
+//    Input (only to be used for Expected Output):
+//    The first line of the input contains an integer 'T' denoting the number of test cases. Then 'T' test cases follow. Each test case consists of two lines.
+//    Description of  test cases is as follows:
+//    The First line of each test case contains two integers 'N' and 'M'  which denotes the no of vertices and no of edges respectively.
+//    The Second line of each test case contains 'M'  space separated pairs u and v denoting that there is a bidirectional  edge from u to v .
+
+//    Output:
+//    The method should return true if there is a cycle else it should return false.
+
+//    Constraints:
+//    1 <=T<= 100
+//    1<=N,M<=100
+//    0 <=u,v<= N-1
+
+//    Example:
+//    Input:
+//    2
+//    2 2
+//    0 1 0 0
+//    4 3
+//    0 1 1 2 2 3
+
+//    Output:
+//    1
+//    0
+#if 0
+#include <iostream>
+#include "data_struct.h"
+
+using namespace std;
+using namespace Common;
+
+int main()
+{
+    int N = 0, M = 0;
+    cin >> N >> M;
+    Disjoint_sets ds(N);
+    for (size_t i = 0; i < M; ++i) {
+        int u = 0, v = 0;
+        cin >> u >> v;
+        int parent_u = ds.find(u);
+        int parent_v = ds.find(v);
+        cout << "[main]: parent u:v: " << parent_u << ":" << parent_v << endl;
+        if (parent_u == parent_v) {
+            cout << "1\n";
+            return 0;
+        }
+        ds.union_elements(u, v);
+    }
+    cout << "0\n";
+
+    return 0;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// Hackerrank: Vaccination Problem
+// ---------------------------------------------------------------------------------------------------------------------------
+//    Vaccination Problem
+
+//    The world health organization wants to establish a total of B vaccination clinics across N cities to immunization people against fatal diseases.
+//    Every city must have at least 1 clinic, and a clinic can only vaccinate people in the same city where they live.
+//    The goal is to minimize the number of vaccination kits needed in the largest clinic. For example suppose you have.
+
+//    1.       2 cities and
+//    2.       7 clinics to be opened
+//    3.       200.000 is the population of first city
+//    4.       50,000 is the population of second city
+//    5.       Two clinics can open in the first city and
+//    6.       Five in the second. This way
+//    7.       100,000 people can be immunized in each of the two clinics in first city, and
+//    8.       100.000 people can be immunized in the each clinic in the second city
+//    9.       So the maximum number of people to be immunized in the largest clinic is 10,000
+
+//    Input:
+//    Two integers in the first line, N, the number of cities, and B, the total number of clinics to be opened
+//    Each of the following N lines contains an integer ai, the population of city i
+
+//    Output:
+//    One integer representing the maximum number of people to be immunized in any single clinic
+
+//    Constraints:
+//    1<=N<=500,000
+//    N<=B<=2,000,000
+//    1<=ai<=5,000,000
+
+//    Sample input:
+//    2 7
+//    200000
+//    500000
+
+//    Sample output:
+//    100000
+#if 0
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+struct Clinic_load
+{
+    int population_ = 0;
+    int load_ = 0;
+    int n_clinics_ = 0;
+
+    explicit Clinic_load(int p):
+        population_(p)
+    {}
+
+    void set_n_clinics(int n_clinics)
+    {
+        if (n_clinics <= 0)
+            return;
+        n_clinics_ = n_clinics;
+        load_ = ceil((double)population_ / (double)n_clinics);
+    }
+};
+
+int max_clinic_load(const vector<int>& populations, int n_clinics)
+{
+
+    if (populations.size() > n_clinics)
+        return 0;
+    auto pred = [](const Clinic_load& l, const Clinic_load& r){ return l.load_ < r.load_; };
+    priority_queue<Clinic_load, vector<Clinic_load>, decltype(pred)> load(pred);
+    // populate by 1:1 (city:clinic) load
+    for (const auto& p: populations) {
+        Clinic_load l(p);
+        l.set_n_clinics(1);
+        load.push(l);
+    }
+    // process the rest of unallocated clinics
+    for (size_t i = 0; i < (n_clinics - populations.size()); ++i) {
+        auto most_load = load.top();
+        load.pop();
+        most_load.set_n_clinics(most_load.n_clinics_+1);
+        load.push(most_load);
+    }
+    // return most loaded clinic
+    return (!load.empty() ? load.top().load_ : 0);
+}
+
+int main()
+{
+    int N = 0, B = 0;
+    cin >> N >> B;
+    vector<int> ai(N, 0);
+    for (size_t i = 0; i < N; ++i) {
+        cin >> ai[i];
+    }
+    cout << max_clinic_load(ai, B) << endl;
+    return 0;
+}
+#endif
