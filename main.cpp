@@ -1774,6 +1774,7 @@ int main () {
 // ---------------------------------------------------------------------------------------------------------------------------------------
 //    Competitions::Code.cpp Sept 2015::Rectangle Area
 // ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
 #include <iostream>
 
 using namespace std;
@@ -1828,4 +1829,282 @@ int main()
     r_area.display();
 
     return 0;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: 2D Array - DS
+
+//    Input Format
+//    Each of the  lines of inputs  contains  space-separated integers .
+//    Constraints
+//    Output Format
+//    Print the largest (maximum) hourglass sum found in .
+
+//    Sample Input
+//    1 1 1 0 0 0
+//    0 1 0 0 0 0
+//    1 1 1 0 0 0
+//    0 0 2 4 4 0
+//    0 0 0 2 0 0
+//    0 0 1 2 4 0
+
+//    Sample Output
+//    19
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+#include <limits>
+
+using namespace std;
+
+int hourglass(vector<vector<int>> arr, size_t i, size_t j) {
+    if ((i < 0) || (i > 3) || (j < 0) || (j > 3))
+        return -1;
+    return (
+        arr[i][j] + arr[i][j+1] + arr[i][j+2] +
+        arr[i+1][j+1] +
+        arr[i+2][j] + arr[i+2][j+1] + arr[i+2][j+2]
+    );
+}
+
+// Complete the hourglassSum function below.
+int hourglassSum(vector<vector<int>> arr) {
+    int max_sum = numeric_limits<int>::min();
+    for (size_t i = 0; i <= 3; ++i)
+        for (size_t j = 0; j <= 3; ++j) {
+            int sum = hourglass(arr, i, j);
+            max_sum = max(max_sum, sum);
+        }
+    return max_sum;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    vector<vector<int>> arr(6);
+    for (int i = 0; i < 6; i++) {
+        arr[i].resize(6);
+
+        for (int j = 0; j < 6; j++) {
+            cin >> arr[i][j];
+        }
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+    int result = hourglassSum(arr);
+
+    fout << result << "\n";
+
+    fout.close();
+
+    return 0;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Arrays: Left Rotation
+
+//    Sample Input
+//    5 4
+//    1 2 3 4 5
+
+//    Sample Output
+//    5 1 2 3 4
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+#if 0
+vector<int> rotLeft(vector<int> a) {
+    int top = a[0];
+    move(++a.begin(), a.end(), a.begin());
+    a[a.size()-1] = top;
+    return a;
+}
+
+// Complete the rotLeft function below.
+vector<int> rotLeft(vector<int> a, int d) {
+    if ((d <= 0) || (!a.size()) || (d == a.size()))
+        return a;
+    for (size_t i = 0; i < d; ++i)
+        a = rotLeft(a);
+    return a;
+}
+#endif
+
+// Complete the rotLeft function below.
+vector<int> rotLeft(vector<int> a, int d) {
+    if ((d <= 0) || (!a.size()))
+        return a;
+    int new_first = d % a.size();
+    if (!new_first)
+        return a;
+    rotate(a.begin(), a.begin()+new_first, a.end());
+    return a;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    string nd_temp;
+    getline(cin, nd_temp);
+
+    vector<string> nd = split_string(nd_temp);
+
+    int n = stoi(nd[0]);
+
+    int d = stoi(nd[1]);
+
+    string a_temp_temp;
+    getline(cin, a_temp_temp);
+
+    vector<string> a_temp = split_string(a_temp_temp);
+
+    vector<int> a(n);
+
+    for (int i = 0; i < n; i++) {
+        int a_item = stoi(a_temp[i]);
+
+        a[i] = a_item;
+    }
+
+    vector<int> result = rotLeft(a, d);
+
+    for (int i = 0; i < result.size(); i++) {
+        fout << result[i];
+
+        if (i != result.size() - 1) {
+            fout << " ";
+        }
+    }
+
+    fout << "\n";
+
+    fout.close();
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Arrays: New Year Chaos
+
+//    Sample Input
+//    2
+//    5
+//    2 1 5 3 4
+//    5
+//    2 5 1 3 4
+
+//    Sample Output
+//    3
+//    Too chaotic
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+
+// Complete the minimumBribes function below.
+void minimumBribes(vector<int> q) {
+
+
+}
+
+int main()
+{
+    int t;
+    cin >> t;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    for (int t_itr = 0; t_itr < t; t_itr++) {
+        int n;
+        cin >> n;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        string q_temp_temp;
+        getline(cin, q_temp_temp);
+
+        vector<string> q_temp = split_string(q_temp_temp);
+
+        vector<int> q(n);
+
+        for (int i = 0; i < n; i++) {
+            int q_item = stoi(q_temp[i]);
+
+            q[i] = q_item;
+        }
+
+        minimumBribes(q);
+    }
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
 }
