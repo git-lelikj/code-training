@@ -2046,8 +2046,30 @@ vector<string> split_string(string);
 
 // Complete the minimumBribes function below.
 void minimumBribes(vector<int> q) {
-
-
+    if (!q.size()) {
+        cout << "0\n";
+        return;
+    }
+    for (int i = 0; i < q.size(); ++i) {
+        if (q[i] - (i + 1) > 2) {
+            cout << "Too chaotic\n";
+            return;
+        }
+    }
+    int result = 0;
+    for (int i = 0; i < q.size() - 1; ++i) {
+        bool stop = true;
+        for (int j = 0; j < q.size() - 1 - i; ++j) {
+            if (q[j] > q[j+1]) {
+                swap(q[j], q[j+1]);
+                ++result;
+                stop = false;
+            }
+        }
+        if (stop)
+            break;
+    }
+    cout << result << endl;
 }
 
 int main()
