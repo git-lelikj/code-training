@@ -2037,7 +2037,7 @@ vector<string> split_string(string input_string) {
 //    Too chaotic
 
 // ---------------------------------------------------------------------------------------------------------------------------------------
-
+#if 0
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -2130,3 +2130,369 @@ vector<string> split_string(string input_string) {
 
     return splits;
 }
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Arrays: Minimum Swaps 2
+
+//    Sample Input 0
+
+//    4
+//    4 3 1 2
+//    Sample Output 0
+
+//    3
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+#if 0
+int partition(vector<int>& arr, int lo, int hi, int& n_swaps)
+{
+    int pivot = arr[hi];
+    int i = lo - 1;
+    for (int j = lo; j <= hi - 1; ++j) {
+        if (arr[j] < pivot) {
+            ++i;
+            swap(arr[i], arr[j]);
+            if (i != j)
+                ++n_swaps;
+        }
+    }
+    ++i;
+    swap(arr[i], arr[hi]);
+    if (i != hi)
+        ++n_swaps;
+    return i;
+}
+
+int quickSort(vector<int>& arr, int lo, int hi)
+{
+    int n_swaps = 0;
+    if (hi <= lo)
+        return 0;
+    int p = partition(arr, lo, hi, n_swaps);
+    n_swaps += quickSort(arr, lo, p - 1);
+    n_swaps += quickSort(arr, p + 1, hi);
+    return n_swaps;
+}
+
+// Complete the minimumSwaps function below.
+int minimumSwaps(vector<int> arr) {
+    if (!arr.size())
+        return 0;
+    else
+        return quickSort(arr, 0, arr.size() - 1);
+}
+#endif
+
+// Complete the minimumSwaps function below.
+int minimumSwaps(vector<int> arr) {
+    if (arr.size() <= 1)
+        return 0;
+    else {
+        int swaps = 0;
+        for (size_t i = 0; i < arr.size(); ++i) {
+            if ((arr[i] <= 0) || (arr[i] > arr.size()))
+                continue;
+            while (arr[i] != i + 1) {
+                swap(arr[i], arr[arr[i] - 1]);
+                ++swaps;
+            }
+        }
+        return swaps;
+    }
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    int n;
+    cin >> n;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    string arr_temp_temp;
+    getline(cin, arr_temp_temp);
+
+    vector<string> arr_temp = split_string(arr_temp_temp);
+
+    vector<int> arr(n);
+
+    for (int i = 0; i < n; i++) {
+        int arr_item = stoi(arr_temp[i]);
+
+        arr[i] = arr_item;
+    }
+
+    int res = minimumSwaps(arr);
+
+    fout << res << "\n";
+
+    fout.close();
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Arrays: Array Manipulation
+
+//    Starting with a 1-indexed array of zeros and a list of operations, for each operation add a value to each of the array element between two given indices, inclusive. Once all operations have been performed, return the maximum value in your array.
+
+//    For example, the length of your array of zeros . Your list of queries is as follows:
+
+//        a b k
+//        1 5 3
+//        4 8 7
+//        6 9 1
+//    Add the values of  between the indices  and  inclusive:
+
+//    index->	 1 2 3  4  5 6 7 8 9 10
+//        [0,0,0, 0, 0,0,0,0,0, 0]
+//        [3,3,3, 3, 3,0,0,0,0, 0]
+//        [3,3,3,10,10,7,7,7,0, 0]
+//        [3,3,3,10,10,8,8,8,1, 0]
+//    The largest value is  after all operations are performed.
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
+// Note: this solution is no-op, too complicated, see discussion for optimal solution
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+
+struct Range
+{
+    int start_ = 0;
+    int end_ = 0;
+    int len_ = 0;
+    u_int weight_ = 0;
+
+    Range(int start, int end, int weight):
+        start_(start), end_(end), weight_(weight)
+    {
+        len_ = (end_ > start_ ? (end_ - start_ + 1) : 0);
+    }
+
+};
+
+bool operator<(const Range& l, const Range& r)
+{
+    return l.start_ < r.start_;
+}
+
+ostream& operator<<(ostream& os, const Range& r)
+{
+    os << "[" << r.start_ << ":" << r.end_ << "," << r.len_ << "," << r.weight_ << "]";
+    return os;
+}
+
+using Ranges = set<Range>;
+
+vector<Ranges::iterator> get_intersection(const Ranges& ranges, const Range& range)
+{
+    vector<Ranges::iterator> result;
+    auto ins_point = ranges.equal_range(range);
+//    if (ins_point.first == ranges.begin())
+//        return result;
+//    if (ins_point.first == ranges.end()) {
+//        result.push_back(--ins_point.first);
+//    }
+//    else {
+        auto it = (ins_point.first->start_ == range.start_ ? ins_point.first : --(ins_point.first) );
+//        cout << "[get_intersection]: it start: " << *it << endl;
+        for (;
+             (it != ranges.end()) &&
+             (it->start_ <= range.end_)
+             ;
+             ++it) {
+            if (range.start_ <= it->end_ ) {
+//                cout << "[get_intersection]: push it: " << *it << endl;
+                result.push_back(it);
+            }
+//        }
+    }
+    return result;
+}
+
+// Complete the arrayManipulation function below.
+long arrayManipulation(int n, vector<vector<int>> queries) {
+    Ranges ranges;
+    ranges.insert(Range(0, n - 1, 0));
+    long result_weight = 0;
+    for (const auto& q: queries) {
+        Range r(q[0]-1, q[1]-1, q[2]);
+        auto inter = get_intersection(ranges, r);
+
+        cout << "[arrayManipulation]: ranges: ";
+        for (const auto& r: ranges)
+            cout << r << " ";
+        cout << endl;
+
+        cout << "[arrayManipulation]: input range: " << r << endl;
+
+        cout << "[arrayManipulation]: intersection: ";
+        for (const auto& i: inter)
+            cout << *i << " ";
+        cout << endl;
+
+        vector<Range> inter_replace;
+        for (auto& i: inter) {
+            if (i->start_ >= r.start_ && i->end_ <= r.end_) {
+                Range r1(i->start_, i->end_, i->weight_ + r.weight_);
+                inter_replace.push_back(r1);
+                result_weight = max(result_weight, (long)(i->weight_ + r.weight_));
+            }
+            else if (i->start_ < r.start_ && i->end_ <= r.end_) {
+                Range r1(i->start_, r.start_ - 1, i->weight_);
+                Range r2(r.start_, i->end_, i->weight_ + r.weight_);
+                inter_replace.push_back(r1);
+                inter_replace.push_back(r2);
+                result_weight = max(result_weight, (long)(i->weight_ + r.weight_));
+            }
+            else if (i->start_ == r.start_ && i->end_ > r.end_) {
+                Range r1(i->start_, r.end_, i->weight_ + r.weight_);
+                Range r2(r.end_ + 1, i->end_, i->weight_);
+                inter_replace.push_back(r1);
+                inter_replace.push_back(r2);
+                result_weight = max(result_weight, (long)(i->weight_ + r.weight_));
+            }
+            else if (i->start_ > r.start_ && i->end_ > r.end_) {
+                Range r1(i->start_, r.end_, i->weight_ + r.weight_);
+                Range r2(r.end_ + 1, i->end_, i->weight_);
+                inter_replace.push_back(r1);
+                inter_replace.push_back(r2);
+                result_weight = max(result_weight, (long)(i->weight_ + r.weight_));
+            }
+            else if (i->start_ < r.start_ && i->end_ == r.end_) {
+                Range r1(i->start_, r.start_ - 1, i->weight_);
+                Range r2(r.start_, i->end_, i->weight_ + r.weight_);
+                inter_replace.push_back(r1);
+                inter_replace.push_back(r2);
+                result_weight = max(result_weight, (long)(i->weight_ + r.weight_));
+            }
+            else if (i->start_ < r.start_ && i->end_ > r.end_) {
+                Range r1(i->start_, r.start_ - 1, i->weight_);
+                Range r2(r.start_, r.end_, i->weight_ + r.weight_);
+                Range r3(r.end_ + 1, i->end_, i->weight_);
+                inter_replace.push_back(r1);
+                inter_replace.push_back(r2);
+                inter_replace.push_back(r3);
+                result_weight = max(result_weight, (long)(i->weight_ + r.weight_));
+            }
+        }
+
+        cout << "[arrayManipulation]: intersection replacement: ";
+        for (const auto& i: inter_replace)
+            cout << i << " ";
+        cout << endl;
+
+        for (auto& i: inter)
+            ranges.erase(i);
+
+        for (auto& i: inter_replace)
+            ranges.insert(i);
+    }
+
+    return result_weight;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    string nm_temp;
+    getline(cin, nm_temp);
+
+    vector<string> nm = split_string(nm_temp);
+
+    int n = stoi(nm[0]);
+
+    int m = stoi(nm[1]);
+
+    vector<vector<int>> queries(m);
+    for (int i = 0; i < m; i++) {
+        queries[i].resize(3);
+
+        for (int j = 0; j < 3; j++) {
+            cin >> queries[i][j];
+        }
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+    long result = arrayManipulation(n, queries);
+
+    fout << result << "\n";
+
+    fout.close();
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
+}
+#endif
