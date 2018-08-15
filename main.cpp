@@ -2622,7 +2622,7 @@ vector<string> split_string(string input_string) {
 //    NO
 
 // ---------------------------------------------------------------------------------------------------------------------------------------
-
+#if 0
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -2664,3 +2664,261 @@ int main()
 
     return 0;
 }
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Hash Tables: Sherlock and Anagrams
+
+//    Sample Input 0
+//    2
+//    abba
+//    abcd
+//    Sample Output 0
+//    4
+//    0
+
+//    Sample Input 1
+//    2
+//    ifailuhkqq
+//    kkkk
+//    Sample Output 1
+//    3
+//    10
+
+//    Sample Input 2
+//    1
+//    cdcd
+//    Sample Output 2
+//    5
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+#include <boost/functional/hash.hpp>
+
+using namespace std;
+
+using Histogram = array<size_t, 26>;
+
+struct Record
+{
+    int i_ = 0;
+    double d_ = .0;
+    string s_;
+    Record(int i, double d, string s):
+        i_(i), d_(d), s_(s)
+    {}
+};
+
+bool operator==(const Record& l, const Record& r)
+{
+    return l.i_ == r.i_;
+}
+
+namespace std
+{
+    template<> struct hash<Record>
+    {
+        size_t operator()(const Record& r) const
+        {
+            size_t seed = 0;
+            boost::hash_combine(seed, r.i_);
+            boost::hash_combine(seed, r.d_);
+            boost::hash_combine(seed, r.s_);
+            return seed;
+        }
+    };
+}
+#if 0
+struct Record_hash
+{
+    size_t operator()(const Record& r) const
+    {
+        return 0;
+    }
+};
+
+struct Record_equal
+{
+    bool operator()(const Record& l, const Record& r) const
+    {
+        return l.i_ == r.i_;
+    }
+};
+#endif
+// Complete the sherlockAndAnagrams function below.
+int sherlockAndAnagrams(string s) {
+
+    if (!s.size())
+        return 0;
+#if 0
+    // standalone fo hash/equal
+    unordered_map<Record, int, Record_hash, Record_equal> rec_map;
+    rec_map.insert({Record(1, 3.14, "abc"), 0});
+    rec_map.insert({{1, 3.14, "def"}, 1});
+#endif
+#if 0
+    // standalone lambda hash/equal
+    auto hash = [](const Record& r) { return std::hash<int>{}(r.i_); };
+    auto equal = [](const Record& l, const Record& r) { return l.i_ == r.i_; };
+    unordered_map<Record, int, decltype(hash), decltype(equal)> rec_map(10, hash, equal);
+    rec_map.insert({Record(1, 3.14, "abc"), 0});
+    rec_map.insert({{1, 3.14, "def"}, 1});
+#endif
+    // builtin equal/std injected hash
+    unordered_map<Record, int> rec_map;
+    rec_map.insert({Record(1, 3.14, "abc"), 0});
+    rec_map.insert({{1, 3.14, "def"}, 1});
+    for (size_t i = 0; i < s.size(); ++i) {
+        array<size_t, 26> histogram = {};
+        for (size_t j = i; j < s.size() - 1; ++j) {
+            ++histogram[s[j]-'a'];
+            // TBD: hash histogram and store in hash table
+        }
+    }
+    // TBD:sum all keys of histogram hash table
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    int q;
+    cin >> q;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    for (int q_itr = 0; q_itr < q; q_itr++) {
+        string s;
+        getline(cin, s);
+
+        int result = sherlockAndAnagrams(s);
+
+        fout << result << "\n";
+    }
+
+    fout.close();
+
+    return 0;
+}
+#endif
+#if 0
+#include <bits/stdc++.h>
+#if 0
+#include <boost/functional/hash.hpp>
+#endif
+
+using namespace std;
+
+using Histogram = array<size_t, 26>;
+
+bool operator==(const Histogram& l, const Histogram& r)
+{
+    if (l.size() != r.size())
+        return false;
+    for (size_t i = 0; i < l.size(); ++i)
+        if (l[i] != r[i])
+            return false;
+    return true;
+}
+
+ostream& operator<<(ostream& os, const Histogram& h)
+{
+    for (const auto& e: h)
+        os << e << " ";
+    return os;
+}
+
+namespace Util
+{
+    template<typename T>
+    void hash_combine(size_t& seed, const T& t)
+    {
+        seed ^= std::hash<T>()(t) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+    }
+
+    template<typename It>
+    void hash_range(size_t& seed, const It& b, const It& e)
+    {
+        for (auto it = b; it != e; ++it)
+            hash_combine(seed, *it);
+    }
+}
+
+struct Histogram_hash
+{
+    size_t operator()(const Histogram& h) const
+    {
+        size_t seed = h.size();
+#if 0
+        boost::hash_range(seed, h.begin(), h.end());
+#endif
+        Util::hash_range(seed, h.begin(), h.end());
+        return seed;
+    }
+};
+
+namespace std
+{
+
+template<> struct hash<Histogram>
+{
+    size_t operator()(const Histogram& h) const
+    {
+        size_t seed = h.size();
+#if 0
+        boost::hash_range(seed, h.begin(), h.end());
+#endif
+        Util::hash_range(seed, h.begin(), h.end());
+        return seed;
+    }
+};
+
+}
+
+// Complete the sherlockAndAnagrams function below.
+int sherlockAndAnagrams(string s) {
+
+    if (!s.size())
+        return 0;
+    unordered_map<Histogram, size_t> histo_hash;
+    for (size_t i = 0; i < s.size(); ++i) {
+        array<size_t, 26> histogram = {};
+        for (size_t j = i; j < s.size(); ++j) {
+            ++histogram[s[j]-'a'];
+//            cout << "[]: add histogram: " << histogram << endl;
+            ++histo_hash[histogram];
+        }
+    }
+//    cout << "[] histo hash: ";
+//    for (const auto& h: histo_hash)
+//        cout << "[" << h.first << "," << h.second << "] ";
+//    cout << endl;
+    int result = 0;
+    for (const auto& h: histo_hash) {
+        result += h.second * (h.second - 1) / 2;
+    }
+    return result;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    int q;
+    cin >> q;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    for (int q_itr = 0; q_itr < q; q_itr++) {
+        string s;
+        getline(cin, s);
+
+        int result = sherlockAndAnagrams(s);
+
+        fout << result << "\n";
+    }
+
+    fout.close();
+
+    return 0;
+}
+#endif
