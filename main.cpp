@@ -3096,3 +3096,175 @@ vector<string> split(const string &str) {
     return tokens;
 }
 #endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Hash Tables: Frequency Queries
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+string ltrim(const string &);
+string rtrim(const string &);
+vector<string> split(const string &);
+
+using Data_hash = unordered_map<int, size_t>;
+using Count_hash = unordered_map<size_t, size_t>;
+
+void replace_count(Count_hash& hash, size_t old_val, size_t new_val)
+{
+    auto old_it = hash.find(old_val);
+    auto new_it = hash.find(new_val);
+    if (old_it != hash.end()) {
+        if (old_it->second > 1)
+            --(old_it->second);
+        else
+            hash.erase(old_val);
+    }
+    if (new_it != hash.end()) {
+        ++new_it->second;
+    }
+    else {
+        hash.insert({new_val, 1});
+    }
+}
+
+// Complete the freqQuery function below.
+vector<int> freqQuery(vector<vector<int>> queries) {
+
+    vector<int> results;
+    Data_hash data_hash;
+    Count_hash count_hash;
+    for (auto const& query: queries) {
+
+        cout << "[freqQuery]: data hash: ";
+        for (auto e: data_hash) {
+            cout << "[" << e.first << "," << e.second << "] ";
+        }
+        cout << endl;
+        cout << "[freqQuery]: count hash: ";
+        for (auto e: count_hash) {
+            cout << "[" << e.first << "," << e.second << "] ";
+        }
+        cout << endl;
+        if (query[0] == 1) {
+            auto it = data_hash.find(query[1]);
+            if (it != data_hash.end()) {
+                size_t count = it->second;
+                ++it->second;
+                replace_count(count_hash, count, count + 1);
+            }
+            else {
+                data_hash.insert({query[1], 1});
+                ++count_hash[1];
+            }
+        }
+        else if (query[0] == 2) {
+            auto it = data_hash.find(query[1]);
+            if (it != data_hash.end()) {
+                size_t count = it->second;
+                if (count > 1) {
+                    --it->second;
+                    replace_count(count_hash, count, count - 1);
+                }
+                else {
+                    data_hash.erase(query[1]);
+                    if (count_hash[1] > 1)
+                        --count_hash[1];
+                    else
+                        count_hash.erase(1);
+                }
+            }
+        }
+        else if (query[0] == 3) {
+            auto it = count_hash.find(query[1]);
+            int result = ( it != count_hash.end() ? 1 : 0 );
+            results.push_back(result);
+        }
+    }
+    return results;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    string q_temp;
+    getline(cin, q_temp);
+
+    int q = stoi(ltrim(rtrim(q_temp)));
+
+    vector<vector<int>> queries(q);
+
+    for (int i = 0; i < q; i++) {
+        queries[i].resize(2);
+
+        string queries_row_temp_temp;
+        getline(cin, queries_row_temp_temp);
+
+        vector<string> queries_row_temp = split(rtrim(queries_row_temp_temp));
+
+        for (int j = 0; j < 2; j++) {
+            int queries_row_item = stoi(queries_row_temp[j]);
+
+            queries[i][j] = queries_row_item;
+        }
+    }
+
+    vector<int> ans = freqQuery(queries);
+
+    for (int i = 0; i < ans.size(); i++) {
+        fout << ans[i];
+
+        if (i != ans.size() - 1) {
+            fout << "\n";
+        }
+    }
+
+    fout << "\n";
+
+    fout.close();
+
+    return 0;
+}
+
+string ltrim(const string &str) {
+    string s(str);
+
+    s.erase(
+        s.begin(),
+        find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace)))
+    );
+
+    return s;
+}
+
+string rtrim(const string &str) {
+    string s(str);
+
+    s.erase(
+        find_if(s.rbegin(), s.rend(), not1(ptr_fun<int, int>(isspace))).base(),
+        s.end()
+    );
+
+    return s;
+}
+
+vector<string> split(const string &str) {
+    vector<string> tokens;
+
+    string::size_type start = 0;
+    string::size_type end = 0;
+
+    while ((end = str.find(" ", start)) != string::npos) {
+        tokens.push_back(str.substr(start, end - start));
+
+        start = end + 1;
+    }
+
+    tokens.push_back(str.substr(start));
+
+    return tokens;
+}
+#endif
