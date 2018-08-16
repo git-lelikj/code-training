@@ -2922,3 +2922,177 @@ int main()
     return 0;
 }
 #endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Hash Tables: Count Triplets
+
+//    Sample Input 0
+//    4 2
+//    1 2 2 4
+//    Sample Output 0
+//    2
+
+//    Sample Input 1
+//    6 3
+//    1 3 9 9 27 81
+//    Sample Output 1
+//    6
+
+//    Sample Input 2
+//    5 5
+//    1 5 5 25 125
+//    Sample Output 2
+//    4
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
+// Note: solution below works i.o. R=1
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+string ltrim(const string &);
+string rtrim(const string &);
+vector<string> split(const string &);
+
+struct Mgm_record
+{
+    int count_  = 0;
+    int count1_ = 0;
+    int count2_ = 0;
+    Mgm_record(int c, int c1, int c2):
+        count_(c), count1_(c1), count2_(c2)
+    {}
+};
+
+using Triplet_hash = unordered_map<long, Mgm_record>;
+
+// Complete the countTriplets function below.
+long countTriplets_impl(vector<long> arr, long r) {
+    Triplet_hash triplet_hash;
+    long triplet_count = 0;
+    for (size_t i = 0; i < arr.size(); ++i) {
+        auto it = triplet_hash.find(arr[i]);
+        if (it == triplet_hash.end()) {
+            // add new start of triplet
+            triplet_hash.insert({arr[i], Mgm_record(1, 0, 0)});
+            triplet_hash.insert({arr[i]*r, Mgm_record(0, 1, 0)});
+        }
+        else {
+            if (it->second.count2_)
+                triplet_count += it->second.count2_;
+            ++it->second.count_;
+            auto it2 = triplet_hash.find(arr[i]*r);
+            if (it2 == triplet_hash.end()) {
+                // add record for next in sequence
+                triplet_hash.insert({arr[i]*r, Mgm_record(0, it->second.count_, it->second.count_* it->second.count1_)});
+            }
+            else {
+                // update next record counters
+                it2->second.count1_ = it->second.count_;
+                it2->second.count2_ += it->second.count1_;
+            }
+        }
+    }
+    return triplet_count;
+}
+
+using Triplet_hash1 = unordered_map<long, int>;
+
+long countTriplets_impl1(vector<long> arr, long r) {
+    Triplet_hash1 triplet_hash;
+    long triplet_count = 0;
+    for (size_t i = 0; i < arr.size(); ++i) {
+        ++triplet_hash[arr[i]];
+    }
+    for (const auto& e: triplet_hash) {
+        cout << "[countTriplets_impl1]: first: " << e.first << ", second: " << e.second << endl;
+        if (e.second < 3)
+            continue;
+        triplet_count += (e.second > 3 ? ((e.second-2) * (e.second-1))/2 : 1);
+    }
+    return triplet_count;
+}
+
+long countTriplets(vector<long> arr, long r) {
+    if (r > 1)
+        return countTriplets_impl(arr, r);
+    else
+        return countTriplets_impl1(arr, r);
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    string nr_temp;
+    getline(cin, nr_temp);
+
+    vector<string> nr = split(rtrim(nr_temp));
+
+    int n = stoi(nr[0]);
+
+    long r = stol(nr[1]);
+
+    string arr_temp_temp;
+    getline(cin, arr_temp_temp);
+
+    vector<string> arr_temp = split(rtrim(arr_temp_temp));
+
+    vector<long> arr(n);
+
+    for (int i = 0; i < n; i++) {
+        long arr_item = stol(arr_temp[i]);
+
+        arr[i] = arr_item;
+    }
+
+    long ans = countTriplets(arr, r);
+
+    fout << ans << "\n";
+
+    fout.close();
+
+    return 0;
+}
+
+string ltrim(const string &str) {
+    string s(str);
+
+    s.erase(
+        s.begin(),
+        find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace)))
+    );
+
+    return s;
+}
+
+string rtrim(const string &str) {
+    string s(str);
+
+    s.erase(
+        find_if(s.rbegin(), s.rend(), not1(ptr_fun<int, int>(isspace))).base(),
+        s.end()
+    );
+
+    return s;
+}
+
+vector<string> split(const string &str) {
+    vector<string> tokens;
+
+    string::size_type start = 0;
+    string::size_type end = 0;
+
+    while ((end = str.find(" ", start)) != string::npos) {
+        tokens.push_back(str.substr(start, end - start));
+
+        start = end + 1;
+    }
+
+    tokens.push_back(str.substr(start));
+
+    return tokens;
+}
+#endif
