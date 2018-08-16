@@ -3268,3 +3268,293 @@ vector<string> split(const string &str) {
     return tokens;
 }
 #endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Sorting: Bubble Sort
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+
+// Complete the countSwaps function below.
+void countSwaps(vector<int> a) {
+
+    size_t swaps = 0;
+    for (size_t i = 0; i < a.size(); ++i) {
+        for (size_t j = 0; j < a.size() - 1; ++j)
+            if (a[j] > a[j + 1]) {
+                swap(a[j], a[j + 1]);
+                ++swaps;
+            }
+    }
+    cout << "Array is sorted in " << swaps << " swaps\n";
+    cout << "First Element: " << (a.size() ? a[0] : 0) << endl;
+    cout << "Last element: " << (a.size() ? a[a.size() - 1] : 0) << endl;
+}
+
+int main()
+{
+    int n;
+    cin >> n;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    string a_temp_temp;
+    getline(cin, a_temp_temp);
+
+    vector<string> a_temp = split_string(a_temp_temp);
+
+    vector<int> a(n);
+
+    for (int i = 0; i < n; i++) {
+        int a_item = stoi(a_temp[i]);
+
+        a[i] = a_item;
+    }
+
+    countSwaps(a);
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Sorting: Mark and Toys
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+
+// Complete the maximumToys function below.
+int maximumToys(vector<int> prices, int k) {
+    int toys = 0;
+    sort(prices.begin(), prices.end());
+    int sum = 0;
+    for (auto p: prices) {
+        sum += p;
+        if (sum <= k)
+            ++toys;
+        else
+            break;
+    }
+    return toys;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    string nk_temp;
+    getline(cin, nk_temp);
+
+    vector<string> nk = split_string(nk_temp);
+
+    int n = stoi(nk[0]);
+
+    int k = stoi(nk[1]);
+
+    string prices_temp_temp;
+    getline(cin, prices_temp_temp);
+
+    vector<string> prices_temp = split_string(prices_temp_temp);
+
+    vector<int> prices(n);
+
+    for (int i = 0; i < n; i++) {
+        int prices_item = stoi(prices_temp[i]);
+
+        prices[i] = prices_item;
+    }
+
+    int result = maximumToys(prices, k);
+
+    fout << result << "\n";
+
+    fout.close();
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Sorting: Comparator
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+class Checker{
+public:
+    // complete this method
+    static int comparator(Player a, Player b)  {
+        if (a.score < b.score)
+            return -1;
+        if (a.score > b.score)
+            return 1;
+        return ( a.name > b.name ? -1 : 1 );
+    }
+};
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Sorting: Comparator
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+
+template <typename It>
+double median(It begin, It end)
+{
+    double result = 0;
+    sort(begin, end);
+    //TBD
+    return result;
+}
+
+// Complete the activityNotifications function below.
+int activityNotifications(vector<int> expenditure, int d) {
+    size_t n = expenditure.size();
+    if (n <= d)
+        return 0;
+    auto wb = expenditure.begin();
+    auto we = wb + d;
+    for (size_t i = 0;
+         i < (n - d);
+         ++i, ++wb, ++we) {
+        vector<int> temp;
+        copy(wb, we, back_inserter(temp));
+        cout << "[activityNotifications]: temp: ";
+        for (auto e: temp)
+            cout << e << " ";
+        cout << endl;
+//        double med = median();
+    }
+    return 0;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    string nd_temp;
+    getline(cin, nd_temp);
+
+    vector<string> nd = split_string(nd_temp);
+
+    int n = stoi(nd[0]);
+
+    int d = stoi(nd[1]);
+
+    string expenditure_temp_temp;
+    getline(cin, expenditure_temp_temp);
+
+    vector<string> expenditure_temp = split_string(expenditure_temp_temp);
+
+    vector<int> expenditure(n);
+
+    for (int i = 0; i < n; i++) {
+        int expenditure_item = stoi(expenditure_temp[i]);
+
+        expenditure[i] = expenditure_item;
+    }
+
+    int result = activityNotifications(expenditure, d);
+
+    fout << result << "\n";
+
+    fout.close();
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
+}
