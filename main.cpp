@@ -3457,8 +3457,11 @@ public:
 #endif
 
 // ---------------------------------------------------------------------------------------------------------------------------------------
-//    Interview prep: Sorting: Comparator
+//    Interview prep: Sorting: Fraudulent Activity Notifications
 // ---------------------------------------------------------------------------------------------------------------------------------------
+
+// Note: this solution is timed out, can be optimized by implementing "running median":
+#if 0
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -3466,12 +3469,17 @@ using namespace std;
 vector<string> split_string(string);
 
 template <typename It>
-double median(It begin, It end)
+pair<It, It> median(It begin, It end)
 {
-    double result = 0;
     sort(begin, end);
-    //TBD
-    return result;
+    size_t size = end - begin;
+    cout << "[median]: size: "  << size << endl;
+    if (!(size % 2)) {
+        return {begin + size/2 - 1, begin + size/2};
+    }
+    else {
+        return {begin + size/2, end};
+    }
 }
 
 // Complete the activityNotifications function below.
@@ -3481,6 +3489,7 @@ int activityNotifications(vector<int> expenditure, int d) {
         return 0;
     auto wb = expenditure.begin();
     auto we = wb + d;
+    int result = 0;
     for (size_t i = 0;
          i < (n - d);
          ++i, ++wb, ++we) {
@@ -3490,9 +3499,13 @@ int activityNotifications(vector<int> expenditure, int d) {
         for (auto e: temp)
             cout << e << " ";
         cout << endl;
-//        double med = median();
+        auto med = median(temp.begin(), temp.end());
+        double med_val = ( med.second == temp.end() ? *(med.first) : ((double)*(med.first) + (double)*(med.second))/2.0 );
+        cout << "[activityNotifications]: median: " << med_val << ", val: " << expenditure[d+i] << endl;
+        if (expenditure[d+i] >= med_val * 2)
+            ++result;
     }
-    return 0;
+    return result;
 }
 
 int main()
@@ -3558,3 +3571,5 @@ vector<string> split_string(string input_string) {
 
     return splits;
 }
+#endif
+
