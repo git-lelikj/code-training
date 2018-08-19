@@ -3573,3 +3573,216 @@ vector<string> split_string(string input_string) {
 }
 #endif
 
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Sorting: Merge Sort: Counting Inversions
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
+// Note: this solution gives "wrong answer", has to calculate properly:
+//    result += (m - i);
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+
+long merge(vector<int>& arr, size_t b, size_t m, size_t e)
+{
+    long result = 0;
+    if ((b > m) || (b > e) || (m > e))
+        return result;
+    size_t size1 = m - b + 1;
+    size_t size2 = e - m;
+    size_t size = e - b + 1;
+    vector<int> v1(size1), v2(size2);
+//    cout << "[merge]: v1: ";
+    for (size_t i = 0; i < size1; ++i) {
+        v1[i] = arr[b+i];
+//        cout << v1[i] << " ";
+    }
+//    cout << endl << "[merge]: v2: ";
+    for (size_t i = 0; i < size2; ++i) {
+        v2[i] = arr[m+i+1];
+//        cout << v2[i] << " ";
+    }
+//    cout << endl;
+    size_t n = min(size1, size2);
+//    cout << "[merge]: s1: " << size1 << ", s2: " << size2 << ", s: " << size << endl;
+    size_t k = 0, i = 0, j = 0;
+    for (; (i < size1) && (j < size2); ++k) {
+        if (v1[i] <= v2[j]) {
+            arr[b+k] = v1[i];
+//            cout << "[merge]: put v1:" << i << " to arr:" << b+k << endl;
+            ++i;
+        }
+        else {
+            arr[b+k] = v2[j];
+//            cout << "[merge]: put v2:" << j << " to arr:" << b+k << endl;
+            ++j;
+            result += (m - i);
+        }
+    }
+    for (size_t x = i; x < size1; ++x) {
+        arr[b+k] = v1[x];
+//        cout << "[merge]: put v1:" << x << " to arr:" << b+k << endl;
+        ++k;
+    }
+    for (size_t x = j; x < size2; ++x) {
+        arr[b+k] = v2[x];
+//        cout << "[merge]: put v2:" << x << " to arr:" << b+k << endl;
+        ++k;
+    }
+    return result;
+}
+
+long merge_sort(vector<int>& arr, size_t s, size_t e)
+{
+//    cout << "[merge_sort]: s: " << s << ", e: " << e << endl;
+    if (s == e) {
+//        cout << "[merge_sort]: edge: exit\n";
+        return 0;
+    }
+    if (e == s + 1) {
+        if (arr[s] > arr[e]) {
+            swap(arr[s], arr[e]);
+//            cout << "[merge_sort]: edge: swap " << s << " and " << e << endl;
+            return 1;
+        }
+        else {
+//            cout << "[merge_sort]: edge: exit\n";
+            return 0;
+        }
+    }
+    size_t m = s + (e + 1 - s)/2 - 1;
+//    cout << "[merge_sort]: m: " << m << endl;
+    long n1 = merge_sort(arr, s, m);
+    long n2 = merge_sort(arr, m + 1, e);
+    long n3 = merge(arr, s, m, e);
+    return n1 + n2 + n3;
+}
+
+// Complete the countInversions function below.
+long countInversions(vector<int> arr) {
+
+    long result = merge_sort(arr, 0, arr.size() - 1);
+//    cout << "[countInversions]: sorted: ";
+//    for (auto e: arr)
+//        cout << e << " ";
+//    cout << endl << "result: " << result << endl;
+
+    return result;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    int t;
+    cin >> t;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    for (int t_itr = 0; t_itr < t; t_itr++) {
+        int n;
+        cin >> n;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        string arr_temp_temp;
+        getline(cin, arr_temp_temp);
+
+        vector<string> arr_temp = split_string(arr_temp_temp);
+
+        vector<int> arr(n);
+
+        for (int i = 0; i < n; i++) {
+            int arr_item = stoi(arr_temp[i]);
+
+            arr[i] = arr_item;
+        }
+
+        long result = countInversions(arr);
+
+        fout << result << "\n";
+    }
+
+    fout.close();
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Strings: Making Anagrams
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+// Complete the makeAnagram function below.
+int makeAnagram(string a, string b) {
+    if (!a.size() || !b.size())
+        return 0;
+    vector<int> hist_a(26);
+    vector<int> hist_b(26);
+    for (auto c: a) {
+        ++hist_a[(int)c - (int)'a'];
+    }
+    for (auto c: b) {
+        ++hist_b[(int)c - (int)'a'];
+    }
+    int result = 0;
+    for (size_t i = 0; i < 26; ++i) {
+        if (hist_a[i] == hist_b[i])
+            continue;
+        result += (hist_a[i] > hist_b[i] ? (hist_a[i] - hist_b[i]) : (hist_b[i] - hist_a[i]) );
+    }
+    return result;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    string a;
+    getline(cin, a);
+
+    string b;
+    getline(cin, b);
+
+    int res = makeAnagram(a, b);
+
+    fout << res << "\n";
+
+    fout.close();
+
+    return 0;
+}
