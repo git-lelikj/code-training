@@ -3742,7 +3742,7 @@ vector<string> split_string(string input_string) {
 // ---------------------------------------------------------------------------------------------------------------------------------------
 //    Interview prep: Strings: Making Anagrams
 // ---------------------------------------------------------------------------------------------------------------------------------------
-
+#if 0
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -3786,3 +3786,50 @@ int main()
 
     return 0;
 }
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Strings: Common Child
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+// Complete the commonChild function below.
+int commonChild(string s1, string s2) {
+
+    size_t n = s1.size();
+    if (!n || n != s2.size())
+        return 0;
+    vector<vector<int>> dp(n+1, vector<int>(n+1, 0));
+
+    for (size_t i = 1; i <= n; ++i)
+        for (size_t j = 1; j <= n; ++j) {
+            if (s1[i-1] == s2[j-1])
+                dp[i][j] = dp[i-1][j-1] + 1;
+            else
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+        }
+    return dp[n][n];
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    string s1;
+    getline(cin, s1);
+
+    string s2;
+    getline(cin, s2);
+
+    int result = commonChild(s1, s2);
+
+    fout << result << "\n";
+
+    fout.close();
+
+    return 0;
+}
+#endif
