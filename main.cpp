@@ -3833,3 +3833,332 @@ int main()
     return 0;
 }
 #endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Greedy: Minimum Absolute Difference in an Array
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+
+// Complete the minimumAbsoluteDifference function below.
+int minimumAbsoluteDifference(vector<int> arr) {
+    if (arr.size() < 2)
+        return 0;
+    sort(arr.begin(), arr.end());
+    int result = numeric_limits<int>::max();
+    for (size_t i = 0; i < arr.size()-1; ++i) {
+        int abs_diff = abs(arr[i+1] - arr[i]);
+        result = min(result, abs_diff);
+    }
+    return result;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    int n;
+    cin >> n;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    string arr_temp_temp;
+    getline(cin, arr_temp_temp);
+
+    vector<string> arr_temp = split_string(arr_temp_temp);
+
+    vector<int> arr(n);
+
+    for (int i = 0; i < n; i++) {
+        int arr_item = stoi(arr_temp[i]);
+
+        arr[i] = arr_item;
+    }
+
+    int result = minimumAbsoluteDifference(arr);
+
+    fout << result << "\n";
+
+    fout.close();
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Greedy: Greedy Florist
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+
+// Complete the getMinimumCost function below.
+int getMinimumCost(int k, vector<int> c) {
+    int n = c.size();
+    if (!n)
+        return 0;
+    sort(c.begin(), c.end(), greater<int>());
+    int cost = 0;
+    for (size_t i = 0, coeff = 0; i < n; ++i) {
+        if (i && !(i % k))
+            ++coeff;
+        cost += (coeff + 1) * c[i];
+    }
+    return cost;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    string nk_temp;
+    getline(cin, nk_temp);
+
+    vector<string> nk = split_string(nk_temp);
+
+    int n = stoi(nk[0]);
+
+    int k = stoi(nk[1]);
+
+    string c_temp_temp;
+    getline(cin, c_temp_temp);
+
+    vector<string> c_temp = split_string(c_temp_temp);
+
+    vector<int> c(n);
+
+    for (int i = 0; i < n; i++) {
+        int c_item = stoi(c_temp[i]);
+
+        c[i] = c_item;
+    }
+
+    int minimumCost = getMinimumCost(k, c);
+
+    fout << minimumCost << "\n";
+
+    fout.close();
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Greedy: Max Min
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+// Complete the maxMin function below.
+int maxMin(int k, vector<int> arr) {
+    size_t n = arr.size();
+    if (n < 2 || k > n)
+        return 0;
+    sort(arr.begin(), arr.end());
+    int result = numeric_limits<int>::max();
+    for (size_t i = 0; i <= n - k; ++i) {
+        result = min(result, arr[i+k-1] - arr[i]);
+    }
+    return result;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    int n;
+    cin >> n;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    int k;
+    cin >> k;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    vector<int> arr(n);
+
+    for (int i = 0; i < n; i++) {
+        int arr_item;
+        cin >> arr_item;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        arr[i] = arr_item;
+    }
+
+    int result = maxMin(k, arr);
+
+    fout << result << "\n";
+
+    fout.close();
+
+    return 0;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Search: Ice Cream Parlor
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+
+// Complete the whatFlavors function below.
+void whatFlavors(vector<int> cost, int money) {
+
+    multimap<int, size_t> bst;
+    for (size_t i = 1; i <= cost.size(); ++i) {
+        bst.insert({cost[i-1], i});
+    }
+    auto lb = bst.lower_bound(money);
+    auto i = lb;
+    if (i == bst.end() || i->first == money)
+        --i;
+    cout << "i start: " << i->first << "," << i->second << endl;
+    for (; i != bst.begin(); --i) {
+        auto j = i;
+        bool stop = false;
+        while (!stop) {
+            --j;
+            cout << "i, j: " << i->first << "," << j->first << endl;
+            if ((i->first + j->first) == money) {
+                if (i->second < j->second)
+                    cout << i->second << " " << j->second << endl;
+                else
+                    cout << j->second << " " << i->second << endl;
+                return;
+            }
+            stop = (j == bst.begin());
+        };
+    }
+}
+
+int main()
+{
+    int t;
+    cin >> t;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    for (int t_itr = 0; t_itr < t; t_itr++) {
+        int money;
+        cin >> money;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        int n;
+        cin >> n;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        string cost_temp_temp;
+        getline(cin, cost_temp_temp);
+
+        vector<string> cost_temp = split_string(cost_temp_temp);
+
+        vector<int> cost(n);
+
+        for (int i = 0; i < n; i++) {
+            int cost_item = stoi(cost_temp[i]);
+
+            cost[i] = cost_item;
+        }
+
+        whatFlavors(cost, money);
+    }
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
+}
