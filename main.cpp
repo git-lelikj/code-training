@@ -4063,13 +4063,15 @@ int main()
 // ---------------------------------------------------------------------------------------------------------------------------------------
 //    Interview prep: Search: Ice Cream Parlor
 // ---------------------------------------------------------------------------------------------------------------------------------------
-
+#if 0
 #include <bits/stdc++.h>
 
 using namespace std;
 
 vector<string> split_string(string);
 
+// BST solution
+#if 0
 // Complete the whatFlavors function below.
 void whatFlavors(vector<int> cost, int money) {
 
@@ -4097,6 +4099,43 @@ void whatFlavors(vector<int> cost, int money) {
             }
             stop = (j == bst.begin());
         };
+    }
+}
+#endif
+
+// hash solution
+void whatFlavors(vector<int> cost, int money) {
+    unordered_multimap<int, size_t> hash;
+    for (size_t i = 1; i <= cost.size(); ++i) {
+        hash.insert({cost[i-1], i});
+    }
+    for (size_t i = 1; i <= cost.size(); ++i) {
+        if (cost[i-1] >= money)
+            continue;
+        int r = money - cost[i-1];
+        if (r != cost[i-1]) {
+            auto it = hash.find(r);
+            if (it != hash.end()) {
+                if (i < it->second)
+                    cout << i << " " << it->second << endl;
+                else
+                    cout << it->second << " " << i << endl;
+                return;
+            }
+        }
+        else {
+            auto er = hash.equal_range(r);
+            if (er.first != hash.end()) {
+                for (auto it = er.first; it != er.second; ++it)
+                    if (i != it->second) {
+                        if (i < it->second)
+                            cout << i << " " << it->second << endl;
+                        else
+                            cout << it->second << " " << i << endl;
+                        return;
+                    }
+            }
+        }
     }
 }
 
@@ -4162,3 +4201,288 @@ vector<string> split_string(string input_string) {
 
     return splits;
 }
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Search: Swap Nodes
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
+// Note: some testcases failed:
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+struct Tree_node
+{
+    int node_ = 0;
+    shared_ptr<Tree_node> left_ = nullptr;
+    shared_ptr<Tree_node> right_ = nullptr;
+    Tree_node(int node, shared_ptr<Tree_node> left = nullptr, shared_ptr<Tree_node> right = nullptr):
+        node_(node), left_(left), right_(right)
+    {}
+};
+
+using Tree_index = unordered_map<int, shared_ptr<Tree_node>>;
+using Tree_index_by_depth = vector<vector<shared_ptr<Tree_node>>>;
+
+shared_ptr<Tree_node> generate_tree(const vector<vector<int>>& indexes, Tree_index& index, Tree_index_by_depth& index_by_depth)
+{
+    if (!indexes.size())
+        return nullptr;
+    shared_ptr<Tree_node> root = make_shared<Tree_node>(1);
+    index.insert({1, root});
+//    vector<shared_ptr<Tree_node>> depth_1 = {root};
+    index_by_depth.push_back({root});
+
+    size_t depth = 2;
+    size_t missed = 0;
+    size_t nodes_on_this_depth = 2;
+    vector<shared_ptr<Tree_node>> nodes_by_depth;
+    for (size_t i = 1; i <= indexes.size(); ++i) {
+        if (nodes_on_this_depth <= 0) {
+            ++depth;
+            index_by_depth.push_back(nodes_by_depth);
+//            cout << "[generate_tree]: nodes on depth " << depth-1 << ": ";
+//            for (auto e: nodes_by_depth)
+//                cout << e->node_ << " ";
+//            cout << endl;
+            nodes_by_depth.clear();
+            nodes_on_this_depth = pow(2, (depth - 1));
+            missed = (missed ? 2 * missed : 0);
+            nodes_on_this_depth -= missed;
+//            cout << "[generate_tree]: make up depth: " << depth << ", missed: " << missed << ", nodes: " << nodes_on_this_depth << endl;
+        }
+        int left = indexes[i-1][0];
+        int right = indexes[i-1][1];
+        nodes_on_this_depth -= 2;
+        if (left == -1)
+            ++missed;
+        if (right == -1)
+            ++missed;
+        if ((left == -1) && (right == -1))
+            continue;
+        auto it = index.find(i);
+        if (it != index.end()) {
+            if (left != -1) {
+                it->second->left_ = make_shared<Tree_node>(left);
+                index.insert({left, it->second->left_});
+                nodes_by_depth.push_back(it->second->left_);
+//                cout << "[generate_tree]: add " << left << " to " << i << endl;
+            }
+            if (right != -1) {
+                it->second->right_ = make_shared<Tree_node>(right);
+                index.insert({right, it->second->right_});
+                nodes_by_depth.push_back(it->second->right_);
+//                cout << "[generate_tree]: add " << right << " to " << i << endl;
+            }
+        }
+    }
+    return root;
+}
+
+void get_in_order(const shared_ptr<Tree_node>& root, vector<int>& in_order)
+{
+    if (root->left_ != nullptr)
+        get_in_order(root->left_, in_order);
+    in_order.push_back(root->node_);
+//    cout << "[get_in_order]: push " << root->node_ << endl;
+    if (root->right_ != nullptr)
+        get_in_order(root->right_, in_order);
+}
+
+vector<vector<int>> swapNodes(vector<vector<int>> indexes, vector<int> queries) {
+    vector<vector<int>> results;
+    Tree_index tree_index;
+    Tree_index_by_depth tree_index_by_depth;
+    auto root = generate_tree(indexes, tree_index, tree_index_by_depth);
+//    vector<int> in_order;
+//    get_in_order(root, in_order);
+//    cout << "[swapNodes]: in order: ";
+//    for (auto e: in_order)
+//        cout << e << " ";
+//    cout << endl;
+    for (auto q: queries) {
+        for (size_t i = 1, d = q; d < tree_index_by_depth.size(); ++i, d *= i) {
+//            cout << "swap level: " << d << ", max depth: " << tree_index_by_depth.size() << endl;
+            auto nodes_by_depth = tree_index_by_depth[d-1];
+            for (auto node: nodes_by_depth) {
+//                cout << "swap node: " << node->node_ << endl;
+                swap(node->left_, node->right_);
+            }
+        }
+        vector<int> result;
+        get_in_order(root, result);
+        results.push_back(result);
+    }
+    return results;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    int n;
+    cin >> n;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    vector<vector<int>> indexes(n);
+    for (int indexes_row_itr = 0; indexes_row_itr < n; indexes_row_itr++) {
+        indexes[indexes_row_itr].resize(2);
+
+        for (int indexes_column_itr = 0; indexes_column_itr < 2; indexes_column_itr++) {
+            cin >> indexes[indexes_row_itr][indexes_column_itr];
+        }
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+    int queries_count;
+    cin >> queries_count;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    vector<int> queries(queries_count);
+
+    for (int queries_itr = 0; queries_itr < queries_count; queries_itr++) {
+        int queries_item;
+        cin >> queries_item;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        queries[queries_itr] = queries_item;
+    }
+
+    vector<vector<int>> result = swapNodes(indexes, queries);
+
+    for (int result_row_itr = 0; result_row_itr < result.size(); result_row_itr++) {
+        for (int result_column_itr = 0; result_column_itr < result[result_row_itr].size(); result_column_itr++) {
+            fout << result[result_row_itr][result_column_itr];
+
+            if (result_column_itr != result[result_row_itr].size() - 1) {
+                fout << " ";
+            }
+        }
+
+        if (result_row_itr != result.size() - 1) {
+            fout << "\n";
+        }
+    }
+
+    fout << "\n";
+
+    fout.close();
+
+    return 0;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Search: Minimum Time Required
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//Note: this gives wrong testcases:
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+
+long time_at_day(const vector<long>& machines, size_t day)
+{
+    long result = 0;
+    for (size_t i = 0; i < machines.size(); ++i)
+        result += day / machines[i];
+    return result;
+}
+
+// Complete the minTime function below.
+long minTime(vector<long> machines, long goal) {
+
+    if (!machines.size())
+        return 0;
+    if (machines.size() == 1)
+        return machines[0] * goal;
+    auto min_it = min_element(machines.begin(), machines.end());
+
+    long low = 1;
+    long high = (*min_it) * goal;
+    long test_day = 0;
+
+    while (low <= high) {
+        test_day = (high + low)/2;
+        long time = time_at_day(machines, test_day);
+        if (time == goal)
+            return test_day;
+        if (time < goal) {
+            low = test_day + 1;
+        }
+        else {
+            high = test_day - 1;
+        }
+    }
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    string nGoal_temp;
+    getline(cin, nGoal_temp);
+
+    vector<string> nGoal = split_string(nGoal_temp);
+
+    int n = stoi(nGoal[0]);
+
+    long goal = stol(nGoal[1]);
+
+    string machines_temp_temp;
+    getline(cin, machines_temp_temp);
+
+    vector<string> machines_temp = split_string(machines_temp_temp);
+
+    vector<long> machines(n);
+
+    for (int i = 0; i < n; i++) {
+        long machines_item = stol(machines_temp[i]);
+
+        machines[i] = machines_item;
+    }
+
+    long ans = minTime(machines, goal);
+
+    fout << ans << "\n";
+
+    fout.close();
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
+}
+
+#endif
