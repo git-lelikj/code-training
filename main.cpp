@@ -4569,3 +4569,69 @@ vector<string> split_string(string input_string) {
     return splits;
 }
 #endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Dynamic programming: Abbreviation
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+// Complete the abbreviation function below.
+string abbreviation(string a, string b) {
+    size_t n = a.size();
+    size_t m = b.size();
+    if (!n && !m) {
+        return "YES";
+    }
+    if (m && !n) {
+        return "NO";
+    }
+
+    vector<vector<bool>> dp(n+1, vector<bool>(m+1, false));
+    dp[0][0] = true;
+    for (size_t i = 1; i < n + 1; ++i)
+        dp[i][0] = ( isupper(a[i-1]) ? false : true );
+    for (size_t j = 1; j < m + 1; ++j)
+        dp[0][j] = false;
+    for (size_t i = 1; i < n + 1; ++i)
+        for (size_t j = 1; j < m + 1; ++j) {
+            if (isupper(a[i-1])) {
+                    dp[i][j] = ( a[i-1] == b[j-1] ? dp[i-1][j-1] : false );
+            }
+            else {
+                if (toupper(a[i-1]) == b[j-1])
+                    dp[i][j] = dp[i-1][j-1] || dp[i-1][j];
+                else
+                    dp[i][j] = dp[i-1][j];
+            }
+        }
+    return ( dp[n][m] == true ? "YES" : "NO" );
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    int q;
+    cin >> q;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    for (int q_itr = 0; q_itr < q; q_itr++) {
+        string a;
+        getline(cin, a);
+
+        string b;
+        getline(cin, b);
+
+        string result = abbreviation(a, b);
+
+        fout << result << "\n";
+    }
+
+    fout.close();
+
+    return 0;
+}
+#endif
