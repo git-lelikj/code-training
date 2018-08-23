@@ -4635,3 +4635,85 @@ int main()
     return 0;
 }
 #endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Stack and Queue: Queues: A Tale of Two Stacks
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <stack>
+#include <queue>
+using namespace std;
+
+class MyQueue {
+
+    public:
+        stack<int> stack_newest_on_top, stack_oldest_on_top;
+        bool push_to_newest = true;
+        void push(int x) {
+            if (push_to_newest) {
+                size_t n_backup = stack_newest_on_top.size();
+                while (!stack_newest_on_top.empty()) {
+                    stack_oldest_on_top.push(stack_newest_on_top.top());
+                    stack_newest_on_top.pop();
+                }
+                stack_newest_on_top.push(x);
+                for (size_t i = 0; i < n_backup; ++i) {
+                    stack_newest_on_top.push(stack_oldest_on_top.top());
+                    stack_oldest_on_top.pop();
+                }
+                push_to_newest = false;
+            }
+            else {
+                size_t n_backup = stack_oldest_on_top.size();
+                while (!stack_oldest_on_top.empty()) {
+                    stack_newest_on_top.push(stack_oldest_on_top.top());
+                    stack_oldest_on_top.pop();
+                }
+                stack_oldest_on_top.push(x);
+                for (size_t i = 0; i < n_backup; ++i) {
+                    stack_oldest_on_top.push(stack_newest_on_top.top());
+                    stack_newest_on_top.pop();
+                }
+                push_to_newest = true;
+            }
+        }
+
+        void pop() {
+            if (!stack_newest_on_top.empty()) {
+                stack_newest_on_top.pop();
+                swap(stack_newest_on_top, stack_oldest_on_top);
+            }
+        }
+
+        int front() {
+            if (!stack_newest_on_top.empty()) {
+                return stack_newest_on_top.top();
+            }
+            else
+                return 0;
+        }
+};
+
+int main() {
+    MyQueue q1;
+    int q, type, x;
+    cin >> q;
+
+    for(int i = 0; i < q; i++) {
+        cin >> type;
+        if(type == 1) {
+            cin >> x;
+            q1.push(x);
+        }
+        else if(type == 2) {
+            q1.pop();
+        }
+        else cout << q1.front() << endl;
+    }
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */
+    return 0;
+}
