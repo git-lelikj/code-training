@@ -4777,3 +4777,266 @@ int main() {
     return 0;
 }
 #endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Stack and Queue: Largest Rectangle
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+
+struct Building_rec
+{
+    size_t start_ = 0;
+    int h_ = 0;
+    Building_rec(size_t start, int h):
+        start_(start), h_(h)
+    {}
+};
+
+// Complete the largestRectangle function below.
+long largestRectangle(vector<int> h) {
+    if (!h.size())
+        return 0;
+    stack<Building_rec> memo;
+    long max_area = 0;
+    memo.emplace(0, h[0]);
+    for (size_t i = 1; i < h.size(); ++i) {
+        if (h[i] > memo.top().h_)
+            memo.emplace(i, h[i]);
+        else if (h[i] < memo.top().h_) {
+            Building_rec b(memo.top().start_, h[i]);
+            while (!memo.empty() && h[i] < memo.top().h_) {
+                max_area = max(max_area, (long)memo.top().h_ * (long)(i - memo.top().start_));
+                b.start_ = memo.top().start_;
+                memo.pop();
+            }
+            if (memo.empty() || memo.top().h_ < b.h_)
+                memo.push(b);
+        }
+    }
+    while (!memo.empty()) {
+        max_area = max(max_area, (long)memo.top().h_ * (long)(h.size() - memo.top().start_));
+        memo.pop();
+    }
+    return max_area;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    int n;
+    cin >> n;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    string h_temp_temp;
+    getline(cin, h_temp_temp);
+
+    vector<string> h_temp = split_string(h_temp_temp);
+
+    vector<int> h(n);
+
+    for (int i = 0; i < n; i++) {
+        int h_item = stoi(h_temp[i]);
+
+        h[i] = h_item;
+    }
+
+    long result = largestRectangle(h);
+
+    fout << result << "\n";
+
+    fout.close();
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Tree: Height of a Binary Tree
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+int height(Node* root) {
+    if (root && (root->left || root->right))
+        return 1 +
+        max( (root->left ? height(root->left) : 0),
+             (root->right ? height(root->right) : 0) );
+    else
+        return 0;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Binary Search Tree : Lowest Common Ancestor
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+class Node {
+    public:
+        int data;
+        Node *left;
+        Node *right;
+        Node(int d) {
+            data = d;
+            left = NULL;
+            right = NULL;
+        }
+};
+
+class Solution {
+    public:
+        Node* insert(Node* root, int data) {
+            if(root == NULL) {
+                return new Node(data);
+            } else {
+                Node* cur;
+                if(data <= root->data) {
+                    cur = insert(root->left, data);
+                    root->left = cur;
+                } else {
+                    cur = insert(root->right, data);
+                    root->right = cur;
+               }
+
+               return root;
+           }
+        }
+        /*The tree node has data, left child and right child
+        class Node {
+            int data;
+            Node* left;
+            Node* right;
+        };
+
+        */
+        Node *lca_impl(Node *root, int v1,int v2) {
+            if (!root)
+                return nullptr;
+            if (v1 < root->data && root->data < v2 ||
+               root->data == v1 ||
+               root->data == v2)
+                return root;
+            if (root->data > v1 && root->data > v2 && root->left)
+                return lca(root->left, v1, v2);
+            if (root->data < v1 && root->data < v2 && root->right)
+                return lca(root->right, v1, v2);
+            return nullptr;
+        }
+
+        Node *lca(Node *root, int v1,int v2) {
+            if (v1 > v2)
+                swap(v1, v2);
+            return lca_impl(root, v1, v2);
+        }
+}; //End of Solution
+
+int main() {
+
+    Solution myTree;
+    Node* root = NULL;
+
+    int t;
+    int data;
+
+    std::cin >> t;
+
+    while(t-- > 0) {
+        std::cin >> data;
+        root = myTree.insert(root, data);
+    }
+
+    int v1, v2;
+    std::cin >> v1 >> v2;
+
+    Node *ans = myTree.lca(root, v1, v2);
+
+    std::cout << ans->data;
+
+    return 0;
+}
+
+
+/* Hidden stub code will pass a root argument to the function below. Complete the function to solve the challenge. Hint: you may want to write one or more helper functions.
+
+The Node struct is defined as follows:
+    struct Node {
+        int data;
+        Node* left;
+        Node* right;
+    }
+*/
+    bool checkBST(Node* root, int& left_max, int& right_min) {
+        if (!root)
+            return true;
+        if (!root->left && !root->right) {
+            left_max = root->data;
+            right_min = root->data;
+            return true;
+        }
+        if (root->left) {
+            int l_max = -1, r_min = 0x7fffffff;
+            bool res = checkBST(root->left, l_max, r_min);
+            if (res == false)
+                return res;
+            if (l_max >= root->data)
+                return false;
+            left_max = max(root->data, l_max);
+        }
+        else
+            left_max = root->data;
+        if (root->right) {
+            int l_max = -1, r_min = 0x7fffffff;
+            bool res = checkBST(root->right, l_max, r_min);
+            if (res == false)
+                return res;
+            if (root->data <= r_min)
+                return false;
+            right_min = min(root->data, r_min);
+        }
+        else
+            right_min = root->data;
+        return true;
+    }
+
+    bool checkBST(Node* root) {
+        if (!root)
+            return true;
+        int left_max = -1, right_min = 0x7fffffff;
+        return checkBST(root, left_max, right_min);
+    }
