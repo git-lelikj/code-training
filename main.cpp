@@ -4902,7 +4902,7 @@ int height(Node* root) {
 // ---------------------------------------------------------------------------------------------------------------------------------------
 //    Interview prep: Binary Search Tree : Lowest Common Ancestor
 // ---------------------------------------------------------------------------------------------------------------------------------------
-
+#if 0
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -4990,7 +4990,7 @@ int main() {
 
     return 0;
 }
-
+#endif
 
 /* Hidden stub code will pass a root argument to the function below. Complete the function to solve the challenge. Hint: you may want to write one or more helper functions.
 
@@ -5001,42 +5001,42 @@ The Node struct is defined as follows:
         Node* right;
     }
 */
-    bool checkBST(Node* root, int& left_max, int& right_min) {
-        if (!root)
-            return true;
-        if (!root->left && !root->right) {
-            left_max = root->data;
-            right_min = root->data;
-            return true;
-        }
-        if (root->left) {
-            int l_max = -1, r_min = 0x7fffffff;
-            bool res = checkBST(root->left, l_max, r_min);
-            if (res == false)
-                return res;
-            if (l_max >= root->data)
-                return false;
-            left_max = max(root->data, l_max);
-        }
-        else
-            left_max = root->data;
-        if (root->right) {
-            int l_max = -1, r_min = 0x7fffffff;
-            bool res = checkBST(root->right, l_max, r_min);
-            if (res == false)
-                return res;
-            if (root->data <= r_min)
-                return false;
-            right_min = min(root->data, r_min);
-        }
-        else
-            right_min = root->data;
+#if 0
+bool checkBST(Node* root, int& min_val, int& max_val) {
+    if (!root)
+        return true;
+    if (!root->left && !root->right) {
+        min_val = root->data;
+        max_val = root->data;
         return true;
     }
-
-    bool checkBST(Node* root) {
-        if (!root)
-            return true;
-        int left_max = -1, right_min = 0x7fffffff;
-        return checkBST(root, left_max, right_min);
+    if (root->left) {
+        int min_v = 0, max_v = 0;
+        if (!checkBST(root->left, min_v, max_v))
+            return false;
+        if (max_v >= root->data)
+            return false;
+        min_val = min_v;
     }
+    else
+        min_val = root->data;
+    if (root->right) {
+        int min_v = 0, max_v = 0;
+        if (!checkBST(root->right, min_v, max_v))
+            return false;
+        if (min_v <= root->data)
+            return false;
+        max_val = max_v;
+    }
+    else
+        max_val = root->data;
+    return true;
+}
+
+bool checkBST(Node* root) {
+    if (!root)
+        return true;
+    int left_max = -1, right_min = 0x7fffffff;
+    return checkBST(root, left_max, right_min);
+}
+#endif
