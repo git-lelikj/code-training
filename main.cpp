@@ -4992,6 +4992,10 @@ int main() {
 }
 #endif
 
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Binary Search Tree : Check BST
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
 /* Hidden stub code will pass a root argument to the function below. Complete the function to solve the challenge. Hint: you may want to write one or more helper functions.
 
 The Node struct is defined as follows:
@@ -5038,5 +5042,383 @@ bool checkBST(Node* root) {
         return true;
     int left_max = -1, right_min = 0x7fffffff;
     return checkBST(root, left_max, right_min);
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Binary Search Tree : Tree: Huffman Decoding
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
+#if 0
+void decode_huff(node * root, string s) {
+    if (!root)
+        return;
+    node* it = root;
+    size_t i = 0;
+    while (i <= s.size()) {
+        if (!it->left && !it->right) {
+            cout << it->data;
+            it = root;
+        }
+        else {
+            if (s[i] == '0' && it->left)
+                it = it->left;
+            else if (s[i] == '1' && it->right)
+                it = it->right;
+            ++i;
+        }
+    }
+    cout << endl;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Graphs: Roads and Libraries
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+
+using Graph = unordered_map<int, vector<int>>;
+
+void dfs(Graph& graph, int x, vector<bool>& visited) {
+    visited[x] = true;
+    for (auto& neighbor: graph[x]) {
+        if (visited[neighbor] == false) {
+            dfs(graph, neighbor, visited);
+        }
+    }
+}
+
+// Complete the roadsAndLibraries function below.
+long roadsAndLibraries(int n, int c_lib, int c_road, vector<vector<int>> cities) {
+    if (c_road >= c_lib)
+        return (long)n * (long)c_lib;
+    Graph graph;
+    for (const auto& path: cities) {
+        graph[path[0]].push_back(path[1]);
+        graph[path[1]].push_back(path[0]);
+    }
+//    cout << "[] graph:\n";
+//    for (auto& n: graph) {
+//        cout << n.first << ": ";
+//        for (auto& e: n.second)
+//            cout << e << " ";
+//        cout << endl;
+//    }
+    vector<bool> visited(n+1, false);
+    long components = 0;
+    for (size_t i = 1; i <= n; ++i) {
+        if (visited[i] == false) {
+            ++components;
+            dfs(graph, i, visited);
+        }
+    }
+    return components*(long)c_lib + (long)((long)n-components)*(long)c_road;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    int q;
+    cin >> q;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    for (int q_itr = 0; q_itr < q; q_itr++) {
+        string nmC_libC_road_temp;
+        getline(cin, nmC_libC_road_temp);
+
+        vector<string> nmC_libC_road = split_string(nmC_libC_road_temp);
+
+        int n = stoi(nmC_libC_road[0]);
+
+        int m = stoi(nmC_libC_road[1]);
+
+        int c_lib = stoi(nmC_libC_road[2]);
+
+        int c_road = stoi(nmC_libC_road[3]);
+
+        vector<vector<int>> cities(m);
+        for (int i = 0; i < m; i++) {
+            cities[i].resize(2);
+
+            for (int j = 0; j < 2; j++) {
+                cin >> cities[i][j];
+            }
+
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+
+        long result = roadsAndLibraries(n, c_lib, c_road, cities);
+
+        fout << result << "\n";
+    }
+
+    fout.close();
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Graphs: Find the nearest clone
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+
+// Complete the findShortest function below.
+
+/*
+ * For the unweighted graph, <name>:
+ *
+ * 1. The number of nodes is <name>_nodes.
+ * 2. The number of edges is <name>_edges.
+ * 3. An edge exists between <name>_from[i] to <name>_to[i].
+ *
+ */
+using Adj_graph = unordered_map<int, vector<int>>;
+using Visited_list = vector<bool>;
+using Bfs_queue = list<pair<int, int>>;
+
+int bfs(int start_node, int graph_nodes, Adj_graph& adj, const vector<long>& ids) {
+    Visited_list visited(graph_nodes+1, false);
+    Bfs_queue bfs_queue;
+    bfs_queue.push_back({start_node,0});
+    visited[start_node] = true;
+    cout << "[bfs]: start: " << start_node << endl;
+    while (!bfs_queue.empty()) {
+        int node = bfs_queue.front().first;
+        int distance = bfs_queue.front().second;
+        bfs_queue.pop_front();
+        cout << "[bfs]: processing: " << node << endl;
+        for (auto& n: adj[node]) {
+            cout << "[bfs]: neighbour: " << n << ", visited: " << visited[n] << endl;
+            if (visited[n] == true)
+                continue;
+            if (ids[n-1] == ids[start_node-1]) {
+                cout << "[bfs]: color matched, distance: " << distance+1 << endl;
+                return distance+1;
+            }
+            bfs_queue.push_back({n, distance+1});
+        }
+        visited[node] = true;
+    }
+    return numeric_limits<int>::max();
+}
+
+int findShortest(int graph_nodes, vector<int> graph_from, vector<int> graph_to, vector<long> ids, int val) {
+    Adj_graph adj_graph;
+    for (size_t i = 0; i < graph_nodes; ++i) {
+        adj_graph[graph_from[i]].push_back(graph_to[i]);
+        adj_graph[graph_to[i]].push_back(graph_from[i]);
+    }
+    int min_distance = numeric_limits<int>::max();
+    for (size_t i = 0; i < graph_nodes; ++i) {
+        if (ids[i] == val) {
+            int distance = bfs(i+1, graph_nodes, adj_graph, ids);
+            min_distance = min(min_distance, distance);
+        }
+    }
+    return (min_distance != numeric_limits<int>::max() ? min_distance : -1);
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    int graph_nodes;
+    int graph_edges;
+
+    cin >> graph_nodes >> graph_edges;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    vector<int> graph_from(graph_edges);
+    vector<int> graph_to(graph_edges);
+
+    for (int i = 0; i < graph_edges; i++) {
+        cin >> graph_from[i] >> graph_to[i];
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+    string ids_temp_temp;
+    getline(cin, ids_temp_temp);
+
+    vector<string> ids_temp = split_string(ids_temp_temp);
+
+    vector<long> ids(graph_nodes);
+
+    for (int i = 0; i < graph_nodes; i++) {
+        long ids_item = stol(ids_temp[i]);
+
+        ids[i] = ids_item;
+    }
+
+    int val;
+    cin >> val;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    int ans = findShortest(graph_nodes, graph_from, graph_to, ids, val);
+
+    fout << ans << "\n";
+
+    fout.close();
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    Interview prep: Graphs: BFS: Shortest Reach in a Graph
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <bits/stdc++.h>
+using namespace std;
+
+class Graph {
+    public:
+
+        using Adj_graph = unordered_map<int, vector<int>>;
+        using Bfs_queue = list<pair<int,int>>;
+        using Visited_list = vector<bool>;
+
+        Graph(int n):
+            n_nodes_(n)
+        {}
+
+        void add_edge(int u, int v) {
+            adj_graph_[u+1].push_back(v+1);
+            adj_graph_[v+1].push_back(u+1);
+        }
+
+        vector<int> shortest_reach(int start) {
+            ++start;
+            vector<int> distances(n_nodes_, -1);
+            Bfs_queue bfs_queue;
+            Visited_list visited(n_nodes_+1, false);
+            bfs_queue.push_back({start, 0});
+            visited[start] = true;
+            while (!bfs_queue.empty()) {
+                auto node = bfs_queue.front();
+                bfs_queue.pop_front();
+                for (auto& n: adj_graph_[node.first]) {
+                    if (visited[n] == false) {
+                        distances[n-1] = (node.second + 1)*6;
+                        bfs_queue.push_back({n, node.second + 1});
+                        visited[n] = true;
+                    }
+                }
+            }
+            return distances;
+        }
+private:
+    Adj_graph adj_graph_;
+    int n_nodes_ = 0;
+};
+
+int main() {
+    int queries;
+    cin >> queries;
+
+    for (int t = 0; t < queries; t++) {
+
+        int n, m;
+        cin >> n;
+        // Create a graph of size n where each edge weight is 6:
+        Graph graph(n);
+        cin >> m;
+        // read and set edges
+        for (int i = 0; i < m; i++) {
+            int u, v;
+            cin >> u >> v;
+            u--, v--;
+            // add each edge to the graph
+            graph.add_edge(u, v);
+        }
+        int startId;
+        cin >> startId;
+        startId--;
+        // Find shortest reach from node s
+        vector<int> distances = graph.shortest_reach(startId);
+
+        for (int i = 0; i < distances.size(); i++) {
+            if (i != startId) {
+                cout << distances[i] << " ";
+            }
+        }
+        cout << endl;
+    }
+
+    return 0;
 }
 #endif
