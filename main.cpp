@@ -908,3 +908,142 @@ int main()
     return 0;
 }
 #endif
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// C++: Templates: Fibonacci
+// ---------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+using namespace std;
+
+template<int N>
+struct Fibonacci
+{
+    static const int result = N * Fibonacci<N-1>::result;
+};
+
+template<>
+struct Fibonacci<1>
+{
+    static const int result = 1;
+};
+
+int main()
+{
+    const int x = 10;
+    cout << "[main]: fibonacci of " << x << ": " << Fibonacci<x>::result << endl;
+
+    return 0;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// C++: Variadic Templates: sizeof...()
+// ---------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+using namespace std;
+
+template<typename... Ts>
+void print_size(Ts... args)
+{
+    cout << "number of args: " << sizeof...(args) << endl;
+}
+
+int main()
+{
+    print_size(1, 3.14, "std");
+    print_size();
+    print_size(1);
+    return 0;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// C++: Variadic Templates: hash_combine
+// ---------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+using namespace std;
+
+template<typename T>
+void hash_combine(size_t& seed, const T& t)
+{
+    seed ^= std::hash<T>()(t) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+}
+
+template<typename T>
+void hash_func(size_t seed, T t)
+{
+    hash_combine(seed, t);
+}
+
+template<typename T, typename... Args>
+void hash_func(size_t& seed, const T& t, const Args&... args)
+{
+    hash_combine(seed, t);
+    hash_func(seed, args...);
+}
+
+template<typename... Args>
+size_t hash_func(Args... args)
+{
+    size_t seed = 0;
+    hash_func(seed, args...);
+    return seed;
+}
+
+struct A
+{
+    int i_ = 0;
+    double d_ = .0;
+    string s_;
+    A(int i, double d, string s)
+        :i_(i), d_(d), s_(s)
+    {}
+};
+
+bool operator==(const A& l, const A& r)
+{
+    return l.i_ == r.i_;
+}
+
+namespace std
+{
+    template<>
+    struct hash<A>
+    {
+        size_t operator()(const A& a) const
+        {
+            size_t seed = 0;
+            hash_func(a.i_, a.d_, a.s_);
+            return seed;
+        }
+    };
+}
+
+#if 0
+struct Hash_a
+{
+    size_t operator()(const A& a) const
+    {
+        return 0;
+    }
+};
+
+struct Equal_a
+{
+    bool operator()(const A& l, const A& r) const
+    {
+        return l.i_ == r.i_;
+    }
+};
+#endif
+
+int main()
+{
+//    unordered_set<A, Hash_a, Equal_a> hash;
+    unordered_set<A> hash;
+    hash.emplace(1,.0,"1");
+}
+#endif
