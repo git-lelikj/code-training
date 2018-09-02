@@ -789,3 +789,122 @@ int main()
     return 0;
 }
 #endif
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// C++: Variadic Templates: Adder
+// ---------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+using namespace std;
+
+template<typename T>
+T adder(T t)
+{
+    cout << __PRETTY_FUNCTION__ << endl;
+    return t;
+}
+
+template <typename T, typename... Args>
+T adder(T t, Args... args)
+{
+    cout << __PRETTY_FUNCTION__ << endl;
+    return (t + adder(args...));
+}
+
+int main()
+{
+    int x1 = 1, x2 = 2, x3 = 3, x4 = 4, x5 = 5;
+    cout << "[main]: sum: " << adder(x1, x2, x3, x4, x5) << endl;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// C++: Variadic Templates: Print any container
+// ---------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+using namespace std;
+template<template<typename, typename> class Container_type,
+         typename T,
+         typename Alloc>
+void print(const Container_type<T, Alloc>& c)
+{
+    for (const auto& e: c)
+        cout << e << " ";
+    cout << endl;
+}
+
+int main()
+{
+    vector<int> vi = {1, 2, 3, 4, 5};
+    print(vi);
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// C++: Variadic Templates: Print any container
+// ---------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+using namespace std;
+
+template<template<typename, typename...> class Container,
+         typename T, typename... Args>
+void print(const Container<T, Args...>& c)
+{
+    for (auto& e: c)
+        cout << e << " ";
+    cout << endl;
+}
+
+template<typename U, typename V>
+ostream& operator<<(ostream& os, pair<U, V> p)
+{
+    os << "[" << p.first << "," << p.second << "]";
+    return os;
+}
+
+int main()
+{
+    vector<int> vi = {1, 2, 3, 4, 5};
+    print(vi);
+
+    map<int, string> mis = {{1,"A"}, {2,"B"}, {3,"C"}};
+    print(mis);
+
+    return 0;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// C++: Variadic Templates: printf
+// ---------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <bits/stdc++.h>
+using namespace std;
+
+void tprintf(const char* format)
+{
+    cout << format;
+}
+
+template<typename T, typename... Args>
+void tprintf(const char* format, T t, Args... args)
+{
+    for (; *format != 0; ++format) {
+        if (*format == '%') {
+            cout << t;
+            tprintf(format+1, args...);
+            break;
+        }
+        cout << *format;
+    }
+}
+
+int main()
+{
+    tprintf("Alrightythen\n");
+    tprintf("% world% %\n","Hello",'!',123);
+    return 0;
+}
+#endif
