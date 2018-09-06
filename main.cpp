@@ -5422,3 +5422,210 @@ int main() {
     return 0;
 }
 #endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    C++: Abstract Classes - Polymorphism (LRU Cache)
+// ---------------------------------------------------------------------------------------------------------------------------------------
+#if 0
+#include <iostream>
+#include <vector>
+#include <map>
+#include <string>
+#include <algorithm>
+#include <set>
+#include <cassert>
+using namespace std;
+
+struct Node{
+   Node* next;
+   Node* prev;
+   int value;
+   int key;
+   Node(Node* p, Node* n, int k, int val):prev(p),next(n),key(k),value(val){};
+   Node(int k, int val):prev(NULL),next(NULL),key(k),value(val){};
+};
+
+class Cache{
+
+   protected:
+   map<int,Node*> mp; //map the key to the node in the linked list
+   int cp;  //capacity
+   Node* tail; // double linked list tail pointer
+   Node* head; // double linked list head pointer
+   virtual void set(int, int) = 0; //set function
+   virtual int get(int) = 0; //get function
+
+};
+
+class LRUCache: public Cache
+{
+public:
+    LRUCache(int capacity)
+    {
+        cp = capacity;
+        tail = nullptr;
+        head = nullptr;
+    }
+
+    virtual void set(int key, int value)
+    {
+        auto it = mp.find(key);
+        if (it != mp.end()) {
+            if (it->second != this->back()) {
+                this->remove(it->second);
+                this->push_back(it->second);
+            }
+            it->second->value = value;
+        }
+        else {
+            if (size == cp) {
+                mp.erase(this->front()->key);
+                this->pop_front();
+                --size;
+            }
+            Node* node = new Node(key, value);
+            this->push_back(node);
+            mp.insert({key, node});
+            ++size;
+        }
+    }
+
+    virtual int get(int key)
+    {
+        auto it = mp.find(key);
+        return (it!=mp.end() ? it->second->value : -1);
+    }
+
+protected:
+    void push_back(Node* node)
+    {
+        if (head == nullptr) {
+            head = node;
+            tail = node;
+        }
+        else {
+            node->next = head;
+            head->prev = node;
+            head = node;
+        }
+    }
+
+    void pop_front()
+    {
+        Node* node = this->front();
+        if (node) {
+            this->remove(node);
+            delete node;
+        }
+#if 0
+        if (tail) {
+            if (tail == head) {
+                delete tail;
+                head = tail = nullptr;
+            }
+            else {
+                if (tail->prev)
+                    tail->prev->next = nullptr;
+                Node* tmp = tail->prev;
+                delete tail;
+                tail = tmp;
+            }
+        }
+#endif
+    }
+
+    void remove(Node* node)
+    {
+        if (!node)
+            return;
+        if (node == tail && tail == head) {
+            head = tail = nullptr;
+            return;
+        }
+        if (node == tail) {
+            tail = node->prev;
+        }
+        if (node == head) {
+            head = node->next;
+        }
+        if (node->prev)
+            node->prev->next = node->next;
+        if (node->next)
+            node->next->prev = node->prev;
+    }
+
+    Node* front()
+    {
+        return tail;
+    }
+
+    Node* back()
+    {
+        return head;
+    }
+private:
+    size_t size = 0;
+};
+
+int main() {
+   int n, capacity,i;
+   cin >> n >> capacity;
+   LRUCache l(capacity);
+   for(i=0;i<n;i++) {
+      string command;
+      cin >> command;
+      if(command == "get") {
+         int key;
+         cin >> key;
+         cout << l.get(key) << endl;
+      }
+      else if(command == "set") {
+         int key, value;
+         cin >> key >> value;
+         l.set(key,value);
+      }
+   }
+   return 0;
+}
+#endif
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+//    C++: Deque-STL
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
+#include <iostream>
+#include <deque>
+#include <set>
+using namespace std;
+
+void printKMax(int arr[], int n, int k){
+    if (k > n)
+        return;
+    multiset<int> ms;
+    for (size_t i = 0; i < k; ++i)
+        ms.insert(arr[i]);
+    cout << *(ms.rbegin());
+    for (size_t i = 1; i <= (n - k); ++i) {
+        ms.erase(arr[i-1]);
+        ms.insert(arr[i+k-1]);
+        cout << " " << *(ms.rbegin());
+    }
+    cout << endl;
+}
+
+int main(){
+
+    int t;
+    cin >> t;
+    while(t>0) {
+        int n,k;
+        cin >> n >> k;
+        int i;
+        int arr[n];
+        for(i=0;i<n;i++)
+            cin >> arr[i];
+        printKMax(arr, n, k);
+        t--;
+    }
+    return 0;
+}
