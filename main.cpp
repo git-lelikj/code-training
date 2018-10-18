@@ -5592,7 +5592,7 @@ int main() {
 // ---------------------------------------------------------------------------------------------------------------------------------------
 //    C++: Deque-STL
 // ---------------------------------------------------------------------------------------------------------------------------------------
-
+#if 0
 #include <iostream>
 #include <deque>
 #include <set>
@@ -5628,4 +5628,23 @@ int main(){
         t--;
     }
     return 0;
+}
+#endif
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+
+    std::vector< int > vec{1,2,3,4,5};
+
+    auto mvec = std::move(vec);
+
+    std::cout << vec.size() << std::endl;
+
+    std::cout << mvec.size() << std::endl;
+
+    return 0;
+
 }
