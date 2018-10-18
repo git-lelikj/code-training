@@ -1396,3 +1396,45 @@ int main() {
     return 0;
 }
 #endif
+
+// -------------------------------------------------------------------------------------------------------
+// Key Pair: Array, pair sum
+// -------------------------------------------------------------------------------------------------------
+#include <bits/stdc++.h>
+using namespace std;
+
+bool test_key_sum(const vector<int>& v, int sum)
+{
+    unordered_map<int, size_t> hash;
+    for (auto i: v) {
+        auto it = hash.find(i);
+        if (it == hash.end())
+            hash.insert({i, 1});
+        else
+            ++it->second;
+    }
+    for (size_t i = 0; i < v.size(); ++i) {
+        if (v[i]> sum)
+            continue;
+        auto it = hash.find(sum - v[i]);
+        size_t count = (v[i] == sum - v[i] ? 2 : 1);
+        if (it != hash.end() && it->second >= count)
+            return true;
+    }
+    return false;
+}
+
+int main() {
+    int T = 0;
+    cin >> T;
+    for (size_t t = 0; t < T; ++t) {
+        int N = 0, X = 0;
+        cin >> N >> X;
+        vector<int> c(N, 0);
+        for (size_t i = 0; i < N; ++i) {
+            cin >> c[i];
+        }
+        cout << (test_key_sum(c, X) ? "YES" : "NO") << endl;
+    }
+    return 0;
+}
