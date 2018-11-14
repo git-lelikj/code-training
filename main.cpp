@@ -1047,3 +1047,66 @@ int main()
     hash.emplace(1,.0,"1");
 }
 #endif
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// Concurrency in Action: accumulate
+// ---------------------------------------------------------------------------------------------------------------------------
+
+#include <bits/stdc++.h>
+using namespace std;
+
+constexpr int NUM_ELEMENTS = 1000000000;
+constexpr int MIN_PER_THREAD = 50;
+
+template<typename T, typename Iterator>
+T concurrent_accumulate(Iterator b, Iterator e, T init)
+{
+    size_t length = distance(b, e);
+//    cout << "[c_accumulate]: length: " << length << endl;
+    size_t hw_threads = thread::hardware_concurrency();
+    size_t n_threads = min(hw_threads ? hw_threads : 2, (length + MIN_PER_THREAD - 1) / MIN_PER_THREAD );
+    size_t block_size = length / n_threads;
+//    cout << "[c_accumulate]: hw threads: " << hw_threads << ", n threads: " << n_threads << endl;
+
+    vector<thread> threads(n_threads - 1);
+    vector<T> results(n_threads);
+
+    auto block_start = b;
+    for (size_t i = 0; i < n_threads-1; ++i) {
+        auto block_end = block_start;
+        advance(block_end, block_size);
+        threads[i] = thread([block_start, block_end, &results, i](){ results[i] = accumulate(block_start, block_end, 0); });
+        block_start = block_end;
+    }
+    results[n_threads-1] = accumulate(block_start, e, 0);
+    for (auto& t: threads)
+        t.join();
+
+    return accumulate(results.begin(), results.end(), init);
+}
+
+int main()
+{
+//    srand(time(0));
+
+    std::random_device rd;  //Will be used to obtain a seed for the random number engine
+    std::mt19937 engine(rd()); //Standard mersenne_twister_engine seeded with rd()
+    std::uniform_int_distribution<> dis(-NUM_ELEMENTS/2, NUM_ELEMENTS/2);
+    auto gen = [&dis, &engine](){ return dis(engine); };
+
+    vector<int> v(NUM_ELEMENTS);
+
+    generate(v.begin(), v.end(), gen);
+
+//    {
+//        auto res = accumulate(v.begin(), v.end(), 0);
+//        cout << "single threaded accumulate result: " << res << endl;
+//    }
+
+    {
+        auto res = concurrent_accumulate(v.begin(), v.end(), 0);
+        cout << "multi threaded accumulate result: " << res << endl;
+    }
+
+    return 0;
+}
