@@ -1051,7 +1051,7 @@ int main()
 // ---------------------------------------------------------------------------------------------------------------------------
 // Concurrency in Action: accumulate
 // ---------------------------------------------------------------------------------------------------------------------------
-
+#if 0
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -1110,3 +1110,185 @@ int main()
 
     return 0;
 }
+#endif
+#if 0
+#include <bits/stdc++.h>
+using namespace std;
+
+struct City_rec
+{
+    City_rec(size_t p, size_t nc):
+        population_(p), n_clinics_(nc)
+    {
+        load_ = population_/n_clinics_;
+    }
+    void add_clinic()
+    {
+        ++n_clinics_;
+        load_ = population_/n_clinics_;
+    }
+    size_t population_ = 0;
+    size_t n_clinics_ = 0;
+    double load_ = .0;
+};
+
+int max_vacc_kits(vector<size_t> cities, size_t nc)
+{
+    if (nc < cities.size())
+        return 0;
+    auto cmp = [](City_rec l, City_rec r){ return l.load_ < r.load_; };
+    using Cities_pq = priority_queue<City_rec, vector<City_rec>, decltype(cmp)>;
+    Cities_pq pq(cmp);
+    for (auto c: cities)
+        pq.push({c, 1});
+    nc -= cities.size();
+    while (nc) {
+        auto c = pq.top();
+        pq.pop();
+        c.add_clinic();
+        pq.push(c);
+        --nc;
+    }
+    auto c = pq.top();
+    return (int)(c.load_);
+}
+
+int main()
+{
+    size_t N = 0, B = 0;
+    cin >> N >> B;
+    vector<size_t> cities(N, 0);
+    for (size_t i = 0; i < N; ++i)
+        cin >> cities[i];
+    cout << max_vacc_kits(cities, B);
+    return 0;
+}
+#endif
+
+#if 0
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    vector<int> v{4,3,2,3,1,4,4,5,1,6,3,7,9,9,8};
+    sort(v.begin(), v.end());
+    for (auto it = v.begin(); it != v.end(); ) {
+        auto next = upper_bound(it, v.end(), *it);
+        for (auto i = it; i != next; ++i)
+            cout << *i << " ";
+        cout << endl;
+        it = next;
+    }
+
+    return 0;
+}
+#endif
+
+#if 0
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<string> split_string(string);
+
+struct Range
+{
+    Range(int s, int e):
+        s_(s), e_(e)
+        {}
+    int s_ = 0;
+    int e_ = 0;
+}
+
+// Complete the gridlandMetro function below.
+int gridlandMetro(int n, int m, int k, vector<vector<int>> track) {
+    if (!n || !m)
+        return 0;
+    long long res = n * m;
+    auto cmp = [](vector<int> l, vector<int> r){ return l[0] < r[0]; };
+    sort(track.begin(), track.end(), cmp);
+    for (auto row = track.begin(); row != track.end();) {
+        auto next = upper_bound(row, track.end(), (*row), cmp);
+        if (distance(row, next) == 1) {
+            res -= (*row)[2] - (*row)[1] + 1;
+        }
+        else {
+            vector<Range> ranges;
+            for (auto i = row; i != next; ++i)
+                ranges.push_back({(*i)[1], (*i)[2]});
+            sort(ranges.begin(), ranges.end(), [](Range l, Range r){ return l.s_ < r.s_;});
+            for (auto i = ranges.begin(); i != ranges.end();) {
+
+            }
+        }
+        row = next;
+    }
+
+    return res;
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    string nmk_temp;
+    getline(cin, nmk_temp);
+
+    vector<string> nmk = split_string(nmk_temp);
+
+    int n = stoi(nmk[0]);
+
+    int m = stoi(nmk[1]);
+
+    int k = stoi(nmk[2]);
+
+    vector<vector<int>> track(k);
+    for (int i = 0; i < k; i++) {
+        track[i].resize(3);
+
+        for (int j = 0; j < 3; j++) {
+            cin >> track[i][j];
+        }
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+    int result = gridlandMetro(n, m, k, track);
+
+    fout << result << "\n";
+
+    fout.close();
+
+    return 0;
+}
+
+vector<string> split_string(string input_string) {
+    string::iterator new_end = unique(input_string.begin(), input_string.end(), [] (const char &x, const char &y) {
+        return x == y and x == ' ';
+    });
+
+    input_string.erase(new_end, input_string.end());
+
+    while (input_string[input_string.length() - 1] == ' ') {
+        input_string.pop_back();
+    }
+
+    vector<string> splits;
+    char delimiter = ' ';
+
+    size_t i = 0;
+    size_t pos = input_string.find(delimiter);
+
+    while (pos != string::npos) {
+        splits.push_back(input_string.substr(i, pos - i));
+
+        i = pos + 1;
+        pos = input_string.find(delimiter, i);
+    }
+
+    splits.push_back(input_string.substr(i, min(pos, input_string.length()) - i + 1));
+
+    return splits;
+}
+#endif
