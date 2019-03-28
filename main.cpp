@@ -146,16 +146,27 @@ protected:
         while (timer_heap_.size() && timer_heap_.top().end_ <= Clock::now()) {
             auto timer_it = timer_heap_.top().timer_it_;
             auto timer = *timer_it;
-            // remove from all structures
-            auto hash_it = timer_id_hash_.find(timer_it->id_);
-            if (hash_it != timer_id_hash_.end())
-                timer_id_hash_.erase(hash_it);
-            timers_.erase(timer_it);
-            timer_heap_.pop();
             l.unlock();
-            if (!timer.cancelled_)
+            if (!timer.cancelled_) {
+                cout << "[tq]: emit tid: " << timer.id_ << " ";
                 timer.handler_();
+            }
             l.lock();
+            if (timer.period_>0) {
+                //cout << "[process_timers]: reschedule: " << timer.id_ << endl;
+                // reschedule slot with period
+                timer_heap_.push(Timer_slot{Clock::now()+chrono::milliseconds(timer.period_), timer_it});
+                // pop expired slot
+                timer_heap_.pop();
+            }
+            else {
+                // remove from all structures
+                auto hash_it = timer_id_hash_.find(timer_it->id_);
+                if (hash_it != timer_id_hash_.end())
+                    timer_id_hash_.erase(hash_it);
+                timers_.erase(timer_it);
+                timer_heap_.pop();
+            }
         }
     }
     
@@ -218,6 +229,7 @@ int main()
     }
     
     {
+#if 0        
          using namespace std::chrono_literals;
         Timer_queue tq;
         thread t([&tq]{ tq.run(); });
@@ -247,6 +259,34 @@ int main()
         
         tq.stop();
         
+        t.join();
+#endif        
+    }
+    
+    {
+        using namespace std::chrono_literals;
+        Timer_queue tq;
+        thread t([&tq]{ tq.run(); });
+        
+        auto prev = Timer_queue::Clock::now();
+        auto tid = tq.schedule_timer([&prev]()
+                                    {
+                                        auto now = Timer_queue::Clock::now();
+                                        if (now > prev) {
+                                            std::chrono::duration<double, std::milli> elapsed = now-prev;
+                                            cout << "[timeout]: elapsed: " << elapsed.count() << endl;
+                                            prev = now;
+                                        }
+                                    }, 
+                                    3000, 10);
+                                    
+        tq.schedule_timer([](){ cout << "[timeout]\n"; }, 4000);
+        
+        this_thread::sleep_for(30s);
+        tq.cancel_timer(tid);
+        this_thread::sleep_for(30s);
+        
+        tq.stop();
         t.join();
     }
 
